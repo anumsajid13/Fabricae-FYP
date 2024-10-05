@@ -1,50 +1,50 @@
-// components/landingPage/BottomBar.js
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-const BottomBar = () => {
- 
 
+const BottomBar = () => {
   return (
-    <div className="fixed bottom-12 left-1/2 transform -translate-x-1/2 bg-white rounded-[50px] shadow-2xl p-6 flex items-center justify-around w-3/5">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-[50px] shadow-2xl p-4 sm:p-6 flex items-center justify-around w-11/12 sm:w-3/5">
       {/* Chat Section */}
-      <div className={`flex items-center transition-opacity duration-300 `}>
+      <div className="flex items-center transition-opacity duration-300">
         <Image 
-          src="/chat.png" // Replace with your chat icon SVG file name
+          src="/chat.png"
           alt="Chat Icon"
-          width={50} 
-          height={50}
+          width={30} 
+          height={30}
+          className="mr-2"
         />
-        <p className="text-gray-700 cursor-pointer">Chat</p>
+        <p className="text-gray-700 cursor-pointer text-sm sm:text-lg">Chat</p>
       </div>
-      <div className={`border-l-2 border-black h-6 mx-4 transition-opacity duration-300 `} />
+      <div className="border-l-2 border-black h-6 mx-4" />
 
       {/* Profile Section */}
-      <div className={`flex items-center transition-opacity duration-300 `}>
+      <div className="flex items-center transition-opacity duration-300">
         <Image 
-          src="/profile.png" // Replace with your profile icon SVG file name
+          src="/profile.png"
           alt="Profile Icon"
-          width={50}
-          height={50}
+          width={30}
+          height={30}
+          className="mr-2"
         />
-        <p className="text-gray-700 cursor-pointer">Profile</p>
+        <p className="text-gray-700 cursor-pointer text-sm sm:text-lg">Profile</p>
       </div>
-      <div className={`border-l-2 border-black h-6 mx-4 transition-opacity duration-300 `} />
+      <div className="border-l-2 border-black h-6 mx-4" />
 
-         {/* Chat Section */}
-      <div className={`flex items-center transition-opacity duration-300 `}>
+      {/* Create Section */}
+      <div className="flex items-center transition-opacity duration-300">
         <Image 
-          src="/profile.png" // Replace with your profile icon SVG file name
+          src="/create.png"
           alt="Create Icon"
-          width={50}
-          height={50}
+          width={30} 
+          height={30}
+          className="mr-2"
         />
         <Link href='/ImageGenerator'>
-        <p className="text-gray-700 cursor-pointer">Create</p>
+          <p className="text-gray-700 cursor-pointer text-sm sm:text-lg">Create</p>
         </Link>      
       </div>
-    
     </div>
   );
 };
