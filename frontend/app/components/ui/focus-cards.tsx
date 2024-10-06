@@ -72,8 +72,7 @@ type Card = {
 export function FocusCards({ cards }: { cards: Card[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-  // Handle save action
-  // Handle save action
+ 
   const handleSave = async (card: Card) => {
     try {
       // Create a reference to the image in Firebase Storage
