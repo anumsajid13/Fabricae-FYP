@@ -1,6 +1,7 @@
 "use client";
 
 import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
+import {FocusCardsDemo} from './focusCards'
 
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
@@ -19,15 +20,20 @@ export function PlaceholdersAndVanishInputDemo() {
     console.log("submitted");
   };
   return (
-    <div className="h-[4rem] flex flex-col justify-center  items-center px-4 bg-black">
+    <>
+
+      <div className="h-[4rem] flex flex-col justify-center  items-center px-4 bg-black">
       {/* <h2 className="mb-10 sm:mb-20 text-large text-center  dark:text-white text-white">
         Create unique design patterns using our AI Pattern Generator
       </h2> */}
-      <PlaceholdersAndVanishInput
-        placeholders={placeholders}
-        onChange={handleChange}
-        onSubmit={onSubmit}
-      />
-    </div>
+        <PlaceholdersAndVanishInput
+          placeholders={placeholders}
+          onChange={handleChange}
+          onSubmit={onSubmit}
+        />
+      </div>
+     
+    </>
+   
   );
 }
