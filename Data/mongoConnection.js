@@ -5,7 +5,7 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb+srv://anum:<password>@cluster0.fx64i.mongodb.net/FabricaeDB", {
+    await mongoose.connect("mongodb+srv://anum:anum123@cluster0.fx64i.mongodb.net/FabricaeDB", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

@@ -6,6 +6,7 @@ const nextConfig = {
         'patternobserver.com',
         'cdn.dribbble.com',
         'blog.fabrics-store.com',
+        'firebasestorage.googleapis.com'
       ],
     },
   };
