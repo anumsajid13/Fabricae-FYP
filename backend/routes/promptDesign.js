@@ -37,4 +37,23 @@ router.get("/retrieve", async (req, res) => {
 
   });
 
+
+router.delete('/delete', async (req, res) => {
+  const { title } = req.body; 
+
+  try {
+   
+    const deletedDesign = await PromptDesign.findOneAndDelete({ title });
+
+    if (!deletedDesign) {
+      return res.status(404).json({ message: 'Design not found.' });
+    }
+
+    return res.status(200).json({ message: 'Design successfully deleted.' });
+  } catch (error) {
+    console.error('Error deleting design:', error);
+    return res.status(500).json({ message: 'Error deleting the design.' });
+  }
+});
+
 module.exports = router;

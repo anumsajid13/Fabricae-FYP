@@ -154,11 +154,11 @@ export function PlaceholdersAndVanishInputDemo() {
   const [searchInitiated, setSearchInitiated] = useState(false);
 
   const placeholders = [
-    "What's the first rule of Fight Club?",
-    "Who is Tyler Durden?",
-    "Where is Andrew Laeddis Hiding?",
-    "Write a Javascript method to reverse a string",
-    "How to assemble your own PC?",
+    "create a bold geometric pattern",
+    "craft a modern minimalistic print",
+    "design a texture inspired by nature",
+    "design a vibrant  floral motif",
+    "create a pattern using traditional Sindhi Ajrak designs",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -23,11 +23,12 @@ export function BackgroundBeamsDemo() {
         </h1>
         <br></br>
         <p className="text-neutral-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10">
-          Welcome to MailJet, the best transactional email service on the web.
-          We provide reliable, scalable, and customizable email solutions for
-          your business. Whether you&apos;re sending order confirmations,
-          password reset emails, or promotional campaigns, MailJet has got you
-          covered.
+        Welcome to Fabricae, your go-to platform for innovative design solutions. 
+        We offer reliable, scalable, and customizable tools to help you bring 
+        your creative visions to life. Whether you&apos;re crafting stunning graphics, 
+        developing unique patterns, or building captivating projects, Fabricae is here 
+        to support your creative journey.
+
         </p>
         <br></br>
         <PlaceholdersAndVanishInputDemo />

@@ -48,6 +48,10 @@ export function FocusCardsDemo() {
     setIsDescending(!isDescending); // Toggle the sort order
   };
 
+  const handleCardDelete = (title: string) => {
+    setCards((prevCards) => prevCards.filter((card) => card.title !== title));
+  };
+
   return (
     <div className="bg-black min-h-screen py-8">
       {/* Toggle buttons for Explore and My Designs */}
@@ -80,7 +84,7 @@ export function FocusCardsDemo() {
   
       {/* Conditional rendering based on selected tab */}
       {selectedTab === 'myDesigns' ? (
-        <FocusCards cards={cards.map(card => ({ title: card.title, src: card.imageUrl }))} /> // Show FocusCards when "My Designs" is selected
+         <FocusCards cards={cards.map(card => ({ title: card.title, src: card.imageUrl }))} onDelete={handleCardDelete} /> // Show FocusCards when "My Designs" is selected
       ) : (
         <div className="text-white text-center"> {/* Empty div for Explore */}
           <h2>Nothing To Show Yet</h2>
