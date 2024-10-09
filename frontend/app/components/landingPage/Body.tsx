@@ -50,7 +50,7 @@ export default function Body() {
       {/* Image Section: Hidden on smaller screens */}
       <div className="relative lg:w-[30%] w-full h-96 lg:h-auto lg:mt-2 hidden lg:block  "> {/* Image hidden on small screens */}
         <Image 
-          src="/Fabricae.PNG"
+          src="/landing.PNG"
           alt="Cover Image"
           width={500}
           height={300}
