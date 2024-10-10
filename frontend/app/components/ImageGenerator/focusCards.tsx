@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"; // Ensure React is imported
 import { FocusCards } from "../ui/focus-cards"; // Import your FocusCards component
 import './global.css';
 import sortIcon from '../path/to/your/sort-icon.png'; // Import your sorting icon
+import { useCardsStore } from "../../store/useCardsStore";
 
 // Define the interface for the PromptDesign
 interface PromptDesign {
@@ -15,9 +16,10 @@ interface PromptDesign {
 }
 
 export function FocusCardsDemo() {
-  const [cards, setCards] = useState<PromptDesign[]>([]); // Store PromptDesign objects
+
   const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore'); // State for the selected tab
   const [isDescending, setIsDescending] = useState<boolean>(true); // State for sort order
+  const { cards, setCards, updateCards } = useCardsStore(); 
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -39,6 +41,9 @@ export function FocusCardsDemo() {
 
   // Function to sort cards by creationDate
   const sortCards = () => {
+    
+    if (!cards) return;
+    console.log("Sorting cards...");
     const sortedCards = [...cards].sort((a, b) => {
       const dateA = new Date(a.creationDate).getTime();
       const dateB = new Date(b.creationDate).getTime();
@@ -49,8 +54,16 @@ export function FocusCardsDemo() {
   };
 
   const handleCardDelete = (title: string) => {
-    setCards((prevCards) => prevCards.filter((card) => card.title !== title));
+    console.log("Deleting card:", title);
+    // updateCards((prevCards) => prevCards.filter((card) => card.title !== title)); // Update cards using the updater function
+    updateCards((prevCards) => {
+      // Make sure prevCards is an array before attempting to filter
+      if (!Array.isArray(prevCards)) return prevCards; 
+      
+      return prevCards.filter((card) => card.title !== title);
+    });
   };
+  
 
   return (
     <div className="bg-black min-h-screen py-8">

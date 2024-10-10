@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { storage } from "../../firebase";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import { useCardsStore } from '../../store/useCardsStore';
+import {PromptDesign} from '../../store/useCardsStore'
 
 // Function to call GPT via RapidAPI to rephrase the prompt
 const rephrasePrompt = async (prompt: string) => {
@@ -100,7 +102,7 @@ const extractMiddleFiveWords = (prompt: string): string => {
 };
 
 // Function to save the generated image to Firebase Storage and MongoDB
-const handleSave = async (imageSrc: string, prompt: string, setGeneratedImages: React.Dispatch<React.SetStateAction<(string | null)[]>>) => {
+const handleSave = async (imageSrc: string, prompt: string, setGeneratedImages: React.Dispatch<React.SetStateAction<(string | null)[]>>, updateCards: (updater: (cards: PromptDesign[]) => PromptDesign[]) => void ) => {
   try {
     // Extracting image title
     const imagetitle = extractMiddleFiveWords(prompt);
@@ -142,11 +144,26 @@ const handleSave = async (imageSrc: string, prompt: string, setGeneratedImages: 
         throw new Error("Failed to save image in the database.");
       }
 
-      const savedImage = await res.json();
+      const savedImage: PromptDesign = await res.json();
       console.log("Image saved in the database:", savedImage);
 
-      toast.success("Image successfully saved!");
-
+      toast.success("Image successfully saved!", {
+        toastId: uniqueId // Use a unique ID here
+      });
+      // updateCards((prevCards) => [...prevCards, savedImage]);
+      updateCards((prevCards) => {
+        // Ensure prevCards is an array before spreading it
+        if (!Array.isArray(prevCards)) return prevCards;
+    
+        // Ensure savedImage is valid (you can add more checks based on your requirements)
+        if (!savedImage || !savedImage.title) {
+          console.error("Invalid card:", savedImage);
+          return prevCards;
+        }
+    
+        // Append the new card
+        return [...prevCards, savedImage];
+      });
       setGeneratedImages((prevImages) => [...prevImages, downloadURL]);
     };
   } catch (error) {
@@ -160,6 +177,7 @@ export function PlaceholdersAndVanishInputDemo() {
   const [loading, setLoading] = useState([false, false, false]);
   const [generatedImages, setGeneratedImages] = useState<(string | null)[]>([null, null, null]);
   const [searchInitiated, setSearchInitiated] = useState(false);
+  const { cards, setCards, updateCards } = useCardsStore(); 
 
   const placeholders = [
     "create a bold geometric pattern",
@@ -195,7 +213,7 @@ export function PlaceholdersAndVanishInputDemo() {
       promptsList.map(async (p) => {
         const imageUrl = await queryImageGeneration(p);
         if (imageUrl) {
-          await handleSave(imageUrl, p, setGeneratedImages); // Save the image if generated
+          await handleSave(imageUrl, p, setGeneratedImages,updateCards); // Save the image if generated
           return imageUrl; // Return the generated image URL
         }
         return null; // If no image was generated
@@ -217,7 +235,7 @@ export function PlaceholdersAndVanishInputDemo() {
       </div>
   
       {searchInitiated && (
-        <div className="w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
+        <div className="w-[900px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
           {loading.map((isLoading, index) => (
             <div key={index} className="flex justify-center items-center bg-black rounded-lg">
               <div className="w-[300px] h-[300px] flex justify-center items-center">
@@ -241,7 +259,17 @@ export function PlaceholdersAndVanishInputDemo() {
           ))}
         </div>
       )}
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000} // Auto close after 3 seconds
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
   
