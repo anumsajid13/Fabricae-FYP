@@ -23,7 +23,7 @@ export default function Navbar() {
           <Link href='/Login'>
         <button
           type="button"
-          className="text-white bg-black border border-white hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2 custom-radius"
+          className="text-white bg-black border border-white hover:bg-customPurple font-medium text-sm px-4 py-2 custom-radius transition duration-500 ease-in-out"
         >
           Login
         </button>
@@ -32,7 +32,7 @@ export default function Navbar() {
         <Link href='/SignUp'>
           <button
             type="button"
-            className="text-white bg-black border border-white custom-radius hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2"
+            className="text-white bg-black border border-white custom-radius hover:bg-customPurple  font-medium text-sm px-4 py-2 transition duration-500 ease-in-out"
           >
             Sign Up
           </button>
