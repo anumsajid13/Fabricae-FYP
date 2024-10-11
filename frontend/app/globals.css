@@ -15,6 +15,15 @@
   font-family: 'Agrandir1';  /* The name of your font */
   src: url('/fonts/Agrandir-GrandLight.otf') format('opentype'); 
   font-weight: normal,bold,bolder; /* Adjust the path */
+
+  
+  font-family: 'Agrandir2';  /* The name of your font */
+  src: url('/fonts/Agrandir-Tight.otf') format('opentype'); 
+  font-weight: normal,bold,bolder; /* Adjust the path */
+
+  font-family: 'PPTelegraf';  /* The name of your font */
+  src: url('/fonts/PPTelegraf-Regular.otf') format('opentype'); 
+  font-weight: normal,bold,bolder; /* Adjust the path */
 }
 
 @media (prefers-color-scheme: dark) {

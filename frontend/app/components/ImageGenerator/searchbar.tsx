@@ -235,7 +235,7 @@ export function PlaceholdersAndVanishInputDemo() {
       </div>
   
       {searchInitiated && (
-        <div className="w-[900px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
+        <div className="w-[900px] gap-mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
           {loading.map((isLoading, index) => (
             <div key={index} className="flex justify-center items-center bg-black rounded-lg">
               <div className="w-[300px] h-[300px] flex justify-center items-center">

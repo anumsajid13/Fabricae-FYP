@@ -7,8 +7,8 @@ export default function Body() {
       
       {/* Text Section */}
       <div className="lg:w-3/5 w-full  flex flex-col justify-center items-start p-8"> {/* Full width on small screens */}
-        <div className="flex items-center mb-4 " style={{ fontFamily: 'Agrandir' }}>
-          <h1 className="text-white text-7xl font-normal">
+        <div className="flex items-center mb-4 font-custom">
+          <h1 className="text-white text-7xl ">
             Create,
           </h1>
           <Image 
@@ -19,22 +19,22 @@ export default function Body() {
             className="ml-2"
           />
         </div>
-        <h2 className="text-white text-7xl font-normal mb-4 " style={{ fontFamily: 'Agrandir' }}>
+        <h2 className="text-white text-7xl mb-4 font-custom " >
           customize, and
         </h2>
-        <h3 className="text-white text-6xl font-normal mb-4" style={{ fontFamily: 'Agrandir' }}>
+        <h3 className="text-white text-6xl mb-4 font-custom" >
           connect—your design
         </h3>
-        <h4 className="text-white text-6xl font-normal" style={{ fontFamily: 'Agrandir' }}>
+        <h4 className="text-white text-6xl font-custom " >
           journey starts here.
         </h4>
 
-        <p className="text-white text-base font-normal mt-4" style={{ fontFamily: 'PP Telegraf' }}>
+        <p className="text-white text-base mt-4 font-custom3" >
           Building a design takes time and effort. With our app, you can create stunning designs, customize them <br/>to perfection, and connect with the right opportunities. Success is a journey, and we’re here to help you every step of the way.
         </p>
 
         <div className="flex items-center mt-4 ">
-          <p className="text-white text-base font-normal cursor-pointer" style={{ fontFamily: 'PP Telegraf', textDecoration: 'underline', textDecorationColor: 'white' }}>
+          <p className="text-white text-base  cursor-pointer font-custom3" style={{ textDecoration: 'underline', textDecorationColor: 'white' }}>
             Learn more
           </p>
           <Image 
