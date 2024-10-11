@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const PromptDesign = require("../../Data/Models/PromptDesign");
+const PromptDesign = require("../Data/Models/PromptDesign");
 
 
 router.post("/", async (req, res) => {
