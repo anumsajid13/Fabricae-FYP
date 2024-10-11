@@ -1,111 +1,81 @@
-"use client"; // Add this at the top
-
-import { useState } from "react";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
+import Link from 'next/link';
 import Image from 'next/image';
-import { FiMenu } from 'react-icons/fi';  // Icon for hamburger menu
-import { AiOutlineClose } from 'react-icons/ai';  // Icon for closing the sidebar
 
-export default function NavBar() {
-  const [isSidebarOpen, setSidebarOpen] = useState(false); // State to toggle sidebar
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
+export default function Navbar() {
   return (
-    <div>
-      <Navbar className="relative px-6 py-2 bg-black flex items-center justify-center" style={{ height: '80px' }}>
-        {/* Brand Section */}
-        <NavbarBrand className="absolute left-0 flex items-center">
+    <nav className="bg-black border-gray-200 dark:bg-gray-900">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <Link href="/logo.svg" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image 
-            src="/button.png" 
-            alt="Logo" 
-            width={40} 
-            height={40} 
-            className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" 
+            src="/logo.svg" 
+            alt="Fabricae Logo" 
+            width={45} // Set your desired width
+            height={32} // Set your desired height
           />
-          <Link className="ml-2 text-xl font-bold text-[#CDFB7C]" href="/" style={{ letterSpacing: '0.05em' }}>
+          <span className="self-center text-2xl font-custom font-bold whitespace-nowrap text-customGreen">
             FABRICAE
-          </Link>
-        </NavbarBrand>
+          </span>
+        </Link>
+        <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
+        <button
+  type="button"
+  className="text-white bg-black border border-white hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2 custom-radius"
+>
+  Login
+</button>
 
-        {/* Center Section */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:flex"> {/* Hidden on small screens */}
-          <NavbarContent className="flex gap-8"> 
-            <NavbarItem>
-              <Link className="text-white text-md sm:text-md" href="#">
+
+        <Link href='/SignUp'>
+          <button
+            type="button"
+            className="text-white bg-black border border-white custom-radius hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2"
+          >
+            Sign Up
+          </button>
+
+          </Link>
+
+          
+          <button
+            data-collapse-toggle="navbar-cta"
+            type="button"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            aria-controls="navbar-cta"
+            aria-expanded="false"
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-black md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <li>
+              <Link href="/" className="block py-2 px-3 md:p-0 text-white rounded md:bg-transparent hover:text-customGreen" aria-current="page">
                 Home
               </Link>
-            </NavbarItem>
-            <NavbarItem isActive>
-              <Link href="#" aria-current="page" className="text-md sm:text-md uppercase" style={{ color: '#CDFB7C', letterSpacing: '0.1em' }}>
+            </li>
+            <li>
+              <Link href="/about" className="block py-2 px-3 md:p-0 text-white rounded hover:text-customGreen md:hover:bg-transparent">
                 Explore
               </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link className="text-white text-md sm:text-md" href="#">
+            </li>
+            <li>
+              <Link href="/services" className="block py-2 px-3 md:p-0 text-white rounded hover:text-customGreen md:hover:bg-transparent">
                 Contact us
               </Link>
-            </NavbarItem>
-          </NavbarContent>
-        </div>
-
-        {/* Right Section */}
-        <div className="absolute right-0 flex items-center gap-4">
-          {/* Log In button will now be shown conditionally */}
-          <NavbarItem className="hidden lg:flex">
-            <Link href="#">
-              <Button 
-                className="text-white border border-white rounded-full text-md sm:text-md px-6 py-2" 
-                style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-                Log In
-              </Button>
-            </Link>
-          </NavbarItem>
-
-          <NavbarItem>
-            <Button 
-              as={Link} 
-              href="#" 
-              className="text-black border border-white bg-white rounded-full text-md sm:text-md px-6 py-2"
-            >
-              Sign Up
-            </Button>
-          </NavbarItem>
-
-          {/* Hamburger Menu for Small Screens */}
-          <div className="md:hidden flex items-center">
-            <FiMenu size={24} className="text-white cursor-pointer" onClick={toggleSidebar} />
-          </div>
-        </div>
-      </Navbar>
-
-      {/* Sidebar (only visible on small screens) */}
-      <div className={`fixed top-0 right-0 h-full bg-black text-white z-50 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`} style={{ width: '75%' }}> {/* Increased width */}
-        <div className="flex justify-end p-4">
-          <AiOutlineClose size={24} className="cursor-pointer" onClick={toggleSidebar} />
-        </div>
-        <div className="flex flex-col items-center gap-8 mt-10">
-          <Link className="text-white text-lg" href="#" onClick={toggleSidebar}>
-            Home
-          </Link>
-          <Link className="text-white text-lg" href="#" onClick={toggleSidebar}>
-            Explore
-          </Link>
-          <Link className="text-white text-lg" href="#" onClick={toggleSidebar}>
-            Contact us
-          </Link>
-          {/* Log In button added to the sidebar */}
-          <Link href="#">
-            <Button 
-              className="text-white border border-white rounded-full text-xs sm:text-md px-6 py-2" 
-              style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-              Log In
-            </Button>
-          </Link>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

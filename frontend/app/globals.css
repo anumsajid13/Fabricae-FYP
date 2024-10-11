@@ -7,6 +7,16 @@
   --foreground: #ffffff;
 }
 
+@font-face {
+  font-family: 'Agrandir';  /* The name of your font */
+  src: url('/fonts/Agrandir-GrandHeavy.otf') format('opentype'); 
+  font-weight: normal,bold,bolder; /* Adjust the path */
+
+  font-family: 'Agrandir1';  /* The name of your font */
+  src: url('/fonts/Agrandir-GrandLight.otf') format('opentype'); 
+  font-weight: normal,bold,bolder; /* Adjust the path */
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -31,4 +41,21 @@ body {
 
 .custom-left-margin {
   margin-left: 150px; /* Custom left margin of 80px */
+}
+
+.custom-radius
+{
+  border-radius: 50px;
+}
+
+.custom-radiusF
+{
+  border-radius: 30px;
+
+}
+
+.custom-radiusI
+{
+  border-radius: 10px;
+
 }
