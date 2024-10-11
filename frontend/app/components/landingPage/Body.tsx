@@ -11,7 +11,7 @@ export default function Body() {
           <h1 className="text-white text-7xl ">
             Create,
           </h1>
-          <Image 
+          <Image
             src="/image.png"
             alt="Small Icon"
             width={200}
