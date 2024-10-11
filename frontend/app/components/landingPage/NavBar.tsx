@@ -1,5 +1,7 @@
+"use client"
 import Link from 'next/link';
 import Image from 'next/image';
+import { Toaster, toast } from 'sonner'
 
 export default function Navbar() {
   return (
@@ -17,12 +19,14 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
+        <Toaster richColors/>
         <button
-  type="button"
-  className="text-white bg-black border border-white hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2 custom-radius"
->
-  Login
-</button>
+          type="button"
+          onClick={() => toast.success('My first toast')}
+          className="text-white bg-black border border-white hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2 custom-radius"
+        >
+          Login
+        </button>
 
 
         <Link href='/SignUp'>
@@ -69,6 +73,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
+           
               <Link href="/services" className="block py-2 px-3 md:p-0 text-white rounded hover:text-customGreen md:hover:bg-transparent">
                 Contact us
               </Link>
