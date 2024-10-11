@@ -17,7 +17,7 @@ const rephrasePrompt = async (prompt: string) => {
   const options = {
     method: "POST",
     headers: {
-      "x-rapidapi-key": "7a56a3ce58mshe0a9ef9613c7f24p1f98fejsncdd919347700",
+      "x-rapidapi-key": "600ce61e42msh91c8a2047564176p12ff8ajsn1015c0f9de65",
       "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
       "Content-Type": "application/json",
     },
@@ -235,9 +235,9 @@ export function PlaceholdersAndVanishInputDemo() {
       </div>
   
       {searchInitiated && (
-        <div className="w-[900px] gap-mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
+        <div className="min-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
           {loading.map((isLoading, index) => (
-            <div key={index} className="flex justify-center items-center bg-black rounded-lg">
+            <div key={index} className="flex justify-between items-center bg-black rounded-lg">
               <div className="w-[300px] h-[300px] flex justify-center items-center">
                 {isLoading ? (
                   <img className="w-[300px] h-[300px]" src="/Imgur.gif" alt="loading" />
@@ -250,7 +250,7 @@ export function PlaceholdersAndVanishInputDemo() {
                     className="rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="w-[300px] h-[300px] bg-black border-2 border-white rounded-md shadow-lg">
+                  <div className="w-[300px] h-[300px] bg-black rounded-md shadow-lg">
                     <img className="w-[100px] h-[100px]" src="/Imgur.gif" alt="loading" />
                   </div>
                 )}
@@ -259,7 +259,7 @@ export function PlaceholdersAndVanishInputDemo() {
           ))}
         </div>
       )}
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000} // Auto close after 3 seconds
         hideProgressBar
@@ -269,7 +269,7 @@ export function PlaceholdersAndVanishInputDemo() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+      /> */}
     </div>
   );
   
