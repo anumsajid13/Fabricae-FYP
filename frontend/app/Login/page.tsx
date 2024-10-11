@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SignupFormDemo } from "../components/signup-formm/signupform";
+import { LoginFormDemo } from "../components/login-formm/loginform";
 import { AuroraBackground } from "../components/ui/aurora-background";
 
 export default function Signup() {
@@ -16,9 +16,9 @@ export default function Signup() {
           duration: 0.8,
           ease: "easeInOut",
         }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4 min-w-full"
+        className="relative flex flex-col gap-4 items-center justify-center px-4 min-w-full min-h-screen"
       >
-        <SignupFormDemo />
+        <LoginFormDemo />
       </motion.div>
     </AuroraBackground>
   );

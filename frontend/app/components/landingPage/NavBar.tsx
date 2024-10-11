@@ -19,20 +19,20 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
-        <Toaster richColors/>
+
+          <Link href='/Login'>
         <button
           type="button"
-          onClick={() => toast.success('My first toast')}
-          className="text-white bg-black border border-white hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2 custom-radius"
+          className="text-white bg-black border border-white hover:bg-customPurple font-medium text-sm px-4 py-2 custom-radius transition duration-500 ease-in-out"
         >
           Login
         </button>
-
+        </Link>
 
         <Link href='/SignUp'>
           <button
             type="button"
-            className="text-white bg-black border border-white custom-radius hover:bg-customPurple focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-4 py-2"
+            className="text-white bg-black border border-white custom-radius hover:bg-customPurple  font-medium text-sm px-4 py-2 transition duration-500 ease-in-out"
           >
             Sign Up
           </button>
