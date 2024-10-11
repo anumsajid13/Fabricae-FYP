@@ -64,7 +64,7 @@ export function FocusCardsDemo() {
     });
   };
   
-
+ 
   return (
     <div className="bg-black min-h-screen py-8">
       {/* Toggle buttons for Explore and My Designs */}
