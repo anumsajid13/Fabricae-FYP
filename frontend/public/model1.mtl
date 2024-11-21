@@ -1,0 +1,179 @@
+# MTL Exporter v1.0 by Seungwoo Oh at CLO - Virtual Fashion Inc.
+newmtl Default_Fabric_FRONT_61476
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.075000 0.075000 0.075000
+Ns 28.763239
+illum 2
+d 1.000000
+newmtl FABRIC_1_FRONT_1800511
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.075000 0.075000 0.075000
+Ns 28.763239
+illum 2
+d 1.000000
+newmtl Mara:skin_14:skin_13:skin_11:skin_10:pose:pose:eyelash1
+Ka 0.041343 0.041343 0.041343
+Kd 0.160784 0.160784 0.160784
+Ks 0.050407 0.050407 0.050407
+Ns 11.999997
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_eyelash.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_eyelash.jpg
+newmtl Mara:eye2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.760000 0.760000 0.760000
+Ns 128.000000
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_eye.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_eye.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_eye_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1044/FV2_Naomi_01_eye_normal_NRM_40.jpg
+newmtl Mara:skin_14:skin_13:skin_11:skin_10:pose:pose:eyelash1
+Ka 0.041343 0.041343 0.041343
+Kd 0.160784 0.160784 0.160784
+Ks 0.050407 0.050407 0.050407
+Ns 11.999997
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_eyelash.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_eyelash.jpg
+newmtl Mara:tooth2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.050407 0.050407 0.050407
+Ns 11.999997
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_tooth.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_tooth.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_tooth_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1045/FV2_Naomi_01_tooth_normal_NRM_100.jpg
+newmtl FV2_Open_Toe_Pump:HEELSG1SG1
+Ka 0.017142 0.017142 0.017142
+Kd 0.066667 0.066667 0.066667
+Ks 0.315000 0.315000 0.315000
+Ns 128.000000
+illum 2
+d 1.000000
+newmtl FV2_Open_Toe_Pump:dummySG1SG1
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.075000 0.075000 0.075000
+Ns 28.763239
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/transparency_23553.png
+map_Kd C:/Users/haniy/Downloads/transparency_23553.png
+map_d C:/Users/haniy/Downloads/transparency_23553.png
+newmtl FV2_Open_Toe_Pump:W_Shoes_skinSG1SG1SG1
+Ka 0.017142 0.017142 0.017142
+Kd 0.066667 0.066667 0.066667
+Ks 0.315000 0.315000 0.315000
+Ns 128.000000
+illum 2
+d 1.000000
+newmtl FV2_Open_Toe_Pump:dummySG1SG1
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.075000 0.075000 0.075000
+Ns 28.763239
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/transparency_23553.png
+map_Kd C:/Users/haniy/Downloads/transparency_23553.png
+map_d C:/Users/haniy/Downloads/transparency_23553.png
+newmtl FV2_Open_Toe_Pump:W_Shoes_skinSG1SG1SG1
+Ka 0.017142 0.017142 0.017142
+Kd 0.066667 0.066667 0.066667
+Ks 0.315000 0.315000 0.315000
+Ns 128.000000
+illum 2
+d 1.000000
+newmtl FV2_Open_Toe_Pump:HEELSG1SG1
+Ka 0.017142 0.017142 0.017142
+Kd 0.066667 0.066667 0.066667
+Ks 0.315000 0.315000 0.315000
+Ns 128.000000
+illum 2
+d 1.000000
+newmtl Hair_Dummy_SHD
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.075000 0.075000 0.075000
+Ns 28.763239
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/transparency_24328.png
+map_Kd C:/Users/haniy/Downloads/transparency_24328.png
+newmtl Mara:face2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.165000 0.165000 0.165000
+Ns 37.550732
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_face.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_face.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_face_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1046/FV2_Naomi_01_face_normal_NRM_30.jpg
+newmtl Hair_SHD
+Ka 0.073610 0.073610 0.073610
+Kd 0.286275 0.286275 0.286275
+Ks 0.198400 0.198400 0.198400
+Ns 60.676949
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/hair_diffuse.jpg
+map_Kd C:/Users/haniy/Downloads/hair_diffuse.jpg
+map_bump C:/Users/haniy/Downloads/hair_normal.jpg
+map_d C:/Users/haniy/Downloads/hair_alpha.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1047/hair_normal_NRM_100.jpg
+newmtl Mara:leg2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.165000 0.165000 0.165000
+Ns 37.550732
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_leg.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_leg.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_leg_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1048/FV2_Naomi_01_leg_normal_NRM_30.jpg
+newmtl Mara:arm2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.165000 0.165000 0.165000
+Ns 37.550732
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_arm.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_arm.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_arm_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1049/FV2_Naomi_01_arm_normal_NRM_30.jpg
+newmtl Mara:body3
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.165000 0.165000 0.165000
+Ns 37.550732
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/bodyImg_1800807.bmp
+map_Kd C:/Users/haniy/Downloads/bodyImg_1800807.bmp
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_body_normal_1800809.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1050/FV2_Naomi_01_body_normal_1800809_NRM_30.jpg
+newmtl Mara:eye2
+Ka 0.257132 0.257132 0.257132
+Kd 1.000000 1.000000 1.000000
+Ks 0.760000 0.760000 0.760000
+Ns 128.000000
+illum 2
+d 1.000000
+map_Ka C:/Users/haniy/Downloads/FV2_Naomi_01_eye.jpg
+map_Kd C:/Users/haniy/Downloads/FV2_Naomi_01_eye.jpg
+map_bump C:/Users/haniy/Downloads/FV2_Naomi_01_eye_normal.jpg
+map_bump C:/Users/haniy/AppData/Local/CLO/CLO Standalone OnlineAuth/24344/1051/FV2_Naomi_01_eye_normal_NRM_40.jpg
