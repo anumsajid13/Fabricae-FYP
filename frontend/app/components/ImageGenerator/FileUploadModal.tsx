@@ -1,27 +1,30 @@
-// FileUploadModal.tsx
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
+import { BackgroundBeams } from "../ui/background-beams";
 import FileUploadDemo from "./fileupload";
+import Dropdown from "../ui/Dropdown";
+import { ToastContainer } from 'react-toastify';
 
-interface FileUploadModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const FileUploadModal: React.FC<FileUploadModalProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
+const FileUploadModal: React.FC = () => {
+  
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-black dark:bg-neutral-800 p-6 rounded-lg shadow-lg max-w-md w-full relative">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-neutral-500 hover:text-neutral-800"
-        >
-          &times;
-        </button>
-        <FileUploadDemo />
+    <div className="h-full w-full rounded-md bg-black relative flex flex-col items-center justify-center antialiased">
+      <div className="max-w-1xl mx-auto p-4">
+        <h1 className="mt-2 relative z-10 text-lg md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-customGreen to-customPurple text-center font-custom">
+          Upload Your Sketch
+        </h1>
+        <br />
+        <br />
+
+       
+        {/* File Upload Component */}
+        <div className="mt-6 max-w-full mx-auto">
+          <ToastContainer />
+          <FileUploadDemo  />
+        </div>
       </div>
+      <BackgroundBeams />
     </div>
   );
 };

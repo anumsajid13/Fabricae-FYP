@@ -1,20 +1,244 @@
-// FileUploadDemo.tsx
 "use client";
+
 import React, { useState } from "react";
 import { FileUpload } from "../ui/file-upload";
+import { v4 as uuidv4 } from "uuid"; // Import uuid for unique ID generation
+import { toast } from "react-toastify";
+import { storage } from "../../firebase"; // Make sure to import Firebase storage setup
+import { ref, uploadString, getDownloadURL } from "firebase/storage"; // Firebase storage functions
 
-const FileUploadDemo: React.FC = () => {
-  const [files, setFiles] = useState<File[]>([]);
-  const handleFileUpload = (files: File[]) => {
-    setFiles(files);
-    console.log(files);
-  };
+interface FileUploadDemoProps {}
 
+// Modal Component
+const Modal = ({ message, onClose }: { message: string; onClose: () => void }) => {
   return (
-    <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-black border-neutral-800 rounded-lg">
-      <FileUpload onChange={handleFileUpload} />
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 className="text-xl font-semibold mb-4 text-black">{message}</h2>
+        <button
+          onClick={onClose}
+          className="w-full py-2 px-4 bg-black text-white rounded-lg focus:outline-none"
+        >
+          OK
+        </button>
+      </div>
     </div>
   );
 };
 
-export default FileUploadDemo; // Ensure it's a default export
+const FileUploadDemo: React.FC = () => {
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedTheme, setSelectedTheme] = useState<string>("Vibrant");
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]); // To keep track of saved images
+  const [modalMessage, setModalMessage] = useState<string | null>(null); // Modal state
+
+  const themes = ["Black & White", "Vibrant", "Pastel Colored"];
+
+  const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedTheme(event.target.value);
+  };
+
+  const handleCloseModal = () => {
+    // Clear the images and close the modal
+    setUploadedImage(null);
+    setGeneratedImage(null);
+    setModalMessage(null);
+  };
+
+  // Function to extract the middle five words from a prompt
+  const extractMiddleFiveWords = (prompt: string): string => {
+    const words = prompt.split(" ");
+    const start = Math.max(0, Math.floor((words.length - 5) / 2));
+    return words.slice(start, start + 5).join(" ");
+  };
+
+  // Function to save the generated image to Firebase Storage and MongoDB
+  const handleSave = async (imageSrc: string, prompt: string) => {
+    try {
+      const imagetitle = extractMiddleFiveWords(prompt);
+      const uniqueId = uuidv4();
+      const storageRef = ref(storage, `images/generated_image_${uniqueId}`);
+  
+      const response = await fetch(imageSrc);
+      const blob = await response.blob();
+  
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        await uploadString(storageRef, base64String, "data_url");
+  
+        const downloadURL = await getDownloadURL(storageRef);
+  
+        const metadata = {
+          title: imagetitle,
+          imageUrl: downloadURL,
+          username: "anum",
+          patternType: "prompt",
+          prompt: prompt,
+        };
+  
+        // Handle network and response errors separately
+        try {
+          const res = await fetch("http://localhost:5000/api/prompt-designs", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(metadata),
+          });
+  
+          if (!res.ok) {
+            toast.error("Failed to save image in the database.");
+            throw new Error("Database save failed with status: " + res.statusText);
+          }
+  
+          toast.success("Image successfully saved!", {
+            toastId: uniqueId,
+          });
+  
+          setGeneratedImages((prevImages) => [...prevImages, downloadURL]);
+        } catch (err) {
+          console.error("Database error:", err);
+          toast.error("Error saving the image in the database.");
+        }
+      };
+    } catch (error) {
+      console.error("Network or storage error:", error);
+      toast.error("Network error: Unable to save the image.");
+    }
+  };
+  
+
+  // Convert file to Base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle file upload
+  const handleFileUpload = async (files: File[]) => {
+   
+    const uniqueId = uuidv4();
+    if (files.length > 0) {
+      const file = files[0];
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        setModalMessage("Invalid file type. Please upload a PNG, JPG, or JPEG image.");
+        return;
+      }
+
+      const base64Image = await fileToBase64(file);
+      setUploadedImage(base64Image);
+
+      try {
+        setLoading(true);
+        const prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
+        const negativePrompt = "lowres, bad anatomy, bad quality";
+        const requestBody = {
+          prompt,
+          negative_prompt: negativePrompt,
+          sketch: base64Image.split(",")[1], // Remove the prefix data:image/...;base64,
+        };
+
+        console.log(prompt)
+        const response = await fetch("https://fyp1-sketch-to-image.hf.space/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+         
+        if (response.ok) {
+          const data = await response.json();
+          const generatedImageBase64 = `data:image/png;base64,${data.image}`;
+          setGeneratedImage(generatedImageBase64);
+
+          // Save the generated image to Firebase and MongoDB
+          handleSave(generatedImageBase64, prompt);
+        } else {
+          console.error("Failed to generate image:", response.statusText);
+          toast.error<string>("Error generating image.Try Later!");
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setUploadedImage(null);
+    setGeneratedImage(null);
+  };
+
+  return (
+    <div>
+      {/* Theme Selection */}
+      <div className="mb-4 max-w-md mx-auto">
+        <div className="text-white mb-2 text-center font-medium">Select a Theme:</div>
+        <div className="flex justify-around">
+          {themes.map((theme) => (
+            <label key={theme} className="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="theme"
+                value={theme}
+                checked={selectedTheme === theme}
+                onChange={handleThemeChange}
+                className="focus:ring-2 focus:ring-customPurple"
+              />
+              <span className="text-white">{theme}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full max-w-7xl mx-auto min-h-96 border bg-black border-neutral-800 rounded-lg p-8 flex flex-col lg:flex-row gap-8">
+        {/* Left Column */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center border-r border-neutral-700 pr-4">
+          <h2 className="text-2xl text-white font-custom mb-4">
+            Your Sketch
+          </h2>
+          {!uploadedImage ? (
+            <FileUpload onChange={handleFileUpload} />
+          ) : (
+            <div className="mt-4 w-full flex flex-col items-center">
+              <h3 className="text-white mb-2">Uploaded Image:</h3>
+              <img src={uploadedImage} alt="Uploaded Sketch" className="rounded-lg max-w-full" />
+              <button
+                onClick={handleRemoveImage}
+                className="mt-4 text-red-500 hover:text-red-700 font-semibold"
+              >
+                Remove Image
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center pl-4">
+          <h2 className="text-2xl text-white font-custom mb-4">
+            Generated Pattern
+          </h2>
+          {loading && <img src="/Imgur.gif" alt="Loading..." />}
+          {generatedImage && (
+            <img src={generatedImage} alt="Generated Pattern" className="rounded-lg max-w-full" />
+          )}
+        </div>
+      </div>
+
+      {modalMessage && <Modal message={modalMessage} onClose={handleCloseModal} />}
+    </div>
+  );
+};
+
+export default FileUploadDemo;

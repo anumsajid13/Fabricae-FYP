@@ -237,7 +237,7 @@ export function PlaceholdersAndVanishInputDemo() {
       {searchInitiated && (
         <div className="min-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
           {loading.map((isLoading, index) => (
-            <div key={index} className="flex justify-between items-center bg-black rounded-lg">
+            <div key={index} className="flex justify-between items-center bg-[#F4F2EF] rounded-lg">
               <div className="w-[300px] h-[300px] flex justify-center items-center">
                 {isLoading ? (
                   <img className="w-[300px] h-[300px]" src="/Imgur.gif" alt="loading" />
