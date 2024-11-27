@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./Data/mongoConnection");
+const promptDesignRoutes = require("./routes/promptDesign");
+const authRoutes = require ("./routes/authRoutes.js");
 
 dotenv.config();
 
@@ -11,8 +13,10 @@ app.use(express.json());
 
 connectDB();
 
-const promptDesignRoutes = require("./routes/promptDesign");
 app.use("/api/prompt-designs", promptDesignRoutes);
+
+app.use("/api/auth", authRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
