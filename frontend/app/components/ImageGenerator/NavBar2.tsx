@@ -22,7 +22,7 @@ export default function Navbar() {
             width={45} 
             height={32} 
           />
-          <span className="self-center text-2xl font-custom font-bold whitespace-nowrap text-customGreen">
+          <span className="self-center text-2xl font-custom font-bold whitespace-nowrap text-white">
             FABRICAE
           </span>
         </Link>
@@ -59,7 +59,7 @@ export default function Navbar() {
           isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
         } transition-transform duration-300 ease-in-out`}
       >
-        <button onClick={toggleSidebar} className="absolute top-4 right-4 text-white focus:outline-none">
+        <button onClick={toggleSidebar} className="absolute top-4 right-4 text-black focus:outline-none">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             className="w-6 h-6" 

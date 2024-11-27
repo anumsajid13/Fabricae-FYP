@@ -25,19 +25,19 @@ export function FocusCardsDemo() {
     // Function to fetch data from the API
     const fetchCards = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve"); // Call your API route
+        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve"); 
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
-        const data: PromptDesign[] = await response.json(); // Use the PromptDesign interface
-        setCards(data); // Update state with the fetched data
+        const data: PromptDesign[] = await response.json(); 
+        setCards(data); 
       } catch (error) {
         console.error("Error fetching cards:", error);
       }
     };
 
-    fetchCards(); // Invoke the fetch function
-  }, []); // Empty dependency array to run once on mount
+    fetchCards(); 
+  }, []); 
 
   // Function to sort cards by creationDate
   const sortCards = () => {
