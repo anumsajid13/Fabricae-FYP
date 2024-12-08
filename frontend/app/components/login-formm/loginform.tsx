@@ -4,7 +4,7 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { signInWithGoogle , signInWithLinkedIn } from '../../../utils/auth';
+import { signInWithGoogle , signInWithLinkedIn ,getUserProfile} from '../../../utils/auth';
 import { useAuthStore } from '../../store/authStore'; 
 
 import {
@@ -13,6 +13,7 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import "../../globals.css";
+import { supabase } from "../../../lib/supabaseClient";
 
 export function LoginFormDemo() {
 
@@ -38,7 +39,9 @@ export function LoginFormDemo() {
         alert('Error during login');
       }
       else{
-        router.push("/")
+
+     
+    router.push ('/')
 
       }
     };
