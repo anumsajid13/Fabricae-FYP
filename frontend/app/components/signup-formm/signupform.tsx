@@ -7,7 +7,7 @@ import { IconBrandGithub, IconBrandGoogle, IconBrandLinkedin } from "@tabler/ico
 import '../../globals.css';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signInWithGoogle } from '../../../utils/auth';
+import { signInWithGoogle ,signInWithLinkedIn} from '../../../utils/auth';
 
 export function SignupFormDemo() {
 
@@ -38,6 +38,18 @@ export function SignupFormDemo() {
 
     if (error) {
       alert('Error during registration');
+    }
+  };
+
+  
+  const handleLinkedRegister= async () => {
+
+    const result = await signInWithLinkedIn();
+    if (result.error) {
+      alert('LinkedIn Sign-In failed');
+    } else {
+      router.push("/")
+
     }
   };
 
@@ -306,6 +318,8 @@ export function SignupFormDemo() {
             <button
               className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-neutral-900 shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="submit"
+              onClick={handleLinkedRegister}
+
             >
               <IconBrandLinkedin className="h-4 w-4 text-neutral-300" />
               <span className="text-sm text-neutral-200">Sign up with LinkedIn</span>
