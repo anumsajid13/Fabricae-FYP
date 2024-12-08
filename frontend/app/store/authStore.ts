@@ -20,6 +20,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ token: null });
     // Remove the token from localStorage
     localStorage.removeItem('authToken');
+    localStorage.removeItem('sb-vjjvhfjwzxorwavtwckv-auth-token');
+
   },
   getToken: () => {
     return localStorage.getItem('authToken');
