@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-[#E7E4D8] border-gray-200 dark:bg-gray-900 ">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto ">
         
         {/* Logo Section */}
         <Link href="/" className="flex items-center  rtl:space-x-reverse">

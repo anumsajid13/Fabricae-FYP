@@ -23,13 +23,21 @@ export function BackgroundBeamsDemo() {
   };
 
   return (
-    <div className="h-full w-full rounded-md bg-[#E7E4D8] relative flex flex-col items-center justify-center antialiased">
+    <div className="pb-32 h-full w-full rounded-md bg-[#E7E4D8] relative flex flex-col items-center justify-center antialiased">
+       {/* Background Video */}
+       <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        src="/Gradient.mp4"
+        autoPlay
+        loop
+        muted
+      ></video>
       <div className="max-w-1xl mx-auto p-4">
-        <h1 className="mt-10 relative z-10 text-lg md:text-7xl bg-clip-text text-black text-center font-custom">
+        <h1 className="mt-20 relative z-10 text-lg md:text-7xl bg-clip-text text-black text-center font-custom">
           Let's Design Patterns!
         </h1>
         <br />
-        <p className="text-black max-w-lg mx-auto my-2 text-sm text-center relative z-10">
+        <p className="text-black max-w-lg mx-auto my-2 text-sm text-center relative z-10 font-bold font-2xl">
           {typedPrompt || (
             <>
               Welcome to Fabricae, your go-to platform for innovative design
@@ -45,14 +53,14 @@ export function BackgroundBeamsDemo() {
         <PlaceholdersAndVanishInputDemo onPromptChange={handlePromptChange} />
         <Link href="/SketchToImage">
           <p
-            className="text-neutral-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10 underline cursor-pointer"
+            className="text-black max-w-lg mx-auto my-2 text-sm text-center relative z-10 underline cursor-pointer"
             onClick={openModal}
           >
             Want to convert your own pencil sketch?
           </p>
         </Link>
       </div>
-      <BackgroundBeams />
+      {/* <BackgroundBeams /> */}
     </div>
   );
 }

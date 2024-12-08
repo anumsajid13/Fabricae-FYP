@@ -194,10 +194,12 @@ const FileUploadDemo: React.FC = () => {
 
   return (
     <div>
+        
+
       {/* Theme Selection */}
-      <div className="mb-4 max-w-md mx-auto">
-        <div className="text-black mb-2 text-center font-medium">Select a Theme:</div>
-        <div className="flex justify-around">
+      <div className="mb-6 max-w-md mx-auto z-20">
+        <div className="text-black  mb-2 text-center font-semibold"></div>
+        <div className="flex justify-around ">
           {themes.map((theme) => (
             <label key={theme} className="flex items-center space-x-2">
               <input
@@ -208,24 +210,38 @@ const FileUploadDemo: React.FC = () => {
                 onChange={handleThemeChange}
                 className="focus:ring-2 focus:ring-customPurple"
               />
-              <span className="text-black">{theme}</span>
+              <span className="text-[#31312f] font-bold">{theme}</span>
             </label>
           ))}
         </div>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto min-h-96 border bg-[#616852] border-neutral-800 rounded-lg p-8 flex flex-col lg:flex-row gap-8">
+      <div
+        className={`w-full max-w-7xl mx-auto min-h-96 bg-[#E7E4D8] border-8 border-transparent rounded-2xl p-8 shadow-2xl hover:shadow-4xl transform hover:scale-105 
+        ${uploadedImage ? "lg:flex lg:flex-row gap-8" : "flex flex-col"}`
+        }
+      >
         {/* Left Column */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center border-r border-neutral-700 pr-4">
-          <h2 className="text-2xl text-white font-custom mb-4">
+        <div
+          className={`w-full ${
+            uploadedImage ? "lg:w-1/2 border-r border-[#91535f] pr-4" : ""
+          } flex flex-col items-center`}
+        >
+          <h2 className="text-2xl text-[#616852] font-custom mb-4 font-semibold">
             Your Sketch
           </h2>
-          {!uploadedImage ? (
-            <FileUpload onChange={handleFileUpload} />
-          ) : (
+
+          {/* Uploaded Image Section */}
+          {uploadedImage ? (
             <div className="mt-4 w-full flex flex-col items-center">
-              <h3 className="text-white mb-2">Uploaded Image:</h3>
-              <img src={uploadedImage} alt="Uploaded Sketch" className="rounded-lg max-w-full" />
+              {/* <h3 className="text-black mb-2">Uploaded Image:</h3> */}
+              <div className="w-64 h-64 border border-gray-300 rounded-lg overflow-hidden">
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded Sketch"
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <button
                 onClick={handleRemoveImage}
                 className="mt-4 text-red-500 hover:text-red-700 font-semibold"
@@ -233,19 +249,29 @@ const FileUploadDemo: React.FC = () => {
                 Remove Image
               </button>
             </div>
+          ) : (
+            <FileUpload onChange={handleFileUpload} />
           )}
         </div>
 
         {/* Right Column */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center pl-4">
-          <h2 className="text-2xl text-white font-custom mb-4">
-            Generated Pattern
-          </h2>
-          {loading && <img src="/Imgur.gif" alt="Loading..." />}
-          {generatedImage && (
-            <img src={generatedImage} alt="Generated Pattern" className="rounded-lg max-w-full" />
-          )}
-        </div>
+        {uploadedImage && (
+          <div className="w-full lg:w-1/2 flex flex-col items-center pl-4">
+            <h2 className="text-2xl text-[#616852] font-semibold font-custom mb-4">
+              Generated Pattern
+            </h2>
+            {loading && <img className="mt-14 w-40 h-40" src="/imgur (2).gif" alt="Loading..." />}
+            {generatedImage && (
+              <div className="w-64 h-64 border border-gray-300 rounded-lg overflow-hidden">
+                <img
+                  src={generatedImage}
+                  alt="Generated Pattern"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {modalMessage && <Modal message={modalMessage} onClose={handleCloseModal} />}
