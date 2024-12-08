@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from "uuid"; // Import uuid for unique ID generation
 import { toast } from "react-toastify";
 import { storage } from "../../firebase"; // Make sure to import Firebase storage setup
 import { ref, uploadString, getDownloadURL } from "firebase/storage"; // Firebase storage functions
+import { useCardsStore } from '../../store/useCardsStore';
+import {PromptDesign} from '../../store/useCardsStore'
 
 interface FileUploadDemoProps {}
 
@@ -31,8 +33,9 @@ const FileUploadDemo: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedTheme, setSelectedTheme] = useState<string>("Vibrant");
-  const [generatedImages, setGeneratedImages] = useState<string[]>([]); // To keep track of saved images
+  const [generatedImages, setGeneratedImages] = useState<(string | null)[]>([null, null, null]);
   const [modalMessage, setModalMessage] = useState<string | null>(null); // Modal state
+  const { cards, setCards, updateCards } = useCardsStore(); 
 
   const themes = ["Black & White", "Vibrant", "Pastel Colored"];
 
@@ -55,59 +58,64 @@ const FileUploadDemo: React.FC = () => {
   };
 
   // Function to save the generated image to Firebase Storage and MongoDB
-  const handleSave = async (imageSrc: string, prompt: string) => {
+  const handleSave = async (
+    imageSrc: string,
+    prompt: string,
+    setGeneratedImages: React.Dispatch<React.SetStateAction<(string | null)[]>>,
+    updateCards: (updater: (cards: PromptDesign[]) => PromptDesign[]) => void
+    ) => {
     try {
       const imagetitle = extractMiddleFiveWords(prompt);
       const uniqueId = uuidv4();
       const storageRef = ref(storage, `images/generated_image_${uniqueId}`);
   
-      const response = await fetch(imageSrc);
-      const blob = await response.blob();
+      // Upload the full Base64 string in 'data_url' format
+      await uploadString(storageRef, imageSrc, "data_url");
   
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = async () => {
-        const base64String = reader.result as string;
-        await uploadString(storageRef, base64String, "data_url");
+      // Get the download URL for the stored image
+      const downloadURL = await getDownloadURL(storageRef);
   
-        const downloadURL = await getDownloadURL(storageRef);
-  
-        const metadata = {
-          title: imagetitle,
-          imageUrl: downloadURL,
-          username: "anum",
-          patternType: "prompt",
-          prompt: prompt,
-        };
-  
-        // Handle network and response errors separately
-        try {
-          const res = await fetch("http://localhost:5000/api/prompt-designs", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(metadata),
-          });
-  
-          if (!res.ok) {
-            toast.error("Failed to save image in the database.");
-            throw new Error("Database save failed with status: " + res.statusText);
-          }
-  
-          toast.success("Image successfully saved!", {
-            toastId: uniqueId,
-          });
-  
-          setGeneratedImages((prevImages) => [...prevImages, downloadURL]);
-        } catch (err) {
-          console.error("Database error:", err);
-          toast.error("Error saving the image in the database.");
-        }
+      // Metadata for MongoDB
+      const metadata = {
+        title: imagetitle,
+        imageUrl: downloadURL,
+        username: "anum",
+        patternType: "prompt",
+        prompt: prompt,
       };
+  
+      // Save metadata in MongoDB
+      const res = await fetch("http://localhost:5000/api/prompt-designs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(metadata),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Database save failed with status: " + res.statusText);
+      }
+  
+      toast.success("Image successfully saved!");
+      const savedImage: PromptDesign = await res.json();
+      updateCards((prevCards) => {
+        // Ensure prevCards is an array before spreading it
+        if (!Array.isArray(prevCards)) return prevCards;
+        
+        // Ensure savedImage is valid (you can add more checks based on your requirements)
+        if (!savedImage || !savedImage.title) {
+          console.error("Invalid card:", savedImage);
+          return prevCards;
+        }
+    
+        // Append the new card
+        return [...prevCards, savedImage];
+      });
+      setGeneratedImages((prevImages) => [...prevImages, downloadURL]);
     } catch (error) {
-      console.error("Network or storage error:", error);
-      toast.error("Network error: Unable to save the image.");
+      console.error("Error during save:", error);
+      toast.error("Error saving the image.");
     }
   };
   
@@ -137,41 +145,45 @@ const FileUploadDemo: React.FC = () => {
       const base64Image = await fileToBase64(file);
       setUploadedImage(base64Image);
 
-      try {
-        setLoading(true);
-        const prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
-        const negativePrompt = "lowres, bad anatomy, bad quality";
-        const requestBody = {
-          prompt,
-          negative_prompt: negativePrompt,
-          sketch: base64Image.split(",")[1], // Remove the prefix data:image/...;base64,
-        };
+       try {
+           setLoading(true);
+           const prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
+           const negativePrompt = "lowres, bad anatomy, bad quality";
+           const requestBody = {
+           prompt,
+           negative_prompt: negativePrompt,
+           sketch: base64Image.split(",")[1], // Removes the prefix data:image/...;base64,
+         };
 
-        console.log(prompt)
-        const response = await fetch("https://fyp1-sketch-to-image.hf.space/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
+           console.log(prompt)
+           const response = await fetch("https://fyp1-sketch-to-image.hf.space/generate", {
+           method: "POST",
+           headers: {
+             "Content-Type": "application/json",
+           },
+           body: JSON.stringify(requestBody),
+         });
          
-        if (response.ok) {
-          const data = await response.json();
-          const generatedImageBase64 = `data:image/png;base64,${data.image}`;
-          setGeneratedImage(generatedImageBase64);
+         if (response.ok) {
+           const data = await response.json();
+           const generatedImageBase64 = `data:image/png;base64,${data.image}`;
+           setGeneratedImage(generatedImageBase64);
+    //   const generatedImageBase64 = `data:image/png;base64,${base64Image.split(',')[1]}`;
+    // setGeneratedImage(generatedImageBase64);
+    setGeneratedImages([generatedImageBase64]);
 
-          // Save the generated image to Firebase and MongoDB
-          handleSave(generatedImageBase64, prompt);
-        } else {
-          console.error("Failed to generate image:", response.statusText);
-          toast.error<string>("Error generating image.Try Later!");
-        }
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      } finally {
-        setLoading(false);
-      }
+    // Save the generated image to Firebase and MongoDB
+    handleSave(generatedImageBase64, prompt,setGeneratedImages,updateCards);
+
+         } else {
+           console.error("Failed to generate image:", response.statusText);
+         toast.error<string>("Error generating image.Try Later!");
+         }
+       } catch (error) {
+         console.error("Error uploading file:", error);
+       } finally {
+         setLoading(false);
+       }
     }
   };
 
@@ -184,7 +196,7 @@ const FileUploadDemo: React.FC = () => {
     <div>
       {/* Theme Selection */}
       <div className="mb-4 max-w-md mx-auto">
-        <div className="text-white mb-2 text-center font-medium">Select a Theme:</div>
+        <div className="text-black mb-2 text-center font-medium">Select a Theme:</div>
         <div className="flex justify-around">
           {themes.map((theme) => (
             <label key={theme} className="flex items-center space-x-2">
@@ -196,13 +208,13 @@ const FileUploadDemo: React.FC = () => {
                 onChange={handleThemeChange}
                 className="focus:ring-2 focus:ring-customPurple"
               />
-              <span className="text-white">{theme}</span>
+              <span className="text-black">{theme}</span>
             </label>
           ))}
         </div>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto min-h-96 border bg-black border-neutral-800 rounded-lg p-8 flex flex-col lg:flex-row gap-8">
+      <div className="w-full max-w-7xl mx-auto min-h-96 border bg-[#616852] border-neutral-800 rounded-lg p-8 flex flex-col lg:flex-row gap-8">
         {/* Left Column */}
         <div className="w-full lg:w-1/2 flex flex-col items-center border-r border-neutral-700 pr-4">
           <h2 className="text-2xl text-white font-custom mb-4">

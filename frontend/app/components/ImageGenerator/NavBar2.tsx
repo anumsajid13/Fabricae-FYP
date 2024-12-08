@@ -18,18 +18,18 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-black border-gray-200 dark:bg-gray-900">
+    <nav className="bg-[#E7E4D8] border-gray-200 dark:bg-gray-900 ">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         
         {/* Logo Section */}
-        <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <Link href="/" className="flex items-center  rtl:space-x-reverse">
           <Image 
-            src="/logo.svg" 
+            src="/F (Logo).svg" 
             alt="Fabricae Logo" 
-            width={45} 
-            height={32} 
+            width={70} 
+            height={50} 
           />
-          <span className="self-center text-2xl font-custom font-bold whitespace-nowrap text-white">
+          <span className="self-center text-2xl font-custom font-bold whitespace-nowrap text-black">
             FABRICAE
           </span>
         </Link>
@@ -40,14 +40,19 @@ export default function Navbar() {
           <Image 
             src="/profile-user.png" 
             alt="Profile" 
-            width={30} 
-            height={30} 
+            width={40} 
+            height={35} 
             className="cursor-pointer"
           />
 
           {/* Hamburger Icon */}
           <button onClick={toggleSidebar} className="text-white focus:outline-none">
-            <svg 
+            <img 
+             style={{height:"40px"}}
+             src="/icons8-hamburger-menu.svg"
+            >
+            </img>
+            {/* <svg 
               xmlns="http://www.w3.org/2000/svg" 
               className="w-6 h-6" 
               fill="none" 
@@ -55,14 +60,14 @@ export default function Navbar() {
               stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            </svg> */}
           </button>
         </div>
       </div>
 
       {/* Sidebar */}
       <div 
-        className={`fixed top-0 right-0 w-64 h-full bg-customPurple text-black z-40 transform ${
+        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${
           isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
         } transition-transform duration-300 ease-in-out`}
       >

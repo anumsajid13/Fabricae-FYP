@@ -40,9 +40,15 @@ export default function Home() {
 
   return (
     <>
-      {token ? <NavBar2 /> : <NavBar />}
-      <Body />
-      <BottomBar />
+      <div style={{ backgroundColor: "#E7E4D8"}}> 
+        {token ? <NavBar2 /> : <NavBar />}    
+          <Body /> 
+        <div style={{ backgroundColor: "#434242"}}>
+          <BottomBar />
+        </div>
+       
+      </div>
+      
     </>
   );
 }

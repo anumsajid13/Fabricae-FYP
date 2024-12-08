@@ -13,10 +13,13 @@ app.use(express.json());
 
 connectDB();
 
+require('events').EventEmitter.defaultMaxListeners = 20;
+const modelRoutes = require("./routes/modelRoutes");
 app.use("/api/prompt-designs", promptDesignRoutes);
 
 app.use("/api/auth", authRoutes);
 
+app.use("/api/model-routes", modelRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
