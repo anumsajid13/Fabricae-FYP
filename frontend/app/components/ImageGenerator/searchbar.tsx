@@ -172,7 +172,7 @@ const handleSave = async (imageSrc: string, prompt: string, setGeneratedImages: 
   }
 };
 
-export function PlaceholdersAndVanishInputDemo() {
+export function PlaceholdersAndVanishInputDemo({ onPromptChange }: { onPromptChange: (input: string) => void }) {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState([false, false, false]);
   const [generatedImages, setGeneratedImages] = useState<(string | null)[]>([null, null, null]);
@@ -188,7 +188,9 @@ export function PlaceholdersAndVanishInputDemo() {
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrompt(e.target.value);
+    const input = e.target.value;
+    setPrompt(input);
+    onPromptChange(input);
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -226,7 +228,7 @@ export function PlaceholdersAndVanishInputDemo() {
 
   return (
     <div className="w-full">
-      <div className="h-auto flex flex-col justify-center items-center px-4 bg-black">
+      <div className="h-auto flex flex-col justify-center items-center px-4 bg-[#E7E4D8]">
         <PlaceholdersAndVanishInput
           placeholders={placeholders}
           onChange={handleChange}
@@ -237,7 +239,7 @@ export function PlaceholdersAndVanishInputDemo() {
       {searchInitiated && (
         <div className="min-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"> {/* Added justify-items-center */}
           {loading.map((isLoading, index) => (
-            <div key={index} className="flex justify-between items-center bg-black rounded-lg">
+            <div key={index} className="flex justify-between items-center bg-[#F4F2EF] rounded-lg">
               <div className="w-[300px] h-[300px] flex justify-center items-center">
                 {isLoading ? (
                   <img className="w-[300px] h-[300px]" src="/Imgur.gif" alt="loading" />
@@ -250,7 +252,7 @@ export function PlaceholdersAndVanishInputDemo() {
                     className="rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="w-[300px] h-[300px] bg-black rounded-md shadow-lg">
+                  <div className="w-[300px] h-[300px] bg-[#E7E4D8] rounded-md shadow-lg">
                     <img className="w-[100px] h-[100px]" src="/Imgur.gif" alt="loading" />
                   </div>
                 )}

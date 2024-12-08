@@ -27,8 +27,8 @@ router.post("/", async (req, res) => {
 
 router.get("/retrieve", async (req, res) => {
   try {
-    // Fetch all prompt designs from the database
-    const designs = await PromptDesign.find({});
+    //Fetch all  designs from the database
+    const designs = await PromptDesign.find().sort({ createdAt: 1 });
     res.status(200).json(designs); 
   } catch (error) {
     console.error("Error fetching designs:", error);
