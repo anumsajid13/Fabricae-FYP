@@ -10,9 +10,11 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
-
+require('events').EventEmitter.defaultMaxListeners = 20;
 const promptDesignRoutes = require("./routes/promptDesign");
+const modelRoutes = require("./routes/modelRoutes");
 app.use("/api/prompt-designs", promptDesignRoutes);
+app.use("/api/model-routes", modelRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
