@@ -61,12 +61,12 @@ const ModelsPage = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="flex h-[100vh] bg-gray-100">
+    <div className="flex flex-col md:flex-row h-[100vh]">
       {/* Left side: 3D Model */}
-      <div className="w-2/3 relative">
+      <div className="md:w-2/3 relative">
         {selectedModel && (
           <Canvas style={{ width: "100%", height: "100%" }}>
-            <color attach="background" args={["#D3D3D3"]} />
+            <color attach="background" args={['#f7f7f7']} />
             <Environment preset="sunset" />
             <PerspectiveCamera makeDefault position={[0, 1.5, 5]} fov={50} />
             <OrbitControls />
@@ -74,22 +74,23 @@ const ModelsPage = () => {
             <ModelComponent key={selectedModel._id} modelUrl={selectedModel.glbUrl} textureUrl={selectedPattern} />
           </Canvas>
         )}
+
         {/* Collapsible Patterns Section */}
-        <div className="absolute bottom-0 left-0 w-full bg-white shadow-md p-4">
+        <div className="absolute bottom-0 left-0 w-full bg-[#f7f7f7] p-4 shadow-lg">
           <div
-            className="flex justify-between items-center cursor-pointer"
+            className="flex justify-between items-center cursor-pointer hover:bg-[#eaeaea] transition-all duration-300"
             onClick={() => setShowPatterns(!showPatterns)}
           >
-            <h3 className="text-lg font-bold">Available Patterns</h3>
-            {showPatterns ? <FaChevronDown /> : <FaChevronUp />}
+            <h3 className="text-xl font-semibold text-[#333]">Available Patterns</h3>
+            {showPatterns ? <FaChevronDown className="text-[#616852]" /> : <FaChevronUp className="text-[#616852]" />}
           </div>
           {showPatterns && (
             <div className="mt-4 grid grid-cols-3 gap-4">
               {patterns.map((pattern) => (
                 <div
                   key={pattern.imageUrl}
-                  className={`flex flex-col items-center p-2 rounded-lg cursor-pointer shadow-md transition-all duration-300 ${
-                    selectedPattern === pattern.imageUrl ? "ring-4 ring-blue-500" : ""
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                    selectedPattern === pattern.imageUrl ? "ring-4 ring-[#616852]" : ""
                   }`}
                   onClick={() => {
                     setSelectedPattern(pattern.imageUrl); // Set texture for 3D model
@@ -99,9 +100,9 @@ const ModelsPage = () => {
                   <img
                     src={pattern.imageUrl}
                     alt={pattern.title}
-                    className="w-24 h-24 object-cover rounded-lg shadow"
+                    className="w-24 h-24 object-cover rounded-lg shadow-md"
                   />
-                  <p className="mt-2 text-sm font-medium text-center">{pattern.title}</p>
+                  <p className="mt-2 text-sm font-medium text-center text-[#333]">{pattern.title}</p>
                 </div>
               ))}
             </div>
@@ -110,23 +111,23 @@ const ModelsPage = () => {
       </div>
 
       {/* Right side: Model selection */}
-      <div className="w-1/3 bg-gray-200 p-6 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4 text-center">Choose a Model</h2>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="md:w-1/3 p-6 overflow-y-auto bg-[#616852] rounded-lg">
+        <h2 className="text-2xl font-bold mb-6 text-center text-[#f7f7f7]">Choose a Model</h2>
+        <div className="grid grid-cols-2 gap-6">
           {models.map((model) => (
             <div
               key={model._id}
-              className={`flex flex-col items-center p-2 rounded-lg cursor-pointer shadow-lg transition-all duration-300 ${
-                selectedModel?._id === model._id ? "ring-4 ring-blue-500" : ""
+              className={`flex flex-col items-center p-4 rounded-lg cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                selectedModel?._id === model._id ? "ring-4 ring-[#f7f7f7]" : ""
               }`}
               onClick={() => setSelectedModel(model)}
             >
               <img
                 src={model.images[0]}
                 alt={model.mockupName}
-                className="w-24 h-24 object-cover rounded-full"
+                className="w-24 h-24 object-cover rounded-full shadow-md"
               />
-              <p className="mt-2 text-sm font-medium">{model.mockupName}</p>
+              <p className="mt-2 text-sm font-medium text-[#f7f7f7]">{model.mockupName}</p>
             </div>
           ))}
         </div>
