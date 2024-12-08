@@ -4,7 +4,8 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { signInWithGoogle } from '../../../utils/auth';
+import { signInWithGoogle , signInWithLinkedIn } from '../../../utils/auth';
+import { useAuthStore } from '../../store/authStore'; 
 
 import {
   IconBrandGithub,
@@ -32,10 +33,24 @@ export function LoginFormDemo() {
     password: ""  });
 
     const handleGoogleLogin = async () => {
-      router.push("/")
       const { error } = await signInWithGoogle();
       if (error) {
         alert('Error during login');
+      }
+      else{
+        router.push("/")
+
+      }
+    };
+
+    const handleLinkedInSignIn = async () => {
+
+      const result = await signInWithLinkedIn();
+      if (result.error) {
+        alert('LinkedIn Sign-In failed');
+      } else {
+        router.push("/")
+
       }
     };
 
@@ -167,14 +182,14 @@ export function LoginFormDemo() {
       }
 
       const { token } = await response.json();
-
-      console.log('token is ', token)
-
-      // Save token to localStorage
-      localStorage.setItem("authToken", token);
-
+      console.log('token is', token);
+  
+      // Set the token in the Zustand store
+      useAuthStore.getState().setToken(token);
+  
       // Redirect to the home page
-      router.push("/");
+      router.push('/');
+      
     } catch (err: any) {
       setErrorMessage(err.message || "An error occurred.");
     } finally {
@@ -271,6 +286,7 @@ export function LoginFormDemo() {
             <button
               className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="button"
+              onClick={handleLinkedInSignIn}
             >
               <IconBrandLinkedin className="h-4 w-4 text-neutral-300" />
               <span className="text-neutral-300 text-sm">LinkedIn</span>

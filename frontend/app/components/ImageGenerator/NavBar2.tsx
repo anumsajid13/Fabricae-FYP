@@ -2,12 +2,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuthStore } from "../../store/authStore";
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+
+  const logout = () => {
+    useAuthStore.getState().removeToken(); // Call removeToken from Zustand store
+    console.log("Logged out and token removed");
   };
 
   return (
@@ -86,6 +93,18 @@ export default function Navbar() {
           </li>
           <li>
             <Link href="/contact" className="text-lg hover:text-customGreen">Contact Us</Link>
+          </li>
+          <li>
+            {/* Log Out Link */}
+            <button
+              onClick={() => {
+                logout(); // Trigger the logout function
+                toggleSidebar(); // Optionally close the sidebar
+              }}
+              className="text-lg hover:text-customGreen"
+            >
+              Log Out
+            </button>
           </li>
         </ul>
       </div>
