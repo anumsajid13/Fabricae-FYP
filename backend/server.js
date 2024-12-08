@@ -14,7 +14,6 @@ app.use(express.json());
 connectDB();
 
 require('events').EventEmitter.defaultMaxListeners = 20;
-const promptDesignRoutes = require("./routes/promptDesign");
 const modelRoutes = require("./routes/modelRoutes");
 app.use("/api/prompt-designs", promptDesignRoutes);
 
