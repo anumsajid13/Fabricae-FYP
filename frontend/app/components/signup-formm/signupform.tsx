@@ -197,7 +197,7 @@ export function SignupFormDemo() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 rounded-none md:rounded-2xl bg-black shadow-lg overflow-hidden">
+    <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 rounded-none md:rounded-2xl bg-[#E7E4D8] shadow-lg overflow-hidden">
       {/* Left column with cover image */}
       <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/signup-cover.svg')" }}>
         <div className="h-full w-full bg-opacity-60 bg-black flex items-center justify-center"></div>
@@ -205,9 +205,9 @@ export function SignupFormDemo() {
 
       {/* Right column with form */}
       <div className="w-full md:w-1/2 p-4 md:p-8">
-        <h2 className="font-bold text-3xl text-neutral-200">Welcome Back!</h2>
+        <h2 className="font-bold text-3xl text-black">Welcome Back!</h2>
         <Link href="/Login">
-        <p className="text-sm max-w-sm mt-2 text-neutral-300">
+        <p className="text-sm max-w-sm mt-2 text-black">
           Login to Fabricae if you already have an account!
         </p>
         </Link>
@@ -215,7 +215,7 @@ export function SignupFormDemo() {
         <form className="my-8" onSubmit={handleSubmit}>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
-              <Label className="text-neutral-200" htmlFor="firstname">First name</Label>
+              <Label className="black" htmlFor="firstname">First name</Label>
               <Input
                 id="firstname"
                 placeholder="Tyler"
@@ -227,7 +227,7 @@ export function SignupFormDemo() {
               {errors.firstname && <p className="text-sm text-red-500">{errors.firstname}</p>}
             </LabelInputContainer>
             <LabelInputContainer>
-              <Label className="text-neutral-200" htmlFor="lastname">Last name</Label>
+              <Label className="text-black" htmlFor="lastname">Last name</Label>
               <Input
                 id="lastname"
                 placeholder="Durden"
@@ -240,7 +240,7 @@ export function SignupFormDemo() {
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
-            <Label className="text-neutral-200" htmlFor="email">Email Address</Label>
+            <Label className="text-black" htmlFor="email">Email Address</Label>
             <Input
               id="email"
               placeholder="haniya911@gmail.com"
@@ -252,7 +252,7 @@ export function SignupFormDemo() {
             {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
-            <Label className="text-neutral-200" htmlFor="password">Password</Label>
+            <Label className="text-black" htmlFor="password">Password</Label>
             <Input
               id="password"
               placeholder="••••••••"
@@ -264,7 +264,7 @@ export function SignupFormDemo() {
             {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-8">
-            <Label className="text-neutral-200" htmlFor="password1">Re-enter your password</Label>
+            <Label className="text-black" htmlFor="password1">Re-enter your password</Label>
             <Input
               id="password1"
               placeholder="••••••••"
@@ -294,21 +294,21 @@ export function SignupFormDemo() {
 
           <div className="flex flex-col space-y-4 ">
             <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
+              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="submit"
               onClick={handleGoogleRegister}
             >
               <IconBrandGoogle className="h-4 w-4 text-neutral-300" />
-              <span className="text-sm text-neutral-200">Sign up with Google</span>
+              <span className="text-sm text-white">Sign up with Google</span>
               <BottomGradient />
 
             </button>
             <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-neutral-900 shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
+              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-white rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="submit"
             >
               <IconBrandLinkedin className="h-4 w-4 text-neutral-300" />
-              <span className="text-sm text-neutral-200">Sign up with LinkedIn</span>
+              <span className="text-sm text-white">Sign up with LinkedIn</span>
               <BottomGradient />
 
             </button>

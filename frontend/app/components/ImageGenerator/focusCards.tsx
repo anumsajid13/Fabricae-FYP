@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react"; // Ensure React is imported
-import { FocusCards } from "../ui/focus-cards"; // Import your FocusCards component
+import React, { useEffect, useState } from "react";
+import { FocusCards } from "../ui/focus-cards"; 
 import './global.css';
-import sortIcon from '../path/to/your/sort-icon.png'; // Import your sorting icon
 import { useCardsStore } from "../../store/useCardsStore";
 
 // Define the interface for the PromptDesign
@@ -16,90 +15,109 @@ interface PromptDesign {
 }
 
 export function FocusCardsDemo() {
+  const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore');
+  const [isDescending, setIsDescending] = useState<boolean>(true);
+  const { cards, setCards, updateCards } = useCardsStore();
 
-  const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore'); // State for the selected tab
-  const [isDescending, setIsDescending] = useState<boolean>(true); // State for sort order
-  const { cards, setCards, updateCards } = useCardsStore(); 
+  // Flag to control the fetch call
+  const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    // Function to fetch data from the API
+    if (hasFetched) return;
+
     const fetchCards = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve"); 
+        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve");
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
-        const data: PromptDesign[] = await response.json(); 
-        setCards(data); 
+        const data: PromptDesign[] = await response.json();
+
+        // Filter out duplicate cards based on imageUrl before setting the state
+        const newCards = data.filter(card => !cards.some(existingCard => existingCard.imageUrl === card.imageUrl));
+
+        setCards(newCards);
+        setHasFetched(true);
       } catch (error) {
         console.error("Error fetching cards:", error);
       }
     };
 
-    fetchCards(); 
-  }, []); 
+    fetchCards();
+  }, [hasFetched, setCards]);
 
-  // Function to sort cards by creationDate
+  
   const sortCards = () => {
-    
     if (!cards) return;
-    console.log("Sorting cards...");
+  
     const sortedCards = [...cards].sort((a, b) => {
       const dateA = new Date(a.creationDate).getTime();
       const dateB = new Date(b.creationDate).getTime();
-      return isDescending ? dateB - dateA : dateA - dateB; // Sort based on the current order
+      return isDescending ? dateB - dateA : dateA - dateB;
     });
-    setCards(sortedCards);
-    setIsDescending(!isDescending); // Toggle the sort order
+  
+    // Ensure uniqueness and add cache busting to imageUrl
+    const uniqueCards = sortedCards.filter((card, index, self) =>
+      index === self.findIndex((t) => t.imageUrl === card.imageUrl)
+    );
+  
+    // Append a timestamp to each image URL to prevent caching
+    const updatedCards = uniqueCards.map(card => ({
+      ...card,
+      imageUrl: `${card.imageUrl}?${new Date().getTime()}` // Cache busting
+    }));
+  
+    console.log("Number of unique cards:", updatedCards.length);
+    setCards(updatedCards); // Update state with cache-busted URLs
+    setIsDescending(!isDescending);
   };
-
+  
   const handleCardDelete = (title: string) => {
     console.log("Deleting card:", title);
-    // updateCards((prevCards) => prevCards.filter((card) => card.title !== title)); // Update cards using the updater function
     updateCards((prevCards) => {
-      // Make sure prevCards is an array before attempting to filter
-      if (!Array.isArray(prevCards)) return prevCards; 
-      
+      if (!Array.isArray(prevCards)) return prevCards;
+
       return prevCards.filter((card) => card.title !== title);
     });
   };
-  
- 
+
   return (
-    <div className="bg-black min-h-screen py-8">
-      {/* Toggle buttons for Explore and My Designs */}
+    <div className="bg-[#E7E4D8] min-h-screen py-8">
       <div className="flex justify-center items-center mb-4 relative">
         <button
           onClick={() => setSelectedTab('explore')}
-          className={`mx-2 text-[rgba(205, 251, 124, 1)] ${selectedTab === 'explore' ? 'font-bold' : ''}`}
+          className={`text-[#822538] mx-2  ${selectedTab === 'explore' ? 'font-bold' : ''}`}
         >
           EXPLORE
         </button>
-  
-        {/* Vertical Line */}
+
         <div className="vertical-line"></div>
-  
+
         <button
           onClick={() => setSelectedTab('myDesigns')}
-          className={`mx-2 text-[rgba(205, 251, 124, 1)] ${selectedTab === 'myDesigns' ? 'font-bold' : ''}`}
+          className={`text-[#822538] mx-2 ${selectedTab === 'myDesigns' ? 'font-bold' : ''}`}
         >
           MY DESIGNS
         </button>
-
-       
       </div>
-      <div className="flex justify-end px-32"> {/* Use flex to align items */}
-        {/* Sorting Icon */}
-        <button onClick={sortCards} className="ml-4"> {/* Margin-left for spacing */}
-          <img src='/sort.png' alt="Sort" className="w-10 h-10" /> {/* Adjust size as needed */}
+
+      <div className="flex justify-end px-32">
+        <button onClick={sortCards} className="ml-4">
+          <img src='/sort (2).png' alt="Sort" className="w-12 h-12" />
         </button>
       </div>
-  
-      {/* Conditional rendering based on selected tab */}
+
       {selectedTab === 'myDesigns' ? (
-         <FocusCards cards={cards.map(card => ({ title: card.title, src: card.imageUrl }))} onDelete={handleCardDelete} /> // Show FocusCards when "My Designs" is selected
+        <FocusCards
+          cards={cards.map(card => ({
+            title: card.title,
+            src: card.imageUrl,
+            key: card.imageUrl, 
+          }))}
+          onDelete={handleCardDelete}
+        />
       ) : (
-        <div className="text-white text-center"> {/* Empty div for Explore */}
+        <div className="text-[#822538] text-center">
           <h2>Nothing To Show Yet</h2>
         </div>
       )}

@@ -186,21 +186,21 @@ export function LoginFormDemo() {
     <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 min-h-screen rounded-none md:rounded-2xl bg-black shadow-lg overflow-hidden">
       {/* Left column with cover image */}
       <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/signup-cover.svg')" }}>
-        {/* Optionally, add some content inside the image div */}
+       
         <div className="h-full w-full bg-opacity-60 bg-black flex items-center justify-center">
         </div>
       </div>
 
       {/* Right column with form */}
-      <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-start justify-center">
-        <h2 className="font-bold text-3xl text-neutral-200">Welcome to Fabricae</h2>
-        <p className="text-sm max-w-sm mt-2 text-neutral-300">
+      <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-start justify-center bg-[#E7E4D8]">
+        <h2 className="font-bold text-3xl text-black">Welcome to Fabricae</h2>
+        <p className="text-sm max-w-sm mt-2 text-black">
           Create an Account if you want to Login!
         </p>
 
         <form className="my-8 w-full" onSubmit={handleSubmit}>
           <LabelInputContainer className="mb-4">
-            <Label className="text-neutral-200" htmlFor="email">
+            <Label className="text-black" htmlFor="email">
               Email Address
             </Label>
             <Input
@@ -215,7 +215,7 @@ export function LoginFormDemo() {
 
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
-            <Label className="text-neutral-200" htmlFor="password">
+            <Label className="text-black" htmlFor="password">
               Password
             </Label>
             <Input
@@ -259,7 +259,7 @@ export function LoginFormDemo() {
 
           <div className="flex flex-col space-y-4">
             <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
+              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="button"
               onClick={handleGoogleLogin}
             >
@@ -269,7 +269,7 @@ export function LoginFormDemo() {
             </button>
 
             <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
+              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
               type="button"
             >
               <IconBrandLinkedin className="h-4 w-4 text-neutral-300" />
