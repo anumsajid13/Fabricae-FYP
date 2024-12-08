@@ -11,7 +11,10 @@ export default function Home() {
     <>
       <NavBar />
       <FileUploadModal/>
+      <div>
       <FocusCardsDemo/>
+      </div>
+     
       
     </>
   );

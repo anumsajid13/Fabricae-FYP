@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import NavBar from '../components/ImageGenerator/NavBar2';
 import { Canvas } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import { OrbitControls, Environment, PerspectiveCamera, ContactShadows } from "@react-three/drei";
@@ -61,12 +62,14 @@ const ModelsPage = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="flex flex-col md:flex-row h-[100vh]">
+    < div className="bg-[#E7E4D8]">    
+    <NavBar/>
+    <div className="flex flex-col md:flex-row h-[100vh] mt-14">
       {/* Left side: 3D Model */}
-      <div className="md:w-2/3 relative">
+      <div className="md:w-2/3 relative bg-[#E7E4D8] ">
         {selectedModel && (
           <Canvas style={{ width: "100%", height: "100%" }}>
-            <color attach="background" args={['#f7f7f7']} />
+            <color attach="background" args={['#E7E4D8']} />
             <Environment preset="sunset" />
             <PerspectiveCamera makeDefault position={[0, 1.5, 5]} fov={50} />
             <OrbitControls />
@@ -76,9 +79,9 @@ const ModelsPage = () => {
         )}
 
         {/* Collapsible Patterns Section */}
-        <div className="absolute bottom-0 left-0 w-full bg-[#f7f7f7] p-4 shadow-lg">
+        <div className="absolute bottom-0 left-0 w-full bg-[#e7b5bf] p-4 shadow-lg " style={{marginTop:"-30%"}}>
           <div
-            className="flex justify-between items-center cursor-pointer hover:bg-[#eaeaea] transition-all duration-300"
+            className="flex justify-between items-center cursor-pointer hover:bg-[#e7b5bf] transition-all duration-300"
             onClick={() => setShowPatterns(!showPatterns)}
           >
             <h3 className="text-xl font-semibold text-[#333]">Available Patterns</h3>
@@ -111,14 +114,14 @@ const ModelsPage = () => {
       </div>
 
       {/* Right side: Model selection */}
-      <div className="md:w-1/3 p-6 overflow-y-auto bg-[#616852] rounded-lg">
-        <h2 className="text-2xl font-bold mb-6 text-center text-[#f7f7f7]">Choose a Model</h2>
+      <div className="md:w-1/3 p-6 overflow-y-auto bg-[#E7E4D8] rounded-lg ">
+        {/* <h2 className="text-2xl font-bold mb-6 text-center text-[#822538]">Choose a Model</h2> */}
         <div className="grid grid-cols-2 gap-6">
           {models.map((model) => (
             <div
               key={model._id}
-              className={`flex flex-col items-center p-4 rounded-lg cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 ${
-                selectedModel?._id === model._id ? "ring-4 ring-[#f7f7f7]" : ""
+              className={` bg-[ ] flex flex-col items-center p-4 rounded-lg cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                selectedModel?._id === model._id ? "ring-4 ring-[#822538]" : ""
               }`}
               onClick={() => setSelectedModel(model)}
             >
@@ -127,11 +130,13 @@ const ModelsPage = () => {
                 alt={model.mockupName}
                 className="w-24 h-24 object-cover rounded-full shadow-md"
               />
-              <p className="mt-2 text-sm font-medium text-[#f7f7f7]">{model.mockupName}</p>
+              <p className="mt-2 text-sm font-medium text-[#822538]">{model.mockupName}</p>
             </div>
           ))}
         </div>
       </div>
+    </div>
+
     </div>
   );
 };
