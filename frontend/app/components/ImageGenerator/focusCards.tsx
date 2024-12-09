@@ -86,16 +86,17 @@ export function FocusCardsDemo() {
       <div className="flex justify-center items-center mb-4 relative">
         <button
           onClick={() => setSelectedTab('explore')}
-          className={`text-[#822538] mx-2  ${selectedTab === 'explore' ? 'font-bold' : ''}`}
+          className={`text-[#822538] mx-2  ${selectedTab === 'explore' ? 'font-bold' : ''} hover:text-[#822538]`}
         >
           EXPLORE
         </button>
 
-        <div className="vertical-line"></div>
+        <div className="border-l-2 border-[#822538] h-10 mx-4"></div>
+
 
         <button
           onClick={() => setSelectedTab('myDesigns')}
-          className={`text-[#822538] mx-2 ${selectedTab === 'myDesigns' ? 'font-bold' : ''}`}
+          className={`text-[#822538] mx-2 ${selectedTab === 'myDesigns' ? 'font-bold' : ''} hover:text-[#822538]`}
         >
           MY DESIGNS
         </button>

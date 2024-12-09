@@ -79,13 +79,13 @@ const ModelsPage = () => {
         )}
 
         {/* Collapsible Patterns Section */}
-        <div className="absolute bottom-0 left-0 w-full bg-[#e7b5bf] p-4 shadow-lg " style={{marginTop:"-30%"}}>
+        <div className="absolute bottom-0 left-0 w-full bg-[#b4707e] p-4 shadow-lg transition-all duration-300" style={{marginTop:"-30%"}}>
           <div
-            className="flex justify-between items-center cursor-pointer hover:bg-[#e7b5bf] transition-all duration-300"
+            className="flex justify-between items-center cursor-pointer hover:bg-[##b4707e] transition-all duration-300"
             onClick={() => setShowPatterns(!showPatterns)}
           >
             <h3 className="text-xl font-semibold text-[#333]">Available Patterns</h3>
-            {showPatterns ? <FaChevronDown className="text-[#616852]" /> : <FaChevronUp className="text-[#616852]" />}
+            {showPatterns ? <FaChevronDown className="text-[#333]" /> : <FaChevronUp className="text-[#333]" />}
           </div>
           {showPatterns && (
             <div className="mt-4 grid grid-cols-3 gap-4">
@@ -93,7 +93,7 @@ const ModelsPage = () => {
                 <div
                   key={pattern.imageUrl}
                   className={`flex flex-col items-center p-4 rounded-lg cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 ${
-                    selectedPattern === pattern.imageUrl ? "ring-4 ring-[#616852]" : ""
+                    selectedPattern === pattern.imageUrl ? "ring-4 ring-[##b4707e]" : ""
                   }`}
                   onClick={() => {
                     setSelectedPattern(pattern.imageUrl); // Set texture for 3D model
