@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 const FileUploadModal: React.FC = () => {
   
   return (
-    <div className="h-full w-full rounded-md bg-[#E7E4D8] relative flex flex-col items-center justify-center antialiased">
+    <div className="h-[570px] w-full rounded-md bg-[#E7E4D8] relative flex flex-col items-center justify-center antialiased">
     {/* Background Video */}
     <video
       className="absolute top-0 left-0 w-full h-full object-cover z-0"
@@ -21,7 +21,7 @@ const FileUploadModal: React.FC = () => {
 
     {/* Main Content */}
     <div className="relative z-10 max-w-1xl mx-auto p-4 ">
-      <h1 className="font-semibold mt-9 text-lg md:text-6xl bg-clip-text text-[#822538] text-center font-custom">
+      <h1 className="font-semibold mt-9 text-lg md:text-6xl bg-clip-text text-black text-center font-custom">
         Upload Your Sketch
       </h1>
       <br />

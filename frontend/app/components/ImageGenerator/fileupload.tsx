@@ -210,14 +210,14 @@ const FileUploadDemo: React.FC = () => {
                 onChange={handleThemeChange}
                 className="focus:ring-2 focus:ring-customPurple"
               />
-              <span className="text-[#31312f] font-bold">{theme}</span>
+              <span className="text-black font-bold">{theme}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div
-        className={`w-full max-w-7xl mx-auto min-h-96 bg-[#E7E4D8] border-8 border-transparent rounded-2xl p-8 shadow-2xl hover:shadow-4xl transform hover:scale-105 
+        className={`w-full max-w-7xl mx-auto h-[300px] bg-transparent
         ${uploadedImage ? "lg:flex lg:flex-row gap-8" : "flex flex-col"}`
         }
       >
@@ -227,9 +227,9 @@ const FileUploadDemo: React.FC = () => {
             uploadedImage ? "lg:w-1/2 border-r border-[#91535f] pr-4" : ""
           } flex flex-col items-center`}
         >
-          <h2 className="text-2xl text-[#616852] font-custom mb-4 font-semibold">
+          {/* <h2 className="text-2xl text-black font-custom mb-4 font-semibold">
             Your Sketch
-          </h2>
+          </h2> */}
 
           {/* Uploaded Image Section */}
           {uploadedImage ? (
