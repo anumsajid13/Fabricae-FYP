@@ -8,6 +8,7 @@ import NavBar from "./components/landingPage/NavBar";
 import NavBar2 from "./components/ImageGenerator/NavBar2";
 import Body from "./components/landingPage/Body";
 import BottomBar from "./components/landingPage/BottomBar";
+import LearnMoreSection from "./components/landingPage/learnMore";
 
 export default function Home() {
   const router = useRouter();
@@ -45,8 +46,9 @@ export default function Home() {
           <Body /> 
         <div style={{ backgroundColor: "#434242"}}>
           <BottomBar />
+          <LearnMoreSection/>
         </div>
-       
+         
       </div>
       
     </>

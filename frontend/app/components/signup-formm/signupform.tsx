@@ -211,7 +211,7 @@ export function SignupFormDemo() {
   return (
     <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 rounded-none md:rounded-2xl bg-[#E7E4D8] shadow-lg overflow-hidden">
       {/* Left column with cover image */}
-      <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/signup-cover.svg')" }}>
+      <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/login2.jpg')" }}>
         <div className="h-full w-full bg-opacity-60 bg-black flex items-center justify-center"></div>
       </div>
 
@@ -236,7 +236,7 @@ export function SignupFormDemo() {
                 value={formData.firstname}
                 onChange={handleChange}
               />
-              {errors.firstname && <p className="text-sm text-red-500">{errors.firstname}</p>}
+              {errors.firstname && <p className="text-sm text-black">{errors.firstname}</p>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label className="text-black" htmlFor="lastname">Last name</Label>
@@ -248,7 +248,7 @@ export function SignupFormDemo() {
                 value={formData.lastname}
                 onChange={handleChange}
               />
-              {errors.lastname && <p className="text-sm text-red-500">{errors.lastname}</p>}
+              {errors.lastname && <p className="text-sm text-black">{errors.lastname}</p>}
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
@@ -261,7 +261,7 @@ export function SignupFormDemo() {
               value={formData.email}
               onChange={handleChange}
             />
-            {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-black">{errors.email}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label className="text-black" htmlFor="password">Password</Label>
@@ -273,7 +273,7 @@ export function SignupFormDemo() {
               value={formData.password}
               onChange={handleChange}
             />
-            {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+            {errors.password && <p className="text-sm text-black">{errors.password}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-8">
             <Label className="text-black" htmlFor="password1">Re-enter your password</Label>
@@ -285,11 +285,11 @@ export function SignupFormDemo() {
               value={formData.password1}
               onChange={handleChange}
             />
-            {errors.password1 && <p className="text-sm text-red-500">{errors.password1}</p>}
+            {errors.password1 && <p className="text-sm text-black">{errors.password1}</p>}
           </LabelInputContainer>
 
           {errorMessage && (
-        <div className="bg-red-100 text-red-700 p-2 rounded mt-2">
+        <div className="bg-red-100 text-black p-2 rounded mt-2">
           {errorMessage}
         </div>
             )}
@@ -337,11 +337,13 @@ export function SignupFormDemo() {
 const BottomGradient = () => {
   return (
     <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-black to-transparent" />
+      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-black to-transparent" />
     </>
   );
 };
+
+
 
 const LabelInputContainer = ({
   children,

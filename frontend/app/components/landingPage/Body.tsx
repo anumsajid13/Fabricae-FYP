@@ -9,7 +9,7 @@ export default function Body() {
       {/* Text Section */}
       <div className="lg:w-3/5 w-full  flex flex-col justify-center items-start p-8"> {/* Full width on small screens */}
         <div className="flex items-center mb-4 font-custom"    style={{height:"10%"}}>
-          <h1 className="text-[#822538]  text-8xl ">
+          <h1 className="text-[#822538]  text-7xl ">
             Create
           </h1>
           <Image
@@ -20,22 +20,22 @@ export default function Body() {
             className="ml-2"
           />
         </div>
-        <h2 className="text-[#822538]  text-7xl mb-4 font-custom "  >
+        <h2 className="text-[#822538]  text-7xl "  >
           customize, and
         </h2>
-        <h3 className="text-black text-6xl mb-4 font-custom" >
+        <h3 className="text-black text-6xl " >
           <span className="text-[#822538]">connect </span>—your design
         </h3>
         <h4 className="text-black text-6xl font-custom " >
           journey starts here.
         </h4>
 
-        <p className="text-black text-base mt-4 font-custom font-medium" >
+        <p className="text-black text-base mt-4  font-para font-normal" >
           Building a design takes time and effort. With our app, you can create stunning designs, customize them to perfection, and connect with the right opportunities. Success is a journey, and we’re here to help you every step of the way.
         </p>
 
         <div className="flex items-center mt-4 ">
-          <p className="text-black text-base  cursor-pointer font-custom" style={{ textDecoration: 'underline', textDecorationColor: 'white' }}>
+          <p className="text-black text-base  cursor-pointer font-custom" style={{ textDecoration: 'underline', textDecorationColor: 'black' }}>
             Learn more
           </p>
           <Image 

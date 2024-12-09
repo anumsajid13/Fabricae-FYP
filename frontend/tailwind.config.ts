@@ -67,8 +67,8 @@ module.exports = {
       fontFamily: {
         custom: ['Agrandir', 'sans-serif'],  // Use your custom font
         custom1: ['Agrandir1'],  // Use your custom font
-        custom2: ['Agrandir2'],  // Use your custom font
         custom3: ['PPTelegraf'],  // Use your custom font
+        para: ['AURA_DEMO'],  // Use your custom font
 
 
       },

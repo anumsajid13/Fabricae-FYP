@@ -13,7 +13,6 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import "../../globals.css";
-import { supabase } from "../../../lib/supabaseClient";
 
 export function LoginFormDemo() {
 
@@ -203,7 +202,7 @@ export function LoginFormDemo() {
   return (
     <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 min-h-screen rounded-none md:rounded-2xl bg-black shadow-lg overflow-hidden">
       {/* Left column with cover image */}
-      <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/signup-cover.svg')" }}>
+      <div className="w-full md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/login.jpg')" }}>
        
         <div className="h-full w-full bg-opacity-60 bg-black flex items-center justify-center">
         </div>
@@ -229,7 +228,7 @@ export function LoginFormDemo() {
               onChange={handleChange}
               className="custom-radiusI"
             />
-          {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+          {errors.email && <p className="text-sm text-black">{errors.email}</p>}
 
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
@@ -244,20 +243,20 @@ export function LoginFormDemo() {
               onChange={handleChange}
               className="custom-radiusI"
             />
-             {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+             {errors.password && <p className="text-sm text-black">{errors.password}</p>}
 
           </LabelInputContainer>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-500 text-white rounded-md p-2 mb-4 text-sm">
+            <div className="bg-black text-white rounded-md p-2 mb-4 text-sm">
               {error}
             </div>
           )}
 
 
           {errorMessage && (
-        <div className="bg-red-100 text-red-700 p-2 rounded mt-2">
+        <div className="bg-black text-white p-2 rounded mt-2">
           {errorMessage}
         </div>
           )}
