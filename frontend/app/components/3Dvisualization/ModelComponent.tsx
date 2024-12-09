@@ -50,6 +50,7 @@ const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl })
   }, [texture, nodes]);
 
   return (
+    
     <group dispose={null}>
       <primitive object={scene} />
     </group>

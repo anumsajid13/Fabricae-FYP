@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,18 +11,17 @@ export default function Navbar() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-
   const logout = () => {
     useAuthStore.getState().removeToken(); // Call removeToken from Zustand store
     console.log("Logged out and token removed");
   };
 
   return (
-    <nav className="bg-[#E7E4D8] border-gray-200 dark:bg-gray-900 ">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto ">
-        
-        {/* Logo Section */}
-        <Link href="/" className="flex items-center  rtl:space-x-reverse">
+    <nav className="bg-[#E7E4D8] border-gray-200 dark:bg-gray-900">
+      <div className="max-w-screen-xl flex items-center justify-between mx-auto py-1">
+
+        {/* Left: Logo */}
+        <Link href="/" className="flex items-center rtl:space-x-reverse">
           <Image 
             src="/F (Logo).svg" 
             alt="Fabricae Logo" 
@@ -34,8 +33,34 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Right Section (Profile & Hamburger) */}
-        <div className="flex items-center space-x-6">
+        {/* Center: Navbar Links */}
+        <div className="flex flex-grow justify-center">
+          <ul className="flex space-x-8 font-medium p-4 md:p-0 mt-4 md:mt-0">
+            <li>
+              <Link href="/" className="font-semibold block py-2 px-3 md:p-0 text-black rounded md:bg-transparent hover:text-[#822538]" aria-current="page">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/ImageGenerator" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+                Prompt
+              </Link>
+            </li>
+            <li>
+              <Link href="/SketchToImage" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+                Sketch
+              </Link>
+            </li>
+            <li>
+              <Link href="/3DModels" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+                3D Models
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Right: Profile & Hamburger */}
+        <div className="flex items-center space-x-6 ml-auto">
           {/* Profile Icon */}
           <Image 
             src="/profile-user.png" 
@@ -48,21 +73,12 @@ export default function Navbar() {
           {/* Hamburger Icon */}
           <button onClick={toggleSidebar} className="text-white focus:outline-none">
             <img 
-             style={{height:"40px"}}
-             src="/icons8-hamburger-menu.svg"
-            >
-            </img>
-            {/* <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="w-6 h-6" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg> */}
+              style={{ height: "30px" }}
+              src="/icons8-hamburger-menu.svg"
+            />
           </button>
         </div>
+
       </div>
 
       {/* Sidebar */}
