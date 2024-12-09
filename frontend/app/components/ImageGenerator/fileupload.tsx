@@ -210,7 +210,7 @@ const FileUploadDemo: React.FC = () => {
                 onChange={handleThemeChange}
                 className="focus:ring-2 focus:ring-customPurple"
               />
-              <span className="text-black font-bold">{theme}</span>
+              <span className="text-black font-bold font-para">{theme}</span>
             </label>
           ))}
         </div>
