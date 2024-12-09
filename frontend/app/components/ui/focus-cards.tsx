@@ -100,7 +100,7 @@ const CardComponent = React.memo(
         )}
         onClick={() => onDelete(card)} // Call delete handler
       >
-        <FaTrash size={26} color={"#CDFB7C"} />
+        <FaTrash size={26} color={"#822538"} />
       </div>
     </div>
   )

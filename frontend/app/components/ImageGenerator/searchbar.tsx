@@ -208,7 +208,7 @@ export function PlaceholdersAndVanishInputDemo({ onPromptChange }: { onPromptCha
     if (rephrasedPrompt1) promptsList.push(rephrasedPrompt1);
     if (rephrasedPrompt2) promptsList.push(rephrasedPrompt2);
   
-    const newLoadingState = [true, true, true]; 
+    const newLoadingState = [true, true, true]; // Assuming you want all loading states to be true initially
     setLoading(newLoadingState);
   
     const newGeneratedImages = await Promise.all(
@@ -228,8 +228,7 @@ export function PlaceholdersAndVanishInputDemo({ onPromptChange }: { onPromptCha
 
   return (
     <div className="w-full">
-     
-      <div className="h-auto flex flex-col justify-center items-center px-4 bg-[#E7E4D8] ">
+      <div className="h-auto flex flex-col justify-center items-center px-4 bg-[#E7E4D8]">
         <PlaceholdersAndVanishInput
           placeholders={placeholders}
           onChange={handleChange}
