@@ -41,8 +41,17 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#E7E4D8] flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-5xl p-10 mt-10">
+    <div className="relative max-h-[75vh] bg-[#E7E4D8] flex items-center justify-center">
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0">
+        <video autoPlay loop muted className="w-full max-h-[89vh] object-cover">
+          <source src="Gradient.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      {/* Profile Box */}
+      <div className="relative z-10 bg-white rounded-xl shadow-lg w-full max-w-5xl p-10  overflow-y-auto max-h-[73vh] mt-14" style={{marginTop:"5%"}}>
         <h2 className="text-2xl text-[#822538] font-semibold mb-6">Account Information</h2>
 
         <div className="flex items-center space-x-4 mb-8">

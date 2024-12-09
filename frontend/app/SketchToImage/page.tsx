@@ -11,7 +11,7 @@ export default function Home() {
     <>
       <NavBar />
       <FileUploadModal/>
-      <div>
+      <div className="z-20">
       <FocusCardsDemo/>
       </div>
      

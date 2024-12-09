@@ -3,9 +3,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthStore } from "../../store/authStore";
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname(); // Get the current pathname from the router
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -16,10 +18,15 @@ export default function Navbar() {
     console.log("Logged out and token removed");
   };
 
+  const linkClasses = (linkPath: string) => {
+    return pathname === linkPath
+      ? "font-semibold block py-2 px-3 md:p-0 text-[#822538] rounded md:bg-transparent"
+      : "font-semibold block py-2 px-3 md:p-0 text-black hover:text-[#822538] md:hover:bg-transparent";
+  };
+
   return (
     <nav className="bg-[#E7E4D8] border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto py-1">
-
         {/* Left: Logo */}
         <Link href="/" className="flex items-center rtl:space-x-reverse">
           <Image 
@@ -37,22 +44,22 @@ export default function Navbar() {
         <div className="flex flex-grow justify-center">
           <ul className="flex space-x-8 font-medium p-4 md:p-0 mt-4 md:mt-0">
             <li>
-              <Link href="/" className="font-semibold block py-2 px-3 md:p-0 text-black rounded md:bg-transparent hover:text-[#822538]" aria-current="page">
+              <Link href="/" className={linkClasses("/")}>
                 Home
               </Link>
             </li>
             <li>
-              <Link href="/ImageGenerator" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+              <Link href="/ImageGenerator" className={linkClasses("/ImageGenerator")}>
                 Prompt
               </Link>
             </li>
             <li>
-              <Link href="/SketchToImage" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+              <Link href="/SketchToImage" className={linkClasses("/SketchToImage")}>
                 Sketch
               </Link>
             </li>
             <li>
-              <Link href="/3DModels" className="font-semibold block py-2 px-3 md:p-0 text-black rounded hover:text-[#822538] md:hover:bg-transparent">
+              <Link href="/3DModels" className={linkClasses("/3DModels")}>
                 3D Models
               </Link>
             </li>
@@ -62,14 +69,15 @@ export default function Navbar() {
         {/* Right: Profile & Hamburger */}
         <div className="flex items-center space-x-6 ml-auto">
           {/* Profile Icon */}
-          <Image 
-            src="/profile-user.png" 
-            alt="Profile" 
-            width={40} 
-            height={35} 
-            className="cursor-pointer"
-          />
-
+          <Link href="/Profile">
+            <Image 
+              src="/profile-user.png" 
+              alt="Profile" 
+              width={40} 
+              height={35} 
+              className="cursor-pointer"
+            />
+          </Link>
           {/* Hamburger Icon */}
           <button onClick={toggleSidebar} className="text-white focus:outline-none">
             <img 
@@ -78,14 +86,11 @@ export default function Navbar() {
             />
           </button>
         </div>
-
       </div>
 
       {/* Sidebar */}
       <div 
-        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${
-          isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-        } transition-transform duration-300 ease-in-out`}
+        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`}
       >
         <button onClick={toggleSidebar} className="absolute top-4 right-4 text-black focus:outline-none">
           <svg 
@@ -102,13 +107,13 @@ export default function Navbar() {
         {/* Sidebar Links */}
         <ul className="mt-10 space-y-6 text-center">
           <li>
-            <Link href="/" className="text-lg hover:text-customGreen">Home</Link>
+            <Link href="/" className={`text-lg ${pathname === "/" ? "text-customGreen" : "hover:text-customGreen"}`}>Home</Link>
           </li>
           <li>
-            <Link href="/explore" className="text-lg hover:text-customGreen">Explore</Link>
+            <Link href="/explore" className={`text-lg ${pathname === "/explore" ? "text-customGreen" : "hover:text-customGreen"}`}>Explore</Link>
           </li>
           <li>
-            <Link href="/contact" className="text-lg hover:text-customGreen">Contact Us</Link>
+            <Link href="/contact" className={`text-lg ${pathname === "/contact" ? "text-customGreen" : "hover:text-customGreen"}`}>Contact Us</Link>
           </li>
           <li>
             {/* Log Out Link */}
