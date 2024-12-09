@@ -236,7 +236,7 @@ export function SignupFormDemo() {
                 value={formData.firstname}
                 onChange={handleChange}
               />
-              {errors.firstname && <p className="text-sm text-black">{errors.firstname}</p>}
+              {errors.firstname && <p className="text-sm text-[#822538]">{errors.firstname}</p>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label className="text-black" htmlFor="lastname">Last name</Label>
@@ -248,7 +248,7 @@ export function SignupFormDemo() {
                 value={formData.lastname}
                 onChange={handleChange}
               />
-              {errors.lastname && <p className="text-sm text-black">{errors.lastname}</p>}
+              {errors.lastname && <p className="text-sm text-[#822538]">{errors.lastname}</p>}
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
@@ -261,7 +261,7 @@ export function SignupFormDemo() {
               value={formData.email}
               onChange={handleChange}
             />
-            {errors.email && <p className="text-sm text-black">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-[#822538]">{errors.email}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label className="text-black" htmlFor="password">Password</Label>
@@ -273,7 +273,7 @@ export function SignupFormDemo() {
               value={formData.password}
               onChange={handleChange}
             />
-            {errors.password && <p className="text-sm text-black">{errors.password}</p>}
+            {errors.password && <p className="text-sm text-[#822538]">{errors.password}</p>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-8">
             <Label className="text-black" htmlFor="password1">Re-enter your password</Label>
@@ -285,7 +285,7 @@ export function SignupFormDemo() {
               value={formData.password1}
               onChange={handleChange}
             />
-            {errors.password1 && <p className="text-sm text-black">{errors.password1}</p>}
+            {errors.password1 && <p className="text-sm text-[#822538]">{errors.password1}</p>}
           </LabelInputContainer>
 
           {errorMessage && (

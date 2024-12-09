@@ -228,7 +228,7 @@ export function LoginFormDemo() {
               onChange={handleChange}
               className="custom-radiusI"
             />
-          {errors.email && <p className="text-sm text-black">{errors.email}</p>}
+          {errors.email && <p className="text-sm text-[#822538]">{errors.email}</p>}
 
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
@@ -243,7 +243,7 @@ export function LoginFormDemo() {
               onChange={handleChange}
               className="custom-radiusI"
             />
-             {errors.password && <p className="text-sm text-black">{errors.password}</p>}
+             {errors.password && <p className="text-sm text-[#822538]">{errors.password}</p>}
 
           </LabelInputContainer>
 
