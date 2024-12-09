@@ -260,7 +260,7 @@ const FileUploadDemo: React.FC = () => {
             <h2 className="text-2xl text-[#616852] font-semibold font-custom mb-4">
               Generated Pattern
             </h2>
-            {loading && <img className="mt-14 w-40 h-40" src="/imgur (2).gif" alt="Loading..." />}
+            {loading}
             {generatedImage && (
               <div className="w-64 h-64 border border-gray-300 rounded-lg overflow-hidden">
                 <img
