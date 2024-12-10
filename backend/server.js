@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./Data/mongoConnection");
 const promptDesignRoutes = require("./routes/promptDesign");
 const authRoutes = require ("./routes/authRoutes.js");
+const userRoutes=require("./routes/userRoutes.js")
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ const modelRoutes = require("./routes/modelRoutes");
 app.use("/api/prompt-designs", promptDesignRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use('/api/users', userRoutes);
 
 app.use("/api/model-routes", modelRoutes);
 

@@ -34,8 +34,11 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already in use. Try a different email." });
     }
 
+    const username=email;
+    const role="Designer";
+
     // Create a new user
-    const newUser = new User({ firstname, lastname, email, password });
+    const newUser = new User({ firstname, lastname, email,username, password, role });
     await newUser.save();
 
     // Generate token
@@ -170,6 +173,50 @@ exports.resetPassword = async (req, res) => {
     delete resetTokens[hashedToken];
 
     res.status(200).json({ message: "Password reset successful." });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+// Controller for getting or creating a user based on email ONLYYY
+exports.getOrCreateUser = async (req, res) => {
+  const { email } = req.body;
+  console.log("email",email)
+  try {
+    // Check if the user already exists
+    let user = await User.findOne({ email });
+    console.log("user",user)
+    if (!user) {
+      // If user doesn't exist, create a new user with the provided email
+      const username = email; 
+      const role = "Designer";
+
+      user = new User({
+        email,
+        username,
+        role,
+      });
+      console.log("user",user)
+      await user.save();
+    }
+    
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      message: user ? "User found" : "User created successfully",
+      user: {
+        id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        profilePictureUrl: user.profilePictureUrl,
+        country: user.country,
+      },
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

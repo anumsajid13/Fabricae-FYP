@@ -1,4 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
+import React, { useState } from "react";
+import { useAuthStore } from '../app/store/authStore'; 
 
 export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
@@ -28,7 +30,7 @@ export const signInWithLinkedIn = async () => {
 
 export const getUserProfile = async () => {
   const { data, error } = await supabase.auth.getSession();
-
+ 
   if (error || !data.session) {
     console.error('Error fetching session:', error?.message || 'No session found');
     return null;
@@ -36,8 +38,14 @@ export const getUserProfile = async () => {
 
   const session = data.session;
 
+  console.log('Token:', session.access_token); 
+  console.log('Name:', session.user.user_metadata?.full_name);
+  console.log('Picture:', session.user.user_metadata?.avatar_url); 
+  console.log('Email:', session.user.email);
+
+
   return {
-    token: session.access_token, // Access token from the session
+    token: session.access_token, 
     name: session.user.user_metadata?.full_name,
     picture: session.user.user_metadata?.avatar_url,
     email: session.user.email,
