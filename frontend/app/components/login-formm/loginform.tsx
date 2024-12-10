@@ -183,11 +183,13 @@ export function LoginFormDemo() {
         setErrorMessage(errorData.message || "An error occurred. Please try again.");
       }
 
-      const { token } = await response.json();
+      const { token, user } = await response.json();
       console.log('token is', token);
   
       // Set the token in the Zustand store
       useAuthStore.getState().setToken(token);
+
+      localStorage.setItem("userEmail", user.email);
   
       // Redirect to the home page
       router.push('/');
