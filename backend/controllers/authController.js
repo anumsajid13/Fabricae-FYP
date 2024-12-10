@@ -34,8 +34,11 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already in use. Try a different email." });
     }
 
+    const username=email;
+    const role="Designer";
+
     // Create a new user
-    const newUser = new User({ firstname, lastname, email, password });
+    const newUser = new User({ firstname, lastname, email,username, password, role });
     await newUser.save();
 
     // Generate token
