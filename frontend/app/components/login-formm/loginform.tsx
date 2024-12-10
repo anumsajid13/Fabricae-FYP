@@ -1,11 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { signInWithGoogle , signInWithLinkedIn ,getUserProfile} from '../../../utils/auth';
 import { useAuthStore } from '../../store/authStore'; 
+import ResetPasswordModal from '../resetPasswordComp/ResetPasswordModal'
+import {  useSearchParams } from "next/navigation";
+import ResetReqModal from '../resetPasswordComp/ResetPassReq'
+import { toast } from "react-toastify";
 
 import {
   IconBrandGithub,
@@ -20,7 +24,62 @@ export function LoginFormDemo() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const reset = searchParams.get("reset") == "true";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReqModel, setIsReqModel] = useState(false)
 
+  // Open modal if URL has token and reset=true
+  useEffect(() => {
+    if (reset && token) {
+      setIsModalOpen(true);
+    }
+  }, [reset, token]);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalClose = () => {
+    setIsReqModel(false);
+  };
+
+
+  const handlePasswordResetSubmit = async (submittedEmail: string) => {
+    console.log("reset emaillll", submittedEmail)
+    const email = submittedEmail; // Make sure the email is already in the form data
+  
+    if (!email) {
+      setErrorMessage("Please provide an email address.");
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/request-password-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        setErrorMessage(data.message || "An error occurred while requesting the password reset.");
+      } else {
+        setErrorMessage("Password reset email sent. Please check your inbox.");
+        toast.success("Password reset email sent. Please check your inbox.");
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "An error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const [formData, setFormData] = useState({
     email: "",
@@ -273,6 +332,36 @@ export function LoginFormDemo() {
             {loading ? "Logging in..." : "Login →"}
             <BottomGradient />
           </button>
+
+          {/* Forgot Password Link */}
+          <div className="mt-4 text-center">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsReqModel(true); // Open the modal when the link is clicked
+              }} 
+              className="text-sm text-[#822538] hover:underline"
+            >
+              Forgot Password?
+            </a>
+          </div>
+
+          {isReqModel && (
+            <ResetReqModal
+              onSubmit={handlePasswordResetSubmit} // Pass the submit function to modal
+              onClose={handleModalClose} 
+            />
+          )
+            
+          }
+          {isModalOpen && (
+          <ResetPasswordModal
+            reset={isModalOpen.toString()} 
+            token={token} 
+            onClose={closeModal} 
+          />
+        )}
 
           <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
