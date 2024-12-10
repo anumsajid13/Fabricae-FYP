@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { FileUpload } from "../ui/file-upload";
 import { v4 as uuidv4 } from "uuid"; // Import uuid for unique ID generation
-import { toast } from "react-toastify";
+
+
 import { storage } from "../../firebase"; // Make sure to import Firebase storage setup
 import { ref, uploadString, getDownloadURL } from "firebase/storage"; // Firebase storage functions
 import { useCardsStore } from '../../store/useCardsStore';

@@ -79,6 +79,7 @@ import { relative } from "path";
       return imageUrl;
     } catch (error) {
       console.error("Error generating image:", error);
+      toast.error("Unable to process the request.");
       return null;
     }
   };

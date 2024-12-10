@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 interface ModelComponentProps {
   modelUrl: string;
-  textureUrl: string; 
+  textureUrl: string;
 }
 
 const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl }) => {
@@ -14,9 +14,10 @@ const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl })
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     loader.load(textureUrl, (loadedTexture) => {
+      loadedTexture.flipY = false; 
       loadedTexture.wrapS = THREE.RepeatWrapping;
       loadedTexture.wrapT = THREE.RepeatWrapping;
-      loadedTexture.repeat.set(3, 3); 
+      loadedTexture.repeat.set(2, 2); 
 
       setTexture(loadedTexture);
     });
@@ -24,8 +25,8 @@ const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl })
 
   useEffect(() => {
     if (texture) {
-     
-      const clothNodeNames = ["Cloth_mesh_1", "Cloth_mesh_2"]; 
+      // List of cloth node names
+      const clothNodeNames = ["Cloth_mesh_1", "Cloth_mesh_2"];
 
       clothNodeNames.forEach((nodeName) => {
         const node = nodes[nodeName];
@@ -33,12 +34,10 @@ const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl })
           if (node.material instanceof THREE.MeshStandardMaterial) {
             node.material.map = texture; 
             node.material.needsUpdate = true; 
-            node.material.color = new THREE.Color(1.0, 1.0, 1.0),
-            node.material.roughness = 0.4,
-            node.material.metalness = 0.1
-            
+            node.material.color = new THREE.Color(1.0, 1.0, 1.0);
+            node.material.roughness = 0.4; 
+            node.material.metalness = 0.1; 
           } else {
-           
             node.material = new THREE.MeshStandardMaterial({
               map: texture,
               side: THREE.DoubleSide,
@@ -50,7 +49,6 @@ const ModelComponent: React.FC<ModelComponentProps> = ({ modelUrl, textureUrl })
   }, [texture, nodes]);
 
   return (
-    
     <group dispose={null}>
       <primitive object={scene} />
     </group>
