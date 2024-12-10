@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import { FileUpload } from "../ui/file-upload";
-import { v4 as uuidv4 } from "uuid"; // Import uuid for unique ID generation
-
-
-import { storage } from "../../firebase"; // Make sure to import Firebase storage setup
-import { ref, uploadString, getDownloadURL } from "firebase/storage"; // Firebase storage functions
+import { v4 as uuidv4 } from "uuid"; 
+import { toast } from "react-toastify";
+import { storage } from "../../firebase"; 
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { useCardsStore } from '../../store/useCardsStore';
 import {PromptDesign} from '../../store/useCardsStore'
 
@@ -38,14 +37,14 @@ const FileUploadDemo: React.FC = () => {
   const [modalMessage, setModalMessage] = useState<string | null>(null); // Modal state
   const { cards, setCards, updateCards } = useCardsStore(); 
 
-  const themes = ["Black & White", "Vibrant", "Pastel Colored"];
+  const themes = ["Black & White", "Vibrant", "Pastel Colored", "Plain background"];
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedTheme(event.target.value);
   };
 
   const handleCloseModal = () => {
-    // Clear the images and close the modal
+    //Clear the images and close the modal
     setUploadedImage(null);
     setGeneratedImage(null);
     setModalMessage(null);
@@ -75,12 +74,14 @@ const FileUploadDemo: React.FC = () => {
   
       // Get the download URL for the stored image
       const downloadURL = await getDownloadURL(storageRef);
+
+      const userEmail = localStorage.getItem("userEmail");
   
       // Metadata for MongoDB
       const metadata = {
         title: imagetitle,
         imageUrl: downloadURL,
-        username: "anum",
+        username: userEmail,
         patternType: "prompt",
         prompt: prompt,
       };
@@ -148,7 +149,14 @@ const FileUploadDemo: React.FC = () => {
 
        try {
            setLoading(true);
-           const prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
+           let prompt = "";
+
+            if (selectedTheme === "Plain background") {
+              prompt = "convert the sketch into an image by outlining the dark pencil strokes with bold vibrant colored outlines and leaving the background as plain white";
+            } else {
+              prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
+            }
+
            const negativePrompt = "lowres, bad anatomy, bad quality";
            const requestBody = {
            prompt,
@@ -200,7 +208,7 @@ const FileUploadDemo: React.FC = () => {
       {/* Theme Selection */}
       <div className="mb-6 max-w-md mx-auto z-20">
         <div className="text-black  mb-2 text-center font-semibold"></div>
-        <div className="flex justify-around ">
+        <div className="flex justify-around w-[550px] ml-[-7%] ">
           {themes.map((theme) => (
             <label key={theme} className="flex items-center space-x-2">
               <input
@@ -258,11 +266,12 @@ const FileUploadDemo: React.FC = () => {
         {/* Right Column */}
         {uploadedImage && (
           <div className="w-full lg:w-1/2 flex flex-col items-center pl-4">
-            <h2 className="text-2xl text-[#616852] font-semibold font-custom mb-4">
+            {/* <h2 className="text-2xl text-[#616852] font-semibold font-custom mb-4">
               Generated Pattern
-            </h2>
-            {loading}
-            {generatedImage && (
+            </h2> */}
+            {loading ? (
+              <img className=" mt-2 w-64 h-64" src="/Imgur.gif" alt="loading" />
+            ) : generatedImage ? (
               <div className="w-64 h-64 border border-gray-300 rounded-lg overflow-hidden">
                 <img
                   src={generatedImage}
@@ -270,7 +279,8 @@ const FileUploadDemo: React.FC = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-            )}
+            ) : null}
+
           </div>
         )}
       </div>

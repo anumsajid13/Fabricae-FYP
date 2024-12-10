@@ -126,10 +126,12 @@ import { relative } from "path";
         const downloadURL = await getDownloadURL(storageRef);
         console.log("Image saved. Firebase URL:", downloadURL);
 
+        const userEmail = localStorage.getItem("userEmail");
+
         const metadata = {
           title: imagetitle,
           imageUrl: downloadURL,
-          username: "anum",
+          username: userEmail,
           patternType: "prompt",
           prompt: prompt
         };

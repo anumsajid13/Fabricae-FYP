@@ -24,10 +24,10 @@ export function FocusCardsDemo() {
 
   useEffect(() => {
     if (hasFetched) return;
-
+    const username = localStorage.getItem("userEmail");
     const fetchCards = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve");
+        const response = await fetch(`http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`);
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
