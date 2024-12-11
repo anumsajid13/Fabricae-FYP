@@ -90,7 +90,9 @@ export default function Navbar() {
 
       {/* Sidebar */}
       <div 
-        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`}
+        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${
+          isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform duration-300 ease-in-out`}
       >
         <button onClick={toggleSidebar} className="absolute top-4 right-4 text-black focus:outline-none">
           <svg 
@@ -107,13 +109,34 @@ export default function Navbar() {
         {/* Sidebar Links */}
         <ul className="mt-10 space-y-6 text-center">
           <li>
-            <Link href="/" className={`text-lg ${pathname === "/" ? "text-customGreen" : "hover:text-customGreen"}`}>Home</Link>
+            <Link 
+              href="/" 
+              className={`text-lg ${
+                pathname === "/" ? "text-black" : "hover:text-[#B4707E]"
+              }`}
+            >
+              Home
+            </Link>
           </li>
           <li>
-            <Link href="/explore" className={`text-lg ${pathname === "/explore" ? "text-customGreen" : "hover:text-customGreen"}`}>Explore</Link>
+            <Link 
+              href="/explore" 
+              className={`text-lg ${
+                pathname === "/explore" ? "text-black" : "hover:text-[#B4707E]"
+              }`}
+            >
+              Explore
+            </Link>
           </li>
           <li>
-            <Link href="/contact" className={`text-lg ${pathname === "/contact" ? "text-customGreen" : "hover:text-customGreen"}`}>Contact Us</Link>
+            <Link 
+              href="/contact" 
+              className={`text-lg ${
+                pathname === "/contact" ? "text-black" : "hover:text-[#B4707E]"
+              }`}
+            >
+              Contact Us
+            </Link>
           </li>
           <li>
             {/* Log Out Link */}
@@ -122,7 +145,7 @@ export default function Navbar() {
                 logout(); // Trigger the logout function
                 toggleSidebar(); // Optionally close the sidebar
               }}
-              className="text-lg hover:text-customGreen"
+              className="text-lg hover:text-[#B4707E]"
             >
               Log Out
             </button>

@@ -1,4 +1,4 @@
-  "use client";
+"use client";
 
   import React, { useState } from "react";
   import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
