@@ -106,22 +106,35 @@ exports.requestPasswordReset = async (req, res) => {
       return res.status(404).json({ message: "User with this email does not exist." });
     }
 
-    // Generate a unique token
+    
     const token = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    // Save the token and expiration in memory (or DB)
+   
     resetTokens[hashedToken] = { userId: user._id, expires: Date.now() + 3600 * 1000 }; // 1 hour
 
-    // Create reset link
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    console.log("Reset in req", resetTokens)
 
-    // Send the reset link via email
+    // Create reset link
+    const resetLink = `${process.env.FRONTEND_URL}/Login?token=${token}&reset=true`;
+
     await transporter.sendMail({
       from: process.env.EMAIL,
       to: email,
       subject: "Password Reset Request",
-      text: `Reset your password using this link: ${resetLink}`,
+      text: `Hi there,
+
+          We’ve received a request to reset the password for your account. If this was you, simply click the link below to create a new password:
+
+          ${resetLink}
+
+          If you didn’t request this change, no worries! Your account is still safe. You can ignore this message, and nothing will be changed.
+
+          If you have any questions or need assistance, feel free to reach out to us.
+
+          Best wishes,  
+          The Fabricae Team`
+
     });
 
     res.status(200).json({ message: "Password reset email sent." });
@@ -134,26 +147,29 @@ exports.requestPasswordReset = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token, newPassword } = req.body;
 
+  console.log("token", token, "newPassword", newPassword);
+
   try {
-    // Hash the token and find the corresponding record
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    console.log('Hashed token:', hashedToken);
     const resetData = resetTokens[hashedToken];
 
     if (!resetData || Date.now() > resetData.expires) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Find the user and update their password
     const user = await User.findById(resetData.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
+   
+    user.password = newPassword;
+
+  
     await user.save();
 
-    // Remove the used token
+
     delete resetTokens[hashedToken];
 
     res.status(200).json({ message: "Password reset successful." });

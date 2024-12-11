@@ -40,8 +40,13 @@ const ModelsPage = () => {
 
   useEffect(() => {
     const fetchPatterns = async () => {
+      const username = localStorage.getItem("userEmail");
+      if (!username) {
+        console.error("No username found in localStorage");
+        return;
+      }
       try {
-        const response = await fetch("http://localhost:5000/api/prompt-designs/retrieve");
+        const response = await fetch(`http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`);
         if (!response.ok) {
           throw new Error("Failed to fetch patterns");
         }

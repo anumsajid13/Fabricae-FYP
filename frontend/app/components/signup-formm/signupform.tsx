@@ -32,26 +32,7 @@ export function SignupFormDemo() {
     password1: "",
   });
 
-  const handleGoogleRegister = async () => {
-    const { error } = await signInWithGoogle();
-    router.push("/");
 
-    if (error) {
-      alert('Error during registration');
-    }
-  };
-
-  
-  const handleLinkedRegister= async () => {
-
-    const result = await signInWithLinkedIn();
-    if (result.error) {
-      alert('LinkedIn Sign-In failed');
-    } else {
-      router.push("/")
-
-    }
-  };
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -304,29 +285,7 @@ export function SignupFormDemo() {
 
           <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
-          <div className="flex flex-col space-y-4 ">
-            <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
-              type="submit"
-              onClick={handleGoogleRegister}
-            >
-              <IconBrandGoogle className="h-4 w-4 text-neutral-300" />
-              <span className="text-sm text-white">Sign up with Google</span>
-              <BottomGradient />
-
-            </button>
-            <button
-              className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-white rounded-md h-10 font-medium shadow-input bg-[#822538] shadow-[0px_0px_1px_1px_var(--neutral-800)] custom-radiusI"
-              type="submit"
-              onClick={handleLinkedRegister}
-
-            >
-              <IconBrandLinkedin className="h-4 w-4 text-neutral-300" />
-              <span className="text-sm text-white">Sign up with LinkedIn</span>
-              <BottomGradient />
-
-            </button>
-          </div>
+        
         </form>
       </div>
     </div>
