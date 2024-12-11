@@ -104,30 +104,46 @@ export default function Navbar() {
           </svg>
         </button>
 
-        {/* Sidebar Links */}
-        <ul className="mt-10 space-y-6 text-center">
-          <li>
-            <Link href="/" className={`text-lg ${pathname === "/" ? "text-customGreen" : "hover:text-customGreen"}`}>Home</Link>
-          </li>
-          <li>
-            <Link href="/explore" className={`text-lg ${pathname === "/explore" ? "text-customGreen" : "hover:text-customGreen"}`}>Explore</Link>
-          </li>
-          <li>
-            <Link href="/contact" className={`text-lg ${pathname === "/contact" ? "text-customGreen" : "hover:text-customGreen"}`}>Contact Us</Link>
-          </li>
-          <li>
-            {/* Log Out Link */}
-            <button
-              onClick={() => {
-                logout(); // Trigger the logout function
-                toggleSidebar(); // Optionally close the sidebar
-              }}
-              className="text-lg hover:text-customGreen"
-            >
-              Log Out
-            </button>
-          </li>
-        </ul>
+      {/* Sidebar Links */}
+<ul className="mt-10 space-y-6 text-center">
+  <li>
+    <Link 
+      href="/" 
+      className={`text-lg ${pathname === "/" ? "text-black " : "hover:text-[#B4707E]"}`}
+    >
+      Home
+    </Link>
+  </li>
+  <li>
+    <Link 
+      href="/explore" 
+      className={`text-lg ${pathname === "/explore" ? "text-black " : "hover:text-[#B4707E]"}`}
+    >
+      Explore
+    </Link>
+  </li>
+  <li>
+    <Link 
+      href="/contact" 
+      className={`text-lg ${pathname === "/contact" ? "text-black ": "hover:text-[#B4707E]"}`}
+    >
+      Contact Us
+    </Link>
+  </li>
+  <li>
+    {/* Log Out Link */}
+    <button
+      onClick={() => {
+        logout(); // Trigger the logout function
+        toggleSidebar(); // Optionally close the sidebar
+      }}
+      className="text-lg hover:text-[#B4707E]"
+    >
+      Log Out
+    </button>
+  </li>
+</ul>
+
       </div>
     </nav>
   );
