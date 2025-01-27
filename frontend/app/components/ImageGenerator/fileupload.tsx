@@ -152,7 +152,7 @@ const FileUploadDemo: React.FC = () => {
            let prompt = "";
 
             if (selectedTheme === "Plain background") {
-              prompt = "convert the sketch into an image by outlining the dark pencil strokes with bold vibrant colored outlines and leaving the background as plain white";
+              prompt = "Transform the given sketch into a high-quality  design by replacing the dark black outlines with bold, thick, and vibrant colored(such as red,green,pink,purple, brown) outlines, ensuring the background remains completely plain, clean, and solid white, free of any texture or shading.";
             } else {
               prompt = `A high-quality textile with ${selectedTheme} pattern based on the sketch`;
             }
