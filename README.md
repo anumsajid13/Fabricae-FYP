@@ -4,11 +4,27 @@ Fabricae is a comprehensive web application designed to help the textile designi
 
 ## Features
 
+- **Account Management**: 
+  - User Registration and Login.
+
+  ![Alt text](./assests/1.png)
+
+  ![Alt text](./assests/2.png)
+
+
 - **Textile Pattern Generation using prompt & pencil skethces**: 
   - Generate unique textile patterns using text prompts or pencil sketches.
+
+  ![Alt text](./assests/3.png)
+
+  ![Alt text](./assests/4.png)
   
 - **3D Modeling**: 
   - Create and visualize 3D models of textile designs for enhanced presentation and prototyping.
+
+  ![Alt text](./assests/5.png)
+
+  ![Alt text](./assests/6.png)
 
 - **Pattern Customization**: 
   - Tool for designers to customize their textile patterns.
