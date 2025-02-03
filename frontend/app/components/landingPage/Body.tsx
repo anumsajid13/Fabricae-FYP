@@ -7,7 +7,7 @@ export default function Body() {
     <div style={{marginLeft:"5%"}}className="font-[Agrandir] w-full h-auto overflow-hidden bg-[#E7E4D8] flex flex-col lg:flex-row  lg:justify-center gap-[0%]"> {/* Flex direction changes based on screen size */}
       
       {/* Text Section */}
-      <div className="lg:w-3/5 w-full  flex flex-col justify-center items-start p-8"> {/* Full width on small screens */}
+      <div style={{ marginTop:"-7%"}}className="lg:w-3/5 w-full  flex flex-col justify-center items-start p-8"> {/* Full width on small screens */}
         <div className="flex items-center mb-4 font-custom"    style={{height:"10%"}}>
           <h1 className="text-[#822538]  text-7xl ">
             Create
@@ -20,12 +20,12 @@ export default function Body() {
             className="ml-2"
           />
         </div>
-        <h2 className="text-[#822538]  text-7xl "  >
+        <h4 className="text-[#822538]  text-7xl font-custom"  >
           customize, and
-        </h2>
-        <h3 className="text-black text-6xl " >
+        </h4>
+        <h4 className="text-black text-6xl font-custom" >
           <span className="text-[#822538]">connect </span>—your design
-        </h3>
+        </h4>
         <h4 className="text-black text-6xl font-custom " >
           journey starts here.
         </h4>

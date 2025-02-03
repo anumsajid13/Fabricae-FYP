@@ -90,7 +90,9 @@ export default function Navbar() {
 
       {/* Sidebar */}
       <div 
-        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`}
+        className={`fixed top-0 right-0 w-64 h-full bg-[#822538] text-black z-40 transform ${
+          isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform duration-300 ease-in-out`}
       >
         <button onClick={toggleSidebar} className="absolute top-4 right-4 text-black focus:outline-none">
           <svg 
