@@ -21,6 +21,8 @@ const ModelsPage = () => {
   const [sliderValue, setSliderValue] = useState<any>(1)
   const { selectedCards } = useSelectedCardsStore();
 
+  
+
   useEffect(() => {
     const fetchModels = async () => {
       try {
@@ -97,12 +99,12 @@ const ModelsPage = () => {
     <div className="absolute top-12 right-12 flex gap-2">
       <button className="bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
         <span className="material-symbols-outlined text-[#822538] hover:text-[#B4707E]">
-          zoom_in
+          undo
         </span>
       </button>
       <button className="bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
         <span className="material-symbols-outlined text-[#822538] hover:text-[#B4707E]">
-          rotate_right
+          redo
         </span>
       </button>
     </div>
