@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Link from 'next/link';
 import { FocusCards } from "../ui/focus-cards"; 
 import './global.css';
 import { useCardsStore } from "../../store/useCardsStore";
+import { useSelectedCardsStore} from "../../store/selectedCardsStore"
 
 // Define the interface for the PromptDesign
 interface PromptDesign {
@@ -18,6 +20,7 @@ export function FocusCardsDemo() {
   const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore');
   const [isDescending, setIsDescending] = useState<boolean>(true);
   const { cards, setCards, updateCards } = useCardsStore();
+  const {selectedCards, setSelectedCards, updateSelectedCards} = useSelectedCardsStore();
 
   // Flag to control the fetch call
   const [hasFetched, setHasFetched] = useState(false);
@@ -122,6 +125,21 @@ export function FocusCardsDemo() {
           <h2>Nothing To Show Yet</h2>
         </div>
       )}
+
+      {/* Next Button */}
+      <div className="fixed bottom-4 right-4">
+          {selectedCards.length > 0 && (
+            <Link href="/3DModels">
+              <img 
+                src="/nextButton.png" 
+                alt="Next"
+                className="w-16 h-16 cursor-pointer transition-transform transform hover:scale-110"
+              />
+            </Link>
+          )}
+        </div>
+
+
     </div>
   );
 }

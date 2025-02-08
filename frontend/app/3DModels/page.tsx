@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import { OrbitControls, Environment, PerspectiveCamera, ContactShadows } from "@react-three/drei";
 import { MeshStandardMaterial } from "three";
+import { useSelectedCardsStore} from "../store/selectedCardsStore"
 
 const ModelComponent = dynamic(
   () => import("../components/3Dvisualization/ModelComponent"),
@@ -18,6 +19,7 @@ const ModelsPage = () => {
   const [selectedPattern, setSelectedPattern] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [sliderValue, setSliderValue] = useState<any>(1)
+  const { selectedCards } = useSelectedCardsStore();
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -151,17 +153,17 @@ const ModelsPage = () => {
             Design Patterns
           </h2>
           <div className="grid grid-cols-3 gap-3">
-            {patterns.map((pattern) => (
+            {selectedCards.map((pattern) => (
               <div
-                key={pattern.imageUrl}
+                key={pattern.src}
                 className={`bg-[#E7E4D8] flex flex-col items-center p-4 rounded-2xl cursor-pointer shadow-md transition-all transform hover:scale-105 ${
-                  selectedPattern === pattern.imageUrl ? "ring-4 ring-[#822538]" : ""
+                  selectedPattern === pattern.src ? "ring-4 ring-[#822538]" : ""
                 }`}
-                onClick={() => setSelectedPattern(pattern.imageUrl)}
+                onClick={() => setSelectedPattern(pattern.src)}
               >
                 {/* Pattern Image */}
                 <img
-                  src={pattern.imageUrl}
+                  src={pattern.src}
                   alt={pattern.title}
                   className="object-cover rounded-2xl shadow-md"
                 />
