@@ -5,6 +5,11 @@ const connectDB = require("./Data/mongoConnection");
 const promptDesignRoutes = require("./routes/promptDesign");
 const authRoutes = require ("./routes/authRoutes.js");
 const userRoutes=require("./routes/userRoutes.js")
+const path = require('path');
+
+const pptxRoutes = require('./routes/portRoutes');
+
+
 
 dotenv.config();
 
@@ -13,6 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
+//////////////////
+
+
 
 require('events').EventEmitter.defaultMaxListeners = 20;
 const modelRoutes = require("./routes/modelRoutes");
@@ -23,6 +31,16 @@ app.use("/api/auth", authRoutes);
 app.use('/api/users', userRoutes);
 
 app.use("/api/model-routes", modelRoutes);
+
+
+
+// Serve static files from the "uploads" directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Use PPTX routes
+app.use('/api', pptxRoutes);
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
