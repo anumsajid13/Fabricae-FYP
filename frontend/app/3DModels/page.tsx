@@ -21,8 +21,6 @@ const ModelsPage = () => {
   const [sliderValue, setSliderValue] = useState<any>(1)
   const { selectedCards } = useSelectedCardsStore();
 
-  
-
   useEffect(() => {
     const fetchModels = async () => {
       try {
@@ -97,17 +95,18 @@ const ModelsPage = () => {
 
     {/* Buttons inside the canvas */}
     <div className="absolute top-12 right-12 flex gap-2">
-      <button className="bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
-        <span className="material-symbols-outlined text-[#822538] hover:text-[#B4707E]">
-          undo
-        </span>
-      </button>
-      <button className="bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
-        <span className="material-symbols-outlined text-[#822538] hover:text-[#B4707E]">
-          redo
-        </span>
-      </button>
+      <img
+        src="/undo.png"
+        alt="Undo"
+        className="w-10 h-10 bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 cursor-pointer"
+      />
+      <img
+        src="/redo.png"
+        alt="Redo"
+        className="w-10 h-10 bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 cursor-pointer"
+      />
     </div>
+
 
     {/* Slider below */}
     <div className="absolute bottom-12 left-12 right-4 w-[89%]">
@@ -177,16 +176,18 @@ const ModelsPage = () => {
   
         {/* Action Buttons */}
         <div className="flex gap-4">
-          <button className="flex-1 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white py-3 rounded-lg font-semibold hover:from-[#B4707E] hover:to-[#822538] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+          <button className="flex-1 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white py-3 rounded-2xl font-semibold hover:from-[#B4707E] hover:to-[#822538] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
             <span className="flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined">save</span>
+            <img className= "w-8 h-8" src= "/save.png"/>
               Save Design
             </span>
           </button>
-          <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] border-2 border-[#822538] py-3 rounded-lg font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+          <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#822538] border-2 border-[#822538] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+           
             <span className="flex items-center justify-center gap-2">
-              Next
-              <span className="material-symbols-outlined">arrow_forward</span>
+            Next
+            <img className= "w-8 h-8" src= "/next.png"/>
+              
             </span>
           </button>
         </div>
