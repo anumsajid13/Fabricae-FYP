@@ -20,12 +20,12 @@ export default function Body() {
             className="ml-2"
           />
         </div>
-        <h2 className="text-[#822538]  text-7xl "  >
+        <h4 className="text-[#822538]  text-7xl font-custom"  >
           customize, and
-        </h2>
-        <h3 className="text-black text-6xl " >
+        </h4>
+        <h4 className="text-black text-6xl font-custom" >
           <span className="text-[#822538]">connect </span>—your design
-        </h3>
+        </h4>
         <h4 className="text-black text-6xl font-custom " >
           journey starts here.
         </h4>

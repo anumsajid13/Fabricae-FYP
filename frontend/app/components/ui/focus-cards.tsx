@@ -3,24 +3,27 @@
 import Image from "next/image";
 import { FaTrash } from "react-icons/fa";
 import React, { useState } from "react";
-import { cn } from "@/lib/utils"; // Ensure this is defined elsewhere in your project
-import { ToastContainer } from "react-toastify";
+import { cn } from "@/lib/utils"; // Ensure this is correctly defined
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { toast } from "react-toastify";
-import DeleteConfirmationModal from "./delete-modal"; // Import the new modal
+import DeleteConfirmationModal from "./delete-modal"; // Ensure this file exists
 import { useDisclosure } from "@nextui-org/react";
+import { useSelectedCardsStore } from "../../store/selectedCardsStore";
 
 type Card = {
   title: string;
   src: string;
 };
 
-export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (title: string) => void}) {
+
+export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (title: string) => void }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const {selectedCards, setSelectedCards, updateSelectedCards} = useSelectedCardsStore();
 
-  const handleDeleteClick = (card: Card) => {
+  const handleDeleteClick = (card: Card, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent event bubbling to card click
     setSelectedCard(card);
     onOpen(); // Open the modal
   };
@@ -31,9 +34,20 @@ export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (titl
       onDelete(selectedCard.title);
       setSelectedCard(null);
     }
-    onClose(); // Close the modal
+    onClose();
   };
 
+  const handleCardClick = (card: Card) => {
+    updateSelectedCards((prevSelected) => {
+      // Toggle selection
+      const isAlreadySelected = prevSelected.some((c) => c.src === card.src);
+      return isAlreadySelected
+        ? prevSelected.filter((c) => c.src !== card.src)
+        : [...prevSelected, card];
+    });
+  };
+  
+  
   return (
     <>
       <ToastContainer />
@@ -45,16 +59,14 @@ export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (titl
             index={index}
             hovered={hovered}
             setHovered={setHovered}
-            onDelete={handleDeleteClick} 
+            onDelete={handleDeleteClick}
+            onCardClick={handleCardClick}
+            selectedCards={selectedCards}
           />
         ))}
       </div>
 
-      <DeleteConfirmationModal 
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={handleConfirmDelete}
-      />
+      <DeleteConfirmationModal isOpen={isOpen} onClose={onClose} onConfirm={handleConfirmDelete} />
     </>
   );
 }
@@ -65,45 +77,53 @@ const CardComponent = React.memo(
     index,
     hovered,
     setHovered,
-    onDelete, 
+    onDelete,
+    onCardClick,
+    selectedCards,
   }: {
     card: Card;
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
-    onDelete: (card: Card) => void; 
-  }) => (
-    <div
-      onMouseEnter={() => setHovered(index)}
-      onMouseLeave={() => setHovered(null)}
-      className={cn(
-        "rounded-lg relative overflow-hidden w-full h-60 md:h-96 transition-all duration-300 ease-out",
-        hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
-      )}
-      style={{ backgroundColor: "black" }}
-    >
-      <Image src={card.src} alt={card.title} fill className="object-cover" />
+    onDelete: (card: Card, event: React.MouseEvent) => void;
+    onCardClick: (card: Card) => void;
+    selectedCards: Card[];
+  }) => {
+    return (
       <div
+        onMouseEnter={() => setHovered(index)}
+        onMouseLeave={() => setHovered(null)}
+        onClick={() => onCardClick(card)}
         className={cn(
-          "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
-          hovered === index ? "opacity-100" : "opacity-0"
+          "rounded-lg relative overflow-hidden w-full h-60 md:h-96 transition-all duration-300 ease-out",
+          hovered !== null && hovered !== index && "blur-sm scale-[0.98]",
+          selectedCards.some((c) => c.src === card.src) ? "border-4 border-[#822538]" : ""
         )}
+        style={{ backgroundColor: "black" }}
       >
-        <div className="text-xl md:text-2xl font-medium text-white">{card.title}</div>
-      </div>
+        <Image src={card.src} alt={card.title} fill className="object-cover" />
+        <div
+          className={cn(
+            "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
+            hovered === index ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <div className="text-xl md:text-2xl font-medium text-white">{card.title}</div>
+        </div>
 
-      {/* Delete Icon */}
-      <div
-        className={cn(
-          "absolute top-2 right-2 transition-opacity duration-300 cursor-pointer transform hover:scale-110",
-          hovered === index ? "opacity-100" : "opacity-0"
-        )}
-        onClick={() => onDelete(card)} // Call delete handler
-      >
-        <FaTrash size={26} color={"#822538"} />
+        {/* Delete Icon */}
+        <div
+          className={cn(
+            "absolute top-2 right-2 transition-opacity duration-300 cursor-pointer transform hover:scale-110",
+            hovered === index ? "opacity-100" : "opacity-0"
+          )}
+          onClick={(event) => onDelete(card, event)}
+        >
+          <FaTrash size={26} color={"#822538"} />
+        </div>
       </div>
-    </div>
-  )
+    );
+  }
 );
 
 CardComponent.displayName = "CardComponent";
@@ -111,8 +131,6 @@ CardComponent.displayName = "CardComponent";
 // Function to handle deleting the design from both Firebase Storage and MongoDB
 const handleDelete = async (title: string, src: string) => {
   try {
-
-    // Proceed to delete the design from MongoDB
     const res = await fetch("http://localhost:5000/api/prompt-designs/delete", {
       method: "DELETE",
       headers: {
