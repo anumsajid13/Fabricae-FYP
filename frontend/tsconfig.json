@@ -17,11 +17,14 @@
         "name": "next"
       }
     ],
+    // "strict": true,   //for editing tool
+    // "esModuleInterop": true,//for editing tool
+    // "moduleResolution": "node",//for editing tool
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/landingPage/NavBar.tsx", "app/store/authStore.ts"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/landingPage/NavBar.tsx", "app/components/3Dvisualization/kameezTrouser.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/landingPage/NavBar.tsx", "app/store/authStore.ts", "app/ImageEditor/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/landingPage/NavBar.tsx", "app/components/3Dvisualization/kameezTrouser.jsx", "app/ImageEditor/page.jsx"],
   "exclude": ["node_modules"]
 }
