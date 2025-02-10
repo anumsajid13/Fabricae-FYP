@@ -6,7 +6,6 @@ import './global.css';
 import { useCardsStore } from "../../store/useCardsStore";
 import { useSelectedCardsStore} from "../../store/selectedCardsStore"
 
-// Define the interface for the PromptDesign
 interface PromptDesign {
   title: string;
   imageUrl: string;
@@ -20,14 +19,13 @@ export function FocusCardsDemo() {
   const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore');
   const [isDescending, setIsDescending] = useState<boolean>(true);
   const { cards, setCards, updateCards } = useCardsStore();
-  const {selectedCards, setSelectedCards, updateSelectedCards} = useSelectedCardsStore();
-
-  // Flag to control the fetch call
+  const { selectedCards, setSelectedCards, updateSelectedCards } = useSelectedCardsStore();
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
     if (hasFetched) return;
     const username = localStorage.getItem("userEmail");
+    
     const fetchCards = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`);
@@ -36,10 +34,18 @@ export function FocusCardsDemo() {
         }
         const data: PromptDesign[] = await response.json();
 
-        // Filter out duplicate cards based on imageUrl before setting the state
-        const newCards = data.filter(card => !cards.some(existingCard => existingCard.imageUrl === card.imageUrl));
+        // Filter out duplicate cards based on both imageUrl and title
+        const uniqueCards = data.reduce((acc: PromptDesign[], current) => {
+          const isDuplicate = acc.some(card => 
+            card.imageUrl === current.imageUrl || card.title === current.title
+          );
+          if (!isDuplicate) {
+            acc.push(current);
+          }
+          return acc;
+        }, []);
 
-        setCards(newCards);
+        setCards(uniqueCards);
         setHasFetched(true);
       } catch (error) {
         console.error("Error fetching cards:", error);
@@ -49,7 +55,6 @@ export function FocusCardsDemo() {
     fetchCards();
   }, [hasFetched, setCards]);
 
-  
   const sortCards = () => {
     if (!cards) return;
   
@@ -59,19 +64,15 @@ export function FocusCardsDemo() {
       return isDescending ? dateB - dateA : dateA - dateB;
     });
   
-    // Ensure uniqueness and add cache busting to imageUrl
-    const uniqueCards = sortedCards.filter((card, index, self) =>
-      index === self.findIndex((t) => t.imageUrl === card.imageUrl)
-    );
-  
-    // Append a timestamp to each image URL to prevent caching
-    const updatedCards = uniqueCards.map(card => ({
+    // Generate unique keys for each card
+    const updatedCards = sortedCards.map(card => ({
       ...card,
-      imageUrl: `${card.imageUrl}?${new Date().getTime()}` // Cache busting
+      imageUrl: `${card.imageUrl}?${new Date().getTime()}`, // Cache busting
+      key: `${card.title}-${card.imageUrl}` // Create a composite key
     }));
   
     console.log("Number of unique cards:", updatedCards.length);
-    setCards(updatedCards); // Update state with cache-busted URLs
+    setCards(updatedCards);
     setIsDescending(!isDescending);
   };
   
@@ -79,7 +80,6 @@ export function FocusCardsDemo() {
     console.log("Deleting card:", title);
     updateCards((prevCards) => {
       if (!Array.isArray(prevCards)) return prevCards;
-
       return prevCards.filter((card) => card.title !== title);
     });
   };
@@ -95,7 +95,6 @@ export function FocusCardsDemo() {
         </button>
 
         <div className="border-l-2 border-[#822538] h-10 mx-4"></div>
-
 
         <button
           onClick={() => setSelectedTab('myDesigns')}
@@ -116,7 +115,7 @@ export function FocusCardsDemo() {
           cards={cards.map(card => ({
             title: card.title,
             src: card.imageUrl,
-            key: card.imageUrl, 
+            key: `${card.title}-${card.imageUrl}`, // Use composite key
           }))}
           onDelete={handleCardDelete}
         />
@@ -126,20 +125,17 @@ export function FocusCardsDemo() {
         </div>
       )}
 
-      {/* Next Button */}
       <div className="fixed bottom-4 right-4">
-          {selectedCards.length > 0 && (
-            <Link href="/3DModels">
-              <img 
-                src="/nextButton.png" 
-                alt="Next"
-                className="w-16 h-16 cursor-pointer transition-transform transform hover:scale-110"
-              />
-            </Link>
-          )}
-        </div>
-
-
+        {selectedCards.length > 0 && (
+          <Link href="/3DModels">
+            <img 
+              src="/nextButton.png" 
+              alt="Next"
+              className="w-16 h-16 cursor-pointer transition-transform transform hover:scale-110"
+            />
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
