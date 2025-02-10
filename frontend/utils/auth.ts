@@ -32,7 +32,7 @@ export const getUserProfile = async () => {
   const { data, error } = await supabase.auth.getSession();
  
   if (error || !data.session) {
-    console.error('Error fetching session:', error?.message || 'No session found');
+   // console.error('Error fetching session:', error?.message || 'No session found');
     return null;
   }
 
