@@ -63,6 +63,7 @@
   "devDependencies": {
     "@types/fabric": "^5.3.9",
     "@types/node": "^20",
+    "@types/prop-types": "^15.7.14",
     "@types/react": "^18",
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
