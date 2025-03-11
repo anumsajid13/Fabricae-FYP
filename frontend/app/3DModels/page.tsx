@@ -1,11 +1,13 @@
 'use client';
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useRef} from "react";
+import html2canvas from "html2canvas";
 import NavBar from '../components/ImageGenerator/NavBar2';
 import { Canvas } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import { OrbitControls, Environment, PerspectiveCamera, ContactShadows } from "@react-three/drei";
 import { MeshStandardMaterial } from "three";
 import { useSelectedCardsStore} from "../store/selectedCardsStore"
+import { useThree } from "@react-three/fiber";
 
 const ModelComponent = dynamic(
   () => import("../components/3Dvisualization/ModelComponent"),
@@ -20,6 +22,11 @@ const ModelsPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [sliderValue, setSliderValue] = useState<any>(1)
   const { selectedCards } = useSelectedCardsStore();
+  const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -67,6 +74,69 @@ const ModelsPage = () => {
     setSliderValue(Number(event.target.value)); 
   };
 
+  const captureScreenshot = async () => {
+    setIsCapturing(true);
+    try {
+      // Get the Three.js canvas element
+      const canvas = document.querySelector('canvas');
+      if (!canvas) {
+        console.error("Canvas not found");
+        return;
+      }
+  
+      // Create a new canvas and get its context
+      const newCanvas = document.createElement('canvas');
+      const context = newCanvas.getContext('2d');
+      if (!context) {
+        console.error("Could not get 2d context");
+        return;
+      }
+  
+      // Set the new canvas dimensions to match the original
+      newCanvas.width = canvas.width;
+      newCanvas.height = canvas.height;
+  
+      // Draw the WebGL canvas content onto the new canvas
+      // This preserves the WebGL state
+      context.drawImage(canvas, 0, 0);
+  
+      // Convert to base64 image
+      const dataUrl = newCanvas.toDataURL('image/png', 1.0);
+      setScreenshot(dataUrl);
+      setShowPreview(true);
+  
+    } catch (error) {
+      console.error("Error capturing screenshot:", error);
+    }finally {
+      setIsCapturing(false);
+    }
+  };
+  
+  // Add this function to actually save the screenshot
+  const handleSaveDesign = async () => {
+    if (!screenshot) return;
+  
+    try {
+      // Convert base64 to blob
+      const base64Response = await fetch(screenshot);
+      const blob = await base64Response.blob();
+  
+      // Create a download link
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `design-${Date.now()}.png`;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  
+      setShowPreview(false);
+    } catch (error) {
+      console.error("Error saving screenshot:", error);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -77,15 +147,15 @@ const ModelsPage = () => {
       {/* Left Side: 3D Model Display (70%) */}
       
      <div className="w-full md:w-7/12 p-6 flex items-center justify-center relative">
-  <div className="bg-[#F7F7F8] rounded-2xl shadow-xl p-4 w-full h-full flex items-center justify-center border-1">
+  <div className="bg-[#F7F7F8] rounded-2xl shadow-xl p-4 w-full h-full flex items-center justify-center border-1" ref={canvasRef}>
     {selectedModel && (
-      <Canvas style={{ width: "100%", height: "100%", borderRadius: "16px" }}>
+      <Canvas gl={{ preserveDrawingBuffer: true }} style={{ width: "100%", height: "100%", borderRadius: "16px" }}>
         {/* Flat Background Color */}
         <color attach="background" args={["#EAE7DB"]} />
         <Environment preset="sunset" />
         <PerspectiveCamera makeDefault position={[0, 3, 10]} fov={10} />
         <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
-
+        
         {/* Centered Model */}
         <group position={[0, -1, 0]}>
         <ModelComponent key={selectedModel._id} modelUrl={selectedModel.glbUrl} textureUrl={selectedPattern} sliderValue={sliderValue}/>
@@ -147,6 +217,36 @@ const ModelsPage = () => {
             ))}
           </div>
         </div>
+
+        {/* Screenshot Preview Modal */}
+        {showPreview && screenshot && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4">
+      <h2 className="text-lg font-semibold mb-4">Preview Screenshot</h2>
+      <div className="relative">
+        <img 
+          src={screenshot} 
+          alt="Screenshot Preview" 
+          className="rounded-lg shadow-md mb-4 w-full"
+        />
+      </div>
+      <div className="flex justify-end gap-4">
+        <button
+          onClick={() => setShowPreview(false)}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSaveDesign}
+          className="px-4 py-2 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white rounded-lg hover:from-[#B4707E] hover:to-[#822538] transition-colors"
+        >
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+)}
   
         {/* Design Patterns */}
         <div className="bg-gradient-to-br from-white to-[#F8F7F2] rounded-2xl p-4 shadow-md">
@@ -176,11 +276,12 @@ const ModelsPage = () => {
   
         {/* Action Buttons */}
         <div className="flex gap-4">
-          <button className="flex-1 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white py-3 rounded-2xl font-semibold hover:from-[#B4707E] hover:to-[#822538] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+          <button  onClick={captureScreenshot} disabled={isCapturing} className="flex-1 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white py-3 rounded-2xl font-semibold hover:from-[#B4707E] hover:to-[#822538] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
             <span className="flex items-center justify-center gap-2">
             <img className= "w-8 h-8" src= "/save.png"/>
-              Save Design
+            {isCapturing ? 'Capturing...' : 'Save Design'}
             </span>
+            
           </button>
           <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#822538] border-2 border-[#822538] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
            

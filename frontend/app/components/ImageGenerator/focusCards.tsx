@@ -53,7 +53,7 @@ export function FocusCardsDemo() {
     };
 
     fetchCards();
-  }, [hasFetched, setCards]);
+  }, [hasFetched, setCards, selectedCards]);
 
   const sortCards = () => {
     if (!cards) return;
