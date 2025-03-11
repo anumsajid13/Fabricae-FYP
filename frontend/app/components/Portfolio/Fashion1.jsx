@@ -1,27 +1,49 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useFashion } from "./FashionContext";
 
-const FashionPortfolio = forwardRef(({ onTextSelect }, ref) => {
+export const  FashionPortfolio =() =>  {
   const [quote, setQuote] = useState("Fashion is the armor to survive the reality of everyday life.");
   const [title, setTitle] = useState("Fashion Portfolio");
   const [backgroundImage, setBackgroundImage] = useState("/Picture7.jpg");
   const [modelImage, setModelImage] = useState("/Picture1.jpg");
   const [label, setLabel] = useState("New Fashion");
   
+  // Track which field is being edited
+  const [editingField, setEditingField] = useState(null);
+  
+  // Store text with styling information
   const [styledContent, setStyledContent] = useState({
-    quote: { text: quote, styles: {} },
-    title: { text: title, styles: {} },
-    label: { text: label, styles: {} }
+    quote: {
+      text: quote,
+      segments: [{ text: quote, styles: {} }]
+    },
+    title: {
+      text: title,
+      segments: [{ text: title, styles: {} }]
+    },
+    label: {
+      text: label,
+      segments: [{ text: label, styles: {} }]
+    }
   });
 
   const backgroundInputRef = useRef(null);
   const modelInputRef = useRef(null);
+  
+  // Access the fashion context
+  const { handleTextSelection, registerComponent } = useFashion();
 
-  // Expose the updateStyles method to parent components
-  useImperativeHandle(ref, () => ({
-    updateStyles(type, styles) {
-      updateStyles(type, styles);
-    }
-  }));
+  // Component ID for this component
+  const componentId = "fashion-portfolio";
+
+  // Register this component with context when it mounts
+  useEffect(() => {
+    registerComponent(componentId, {
+      updateStyles: updateStyles
+    });
+    
+    // No need for a cleanup function as the component registry persists
+  }, []);
 
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
@@ -31,40 +53,207 @@ const FashionPortfolio = forwardRef(({ onTextSelect }, ref) => {
     }
   };
 
-  const handleTextSelection = (e, type) => {
+  const handleTextChange = (e, type) => {
+    const newText = e.target.value;
+    
+    // Update both the direct state and the styled content
+    switch(type) {
+      case 'quote':
+        setQuote(newText);
+        break;
+      case 'title':
+        setTitle(newText);
+        break;
+      case 'label':
+        setLabel(newText);
+        break;
+      default:
+        break;
+    }
+
+    setStyledContent(prev => ({
+      ...prev,
+      [type]: {
+        text: newText,
+        segments: [{ text: newText, styles: {} }]
+      }
+    }));
+  };
+
+  const handleLocalTextSelection = (e, type) => {
+    if (editingField) return; // Don't handle selection while editing
+    
     const selection = window.getSelection();
     const text = selection.toString();
     
     if (text.length > 0) {
       const range = selection.getRangeAt(0);
+      const startOffset = range.startOffset;
+      const endOffset = range.endOffset;
+      
       const selectedText = {
-        text: text,
-        range: range,
-        element: e.target.tagName,
-        type: type
+        text,
+        type,
+        startOffset,
+        endOffset,
+        componentId // Include the component ID
       };
       
-      onTextSelect(selectedText);
+      // Send selection to the global context
+      handleTextSelection(selectedText);
     }
   };
 
-  const updateStyles = (type, styles) => {
-    setStyledContent(prev => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        styles: {
-          ...prev[type].styles,
-          ...styles
+// This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
+const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+  console.log("Updating styles for", type, "with", styles);
+  console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
+  
+  setStyledContent(prev => {
+    const content = prev[type];
+    
+    if (!content) return prev;
+
+    // Use the saved offsets from the context instead of trying to get them from the current selection
+    let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
+    let endOffset = savedEndOffset !== undefined ? savedEndOffset : content.text.length;
+    
+    console.log("Applying style from offset", startOffset, "to", endOffset);
+    
+    // Create new segments based on the selection
+    const newSegments = [];
+    let currentOffset = 0;
+    
+    content.segments.forEach(segment => {
+      const segmentLength = segment.text.length;
+      const segmentEnd = currentOffset + segmentLength;
+      
+      if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+        // This segment is completely outside the selection
+        newSegments.push(segment);
+      } else {
+        // This segment overlaps with the selection
+        
+        // Add part before selection if it exists
+        if (currentOffset < startOffset) {
+          newSegments.push({
+            text: segment.text.substring(0, startOffset - currentOffset),
+            styles: { ...segment.styles }
+          });
+        }
+        
+        // Add the selected part with new styles
+        newSegments.push({
+          text: segment.text.substring(
+            Math.max(0, startOffset - currentOffset),
+            Math.min(segmentLength, endOffset - currentOffset)
+          ),
+          styles: { ...segment.styles, ...styles }
+        });
+        
+        // Add part after selection if it exists
+        if (segmentEnd > endOffset) {
+          newSegments.push({
+            text: segment.text.substring(endOffset - currentOffset),
+            styles: { ...segment.styles }
+          });
         }
       }
-    }));
+      
+      currentOffset += segmentLength;
+    });
+    
+    return {
+      ...prev,
+      [type]: {
+        text: content.text,
+        segments: newSegments
+      }
+    };
+  });
+};
+
+// Also update the registerComponent line in the useEffect in FashionPortfolio.jsx to:
+useEffect(() => {
+  registerComponent(componentId, {
+    updateStyles: updateStyles
+  });
+}, []);
+
+
+const EditableText = ({ content, type, className }) => {
+  const textRef = useRef(null);
+  const inputRef = useRef(null);
+  const [localValue, setLocalValue] = useState('');
+  
+  // Initialize local value when editing starts
+  useEffect(() => {
+    if (editingField === type) {
+      setLocalValue(content.text);
+    }
+  }, [editingField, type, content.text]);
+  
+  const handleInputChange = (e) => {
+    const newText = e.target.value;
+    setLocalValue(newText);
+    
+    // Only update the parent state when input loses focus
+    // This prevents re-rendering during typing
   };
+  
+  const handleInputBlur = () => {
+    // Update the parent state with final value
+    handleTextChange({ target: { value: localValue } }, type);
+    setEditingField(null);
+  };
+  
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleInputBlur();
+    }
+  };
+  
+  if (editingField === type) {
+    return (
+      <input
+        ref={inputRef}
+        type="text"
+        value={localValue}
+        onChange={handleInputChange}
+        onBlur={handleInputBlur}
+        onKeyDown={handleInputKeyDown}
+        autoFocus
+        className={`bg-transparent border-b border-white focus:outline-none ${className}`}
+        style={{ 
+          width: '100%',
+          boxSizing: 'border-box',
+          display: 'block',
+          whiteSpace: 'pre'
+        }}
+      />
+    );
+  }
+
+  return (
+    <div
+      ref={textRef}
+      className={className}
+      onMouseUp={(e) => handleLocalTextSelection(e, type)}
+      onClick={() => setEditingField(type)}
+    >
+      {content.segments.map((segment, index) => (
+        <span key={index} style={segment.styles}>
+          {segment.text}
+        </span>
+      ))}
+    </div>
+  );
+};
 
   return (
     <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7]">
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-80"
+        className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
         onClick={() => backgroundInputRef.current.click()}
       ></div>
@@ -73,56 +262,50 @@ const FashionPortfolio = forwardRef(({ onTextSelect }, ref) => {
         type="file"
         accept="image/*"
         ref={backgroundInputRef}
-        style={{ display: "none" }}
+        className="hidden"
         onChange={(e) => handleImageUpload(e, setBackgroundImage)}
       />
 
       <div className="relative flex items-center justify-center h-full">
         <div className="relative z-30 text-center">
-          <div 
-            className="text-white italic text-sm md:text-lg lg:text-xl mb-8"
-            style={styledContent.quote.styles}
-            onMouseUp={(e) => handleTextSelection(e, 'quote')}
-          >
-            {quote}
-          </div>
+          <EditableText
+            content={styledContent.quote}
+            type="quote"
+            className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
+          />
 
-          <div 
-            className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto"
-            style={styledContent.title.styles}
-            onMouseUp={(e) => handleTextSelection(e, 'title')}
-          >
-            {title}
-          </div>
+          <EditableText
+            content={styledContent.title}
+            type="title"
+            className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
+          />
         </div>
 
         <div className="absolute top-1/4 right-10 flex justify-end">
-          <div className="relative max-h-[calc(100%-4rem)]" onClick={() => modelInputRef.current.click()}>
+          <div className="relative max-h-[calc(100%-4rem)]">
             <div className="absolute -inset-5 bg-[#9a7752] rounded-lg z-10"></div>
             <img
               src={modelImage}
               alt="New Fashion"
-              className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto"
+              className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
+              onClick={() => modelInputRef.current.click()}
             />
             <input
               type="file"
               accept="image/*"
               ref={modelInputRef}
-              style={{ display: "none" }}
+              className="hidden"
               onChange={(e) => handleImageUpload(e, setModelImage)}
             />
-            <div
-              className="absolute bottom-4 right-4 z-30 bg-white text-[#9a7752] font-bold px-4 py-1 text-xs uppercase tracking-wide rounded"
-              style={styledContent.label.styles}
-              onMouseUp={(e) => handleTextSelection(e, 'label')}
-            >
-              {label}
-            </div>
+            <EditableText
+              content={styledContent.label}
+              type="label"
+              className="absolute bottom-4 right-4 z-30 bg-white text-[#9a7752] font-bold px-4 py-1 text-xs uppercase tracking-wide rounded cursor-text"
+            />
           </div>
         </div>
       </div>
     </div>
   );
-});
+};
 
-export default FashionPortfolio;
