@@ -1,6 +1,6 @@
 import React from "react";
 
-const SketchesIllustrations = () => {
+export const SketchesIllustrations =() =>{
  return (
    <div
      className="relative bg-cover bg-center py-20"
@@ -27,4 +27,3 @@ const SketchesIllustrations = () => {
  );
 };
 
-export default SketchesIllustrations;

@@ -1,6 +1,6 @@
 import React from "react";
 
-const PortfolioSection = () => {
+export const PortfolioSection =() => {
   return (
     <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center">
       <div className="bg-[#c2a18a] p-6 rounded-lg shadow-lg max-w-7xl flex flex-col md:flex-row items-center bg-opacity-80 h-[700px]">
@@ -45,4 +45,3 @@ const PortfolioSection = () => {
   );
 };
 
-export default PortfolioSection;

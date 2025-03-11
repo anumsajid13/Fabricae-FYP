@@ -1,6 +1,6 @@
 import React from "react";
 
-const FabricMaterialSelection = () => {
+export const  FabricMaterialSelection = () =>{
   return (
     <div
       className="relative min-h-screen bg-cover bg-center"
@@ -44,4 +44,3 @@ const FabricMaterialSelection = () => {
   );
 };
 
-export default FabricMaterialSelection;

@@ -1,6 +1,5 @@
 import React from "react";
-
-const Fashion = () => {
+export const Fashion =  () => {
   return (
     <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex items-center justify-center">
       <div className="w-[80%] bg-[#a3846f] bg-opacity-90 p-8 flex flex-col md:flex-row gap-6">
@@ -23,4 +22,3 @@ const Fashion = () => {
   );
 };
 
-export default Fashion;
