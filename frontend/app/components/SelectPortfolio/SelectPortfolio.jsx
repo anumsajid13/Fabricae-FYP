@@ -12,11 +12,13 @@ const SelectPortfolio  = () => {
   const router = useRouter();
   
   const handlePortfolioSelection = (portfolioId) => {
-    // Update state
+    console.log('iddd', portfolioId);
+    // Store in localStorage
+    localStorage.setItem('selectedPortfolio', portfolioId);
+    // Update state for local components
     setSelectedPortfolio(portfolioId);
-    
     // Navigate to the customization page
-    router.push("/Portfolio"); // Use `push` for navigation
+    router.push("/Portfolio");
   };
   
     return (

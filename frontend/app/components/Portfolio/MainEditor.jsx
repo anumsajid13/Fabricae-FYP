@@ -25,8 +25,7 @@ import { PortfolioContext } from '../SelectPortfolio/PortfolioContext.jsx';
   // Get context functions
   const { selection, applyStyle } = useFashion();
 
-  const { selectedPortfolio } = useContext(PortfolioContext);
-
+  const [portfolioId, setSelectedPortfolio] = useState(1);
   // Create a map where each number points to an array of components from a specific folder
   const componentsMap = {
     1: [
@@ -51,10 +50,15 @@ import { PortfolioContext } from '../SelectPortfolio/PortfolioContext.jsx';
     ]
   };
 
-  // Default to portfolio 1 if selectedPortfolio is not set or not in the map
-  const portfolioId = selectedPortfolio && componentsMap[selectedPortfolio] 
-    ? selectedPortfolio 
-    : 1;
+
+  // In PluginContent.jsx
+useEffect(() => {
+  // Get the stored portfolio ID when component mounts
+  const storedPortfolio = localStorage.getItem('selectedPortfolio');
+  if (storedPortfolio) {
+    setSelectedPortfolio(parseInt(storedPortfolio, 10));
+  }
+}, []);
   
   // Get the components for the current portfolio
   const currentPortfolioComponents = componentsMap[portfolioId];
