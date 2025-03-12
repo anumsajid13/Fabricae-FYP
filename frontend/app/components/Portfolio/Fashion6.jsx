@@ -2,7 +2,7 @@ import React from "react";
 
 export const PortfolioSection =() => {
   return (
-    <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center">
+    <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center portfolio-page">
       <div className="bg-[#c2a18a] p-6 rounded-lg shadow-lg max-w-7xl flex flex-col md:flex-row items-center bg-opacity-80 h-[700px]">
         {/* Image Grid */}
         <div className="grid grid-cols-3 gap-4 md:w-2/3">

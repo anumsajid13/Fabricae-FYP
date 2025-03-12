@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useFashion } from "./FashionContext";
+import { useFashionStore } from "./FashionProvider";
 
 export const FashionLayout  = () =>{
   const [backgroundImage, setBackgroundImage] = useState("/Picture7.jpg");
@@ -23,9 +23,8 @@ export const FashionLayout  = () =>{
     }
   });
   
-  // Access fashion context
-  const { handleTextSelection, registerComponent } = useFashion();
-  
+  const { handleTextSelection, registerComponent, applyStyle } = useFashionStore();
+
   // Component ID for this component
   const componentId = "fashion-layout";
   
@@ -179,19 +178,14 @@ export const FashionLayout  = () =>{
     );
   };
   
-  const handleColorChange = () => {
-    // Toggle between a few colors
-    const colors = ['#a3846f', '#616852', '#B4707E', '#434242'];
-    const currentIndex = colors.indexOf(bgColor);
-    const nextIndex = (currentIndex + 1) % colors.length;
-    setBgColor(colors[nextIndex]);
-  };
+
 
   return (
     <div
       style={{ backgroundImage: `url('${backgroundImage}')` }}
-      className="bg-cover bg-center min-h-screen flex items-center justify-center cursor-pointer"
+      className="bg-cover bg-center min-h-screen flex items-center justify-center cursor-pointer portfolio-page"
       onClick={() => backgroundInputRef.current.click()}
+      
     >
       <input
         type="file"
@@ -227,12 +221,7 @@ export const FashionLayout  = () =>{
             className="text-lg cursor-text"
           />
           
-          <button 
-            onClick={handleColorChange}
-            className="mt-4 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            Change Background Color
-          </button>
+        
         </div>
       </div>
     </div>

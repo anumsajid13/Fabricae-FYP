@@ -43,11 +43,7 @@ export default function Navbar() {
         {/* Center: Navbar Links */}
         <div className="flex flex-grow justify-center">
           <ul className="flex space-x-8 font-medium p-4 md:p-0 mt-4 md:mt-0 font-custom">
-            <li>
-              <Link href="/" className={linkClasses("/")}>
-                Home
-              </Link>
-            </li>
+          
             <li>
               <Link href="/ImageGenerator" className={linkClasses("/ImageGenerator")}>
                 Prompt

@@ -3,7 +3,7 @@ import React from "react";
 export const SketchesIllustrations =() =>{
  return (
    <div
-     className="relative bg-cover bg-center py-20"
+     className="relative bg-cover bg-center py-20 portfolio-page"
      style={{ backgroundImage: "url('/Picture7.jpg')" }}
    >
      <div className="bg-[#b4967a] p-8 mx-8 md:mx-16 rounded-lg grid md:grid-cols-2 items-center">

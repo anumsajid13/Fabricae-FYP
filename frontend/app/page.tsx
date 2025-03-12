@@ -7,12 +7,11 @@ import { getUserProfile } from "../utils/auth";
 import NavBar from "./components/landingPage/NavBar";
 import NavBar2 from "./components/ImageGenerator/NavBar2";
 import Body from "./components/landingPage/Body";
-import BottomBar from "./components/landingPage/BottomBar";
 import LearnMoreSection from "./components/landingPage/learnMore";
 
 export default function Home() {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token); 
+  const token = useAuthStore((state) => state.token);
   const setToken = useAuthStore((state) => state.setToken);
   const [userInitialized, setUserInitialized] = useState(false);
 
@@ -33,7 +32,6 @@ export default function Home() {
           } else {
             console.error("Email is undefined in user profile.");
           }
-
         } else {
           console.log("No session found.");
         }
@@ -45,46 +43,47 @@ export default function Home() {
     };
 
     if (!userInitialized) {
-      initializeUser(); 
+      initializeUser();
     }
   }, [userInitialized, setToken]);
 
   const fetchOrCreateUser = async (email: string) => {
     try {
-
-      console.log("email",email)
-      const response = await fetch('http://localhost:5000/api/auth/get-or-create-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      console.log("email", email);
+      const response = await fetch(
+        "http://localhost:5000/api/auth/get-or-create-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {
-        console.log('User Data:', data.user);
-        console.log('JWT Token:', data.token);
+        console.log("User Data:", data.user);
+        console.log("JWT Token:", data.token);
 
         useAuthStore.getState().setToken(data.token);
         localStorage.setItem("userEmail", data.user.email);
-        router.push('/'); 
+        router.push("/");
       } else {
-        console.error('Error:', data.message);
+        console.error("Error:", data.message);
       }
     } catch (error) {
-      console.error('Error during user creation:', error);
+      console.error("Error during user creation:", error);
     }
   };
 
   return (
     <>
-      <div style={{ backgroundColor: "#E7E4D8" }}>
+      <div style={{ backgroundColor: "#E7E4D8", overflowX: "hidden" }}>
         {token ? <NavBar2 /> : <NavBar />}
         <Body />
         <div style={{ backgroundColor: "#434242" }}>
-          <BottomBar />
-          <LearnMoreSection />
+          <LearnMoreSection id="learn-more" />
         </div>
       </div>
     </>

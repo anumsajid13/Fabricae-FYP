@@ -3,7 +3,7 @@ import React from "react";
 export const  FabricMaterialSelection = () =>{
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center"
+      className="relative min-h-screen bg-cover bg-center portfolio-page"
       style={{ backgroundImage: "url('/Picture7.jpg')" }}
     >
       <div className="bg-[#b4967a] p-8 m-16 rounded-lg grid md:grid-cols-2">

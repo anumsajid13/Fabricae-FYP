@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useFashion } from "./FashionContext";
+import { useFashionStore } from "./FashionProvider";
 
 export const  FashionPortfolio =() =>  {
   const [quote, setQuote] = useState("Fashion is the armor to survive the reality of everyday life.");
@@ -7,10 +7,41 @@ export const  FashionPortfolio =() =>  {
   const [backgroundImage, setBackgroundImage] = useState("/Picture7.jpg");
   const [modelImage, setModelImage] = useState("/Picture1.jpg");
   const [label, setLabel] = useState("New Fashion");
+
   
   // Track which field is being edited
   const [editingField, setEditingField] = useState(null);
+  const backgroundInputRef = useRef(null);
+  const modelInputRef = useRef(null);
   
+  const { handleTextSelection, registerComponent, applyStyle } = useFashionStore();
+
+
+  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
+
+  const handleImageClick = (type) => {
+    setShowImageOptions(type);
+  };
+
+  const handleCloseModal = () => {
+    setShowImageOptions(null);
+  };
+
+  const handleChooseFromComputer = (type) => {
+    if (type === 'background') {
+      backgroundInputRef.current.click();
+    } else if (type === 'model') {
+      modelInputRef.current.click();
+    }
+    setShowImageOptions(null);
+  };
+
+  const handleChooseFromGallery = (type) => {
+    // Implement your gallery logic here
+    console.log(`Choose from gallery for ${type}`);
+    setShowImageOptions(null);
+  };
+
   // Store text with styling information
   const [styledContent, setStyledContent] = useState({
     quote: {
@@ -27,12 +58,7 @@ export const  FashionPortfolio =() =>  {
     }
   });
 
-  const backgroundInputRef = useRef(null);
-  const modelInputRef = useRef(null);
   
-  // Access the fashion context
-  const { handleTextSelection, registerComponent } = useFashion();
-
   // Component ID for this component
   const componentId = "fashion-portfolio";
 
@@ -240,6 +266,7 @@ const EditableText = ({ content, type, className }) => {
       className={className}
       onMouseUp={(e) => handleLocalTextSelection(e, type)}
       onClick={() => setEditingField(type)}
+      
     >
       {content.segments.map((segment, index) => (
         <span key={index} style={segment.styles}>
@@ -251,11 +278,12 @@ const EditableText = ({ content, type, className }) => {
 };
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7]">
+    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page">
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
-        onClick={() => backgroundInputRef.current.click()}
+        onClick={() => handleImageClick('background')}
+
       ></div>
 
       <input
@@ -264,6 +292,7 @@ const EditableText = ({ content, type, className }) => {
         ref={backgroundInputRef}
         className="hidden"
         onChange={(e) => handleImageUpload(e, setBackgroundImage)}
+
       />
 
       <div className="relative flex items-center justify-center h-full">
@@ -305,6 +334,16 @@ const EditableText = ({ content, type, className }) => {
           </div>
         </div>
       </div>
+
+        {/* Image Options Modal */}
+        {showImageOptions && (
+        <ImageOptionsModal
+          onClose={handleCloseModal}
+          onChooseFromComputer={() => handleChooseFromComputer(showImageOptions)}
+          onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
+        />
+      )}
+      
     </div>
   );
 };
