@@ -1,76 +1,24 @@
+// routes/designRoutes.js
 const express = require("express");
 const router = express.Router();
+const designController = require("../controllers/promptController");
 
-const PromptDesign = require("../Data/Models/PromptDesign");
+// Create a new prompt design
+router.post("/", designController.createPromptDesign);
 
+// Fetch all designs
+router.get("/retrieve", designController.getAllDesigns);
 
-router.post("/", async (req, res) => {
-  try {
-    const { title, imageUrl, username, patternType, prompt} = req.body;
+// Fetch designs by username and patternType
+router.get(
+  "/retrieve-by-username-and-patternType/:username/:patternType",
+  designController.getDesignsByUsernameAndPatternType
+);
 
-    const newPromptDesign = new PromptDesign({
-      title,
-      imageUrl,
-      username,
-      patternType,
-      prompt
-    });
+// Fetch designs by username
+router.get("/retrieve-by-username/:username", designController.getDesignsByUsername);
 
-    const savedPromptDesign = await newPromptDesign.save();
-    res.status(201).json(savedPromptDesign);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to save prompt design" });
-  }
-});
-
-
-
-router.get("/retrieve", async (req, res) => {
-  try {
-    //Fetch all  designs from the database
-    const designs = await PromptDesign.find().sort({ createdAt: 1 });
-    res.status(200).json(designs); 
-  } catch (error) {
-    console.error("Error fetching designs:", error);
-    res.status(500).json({ error: "Failed to fetch designs" });
-  }
-
-  });
-
-  // Route to retrieve designs by username
-router.get("/retrieve-by-username/:username", async (req, res) => {
-  const { username } = req.params;
- // console.log("username",username)
-  try {
-    const designs = await PromptDesign.find({ username }).sort({ createdAt: -1 }); // Sorting by most recent first
-    if (designs.length === 0) {
-      return res.status(404).json({ message: "No designs found for the specified username." });
-    }
-
-    res.status(200).json(designs);
-  } catch (error) {
-    console.error("Error fetching designs by username:", error);
-    res.status(500).json({ error: "Failed to fetch designs by username." });
-  }
-});
-
-
-router.delete('/delete', async (req, res) => {
-  const { title } = req.body; 
-
-  try {
-   
-    const deletedDesign = await PromptDesign.findOneAndDelete({ title });
-
-    if (!deletedDesign) {
-      return res.status(404).json({ message: 'Design not found.' });
-    }
-
-    return res.status(200).json({ message: 'Design successfully deleted.' });
-  } catch (error) {
-    console.error('Error deleting design:', error);
-    return res.status(500).json({ message: 'Error deleting the design.' });
-  }
-});
+// Delete a design by title
+router.delete("/delete", designController.deleteDesignByTitle);
 
 module.exports = router;

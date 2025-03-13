@@ -2,21 +2,19 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import {  useContext } from 'react';
-import { PortfolioContext } from './PortfolioContext';
+import { useFashionStore } from "../Portfolio/FashionProvider";
+
 
 const SelectPortfolio  = () => {
 
-  const { setSelectedPortfolio } = useContext(PortfolioContext);
+const { portfolioId, setPortfolioId } = useFashionStore();
   
   const router = useRouter();
   
   const handlePortfolioSelection = (portfolioId) => {
     console.log('iddd', portfolioId);
-    // Store in localStorage
-    localStorage.setItem('selectedPortfolio', portfolioId);
-    // Update state for local components
-    setSelectedPortfolio(portfolioId);
+   
+    setPortfolioId(portfolioId);
     // Navigate to the customization page
     router.push("/Portfolio");
   };

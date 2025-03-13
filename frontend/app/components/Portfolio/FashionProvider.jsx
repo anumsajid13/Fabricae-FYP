@@ -10,6 +10,16 @@ export const useFashionStore = create((set, get) => ({
     endOffset: 0,
   },
 
+
+  // State for portfolio ID
+  portfolioId: 1, // Default portfolio ID
+
+  // Function to set portfolio ID
+  setPortfolioId: (id) => {
+    set({ portfolioId: id });
+  },
+
+  
   // Component registry to track registered components and their methods
   componentRegistry: {},
 

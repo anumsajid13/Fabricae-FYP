@@ -141,7 +141,34 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
               <div className="w-full bg-cream-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:translate-y-[-4px]">
                 <div className="flex">
                   <div className="bg-[#b4707e] p-6 flex justify-center items-center">
-                    <svg
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="#fff" d="M19 13a1 1 0 0 0-1 1v.38l-1.48-1.48a2.79 2.79 0 0 0-3.93 0l-.7.7l-2.48-2.48a2.85 2.85 0 0 0-3.93 0L4 12.6V7a1 1 0 0 1 1-1h7a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-5a1 1 0 0 0-1-1M5 20a1 1 0 0 1-1-1v-3.57l2.9-2.9a.79.79 0 0 1 1.09 0l3.17 3.17l4.3 4.3Zm13-1a.9.9 0 0 1-.18.53L13.31 15l.7-.7a.77.77 0 0 1 1.1 0L18 17.21Zm4.71-14.71l-3-3a1 1 0 0 0-.33-.21a1 1 0 0 0-.76 0a1 1 0 0 0-.33.21l-3 3a1 1 0 0 0 1.42 1.42L18 4.41V10a1 1 0 0 0 2 0V4.41l1.29 1.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42" stroke-width="0.5" stroke="#000"/></svg>                  </div>
+                  <div className="p-4 flex-1">
+                    <h3 className="text-2xl font-bold mb-2 font-custom">
+                      Sketch to Pattern
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Got a quick sketch or a random design? Watch it transform
+                      into a stunning digital pattern—because every great design
+                      starts with a simple idea!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+               {/* Step 4: Editing Card */}
+               <div className="flex w-full items-center">
+              <div className="h-full flex flex-col items-center mr-4">
+                <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
+                  4
+                </div>
+              </div>
+
+              <div className="w-full bg-cream-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:translate-y-[-4px]">
+                <div className="flex">
+                  <div className="bg-[#b4707e] p-6 flex justify-center items-center">
+                  <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="48"
                       height="48"
@@ -158,17 +185,67 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
                   </div>
                   <div className="p-4 flex-1">
                     <h3 className="text-2xl font-bold mb-2 font-custom">
-                      Sketch to Pattern
+                      Pattern Editing
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Got a quick sketch or a random design? Watch it transform
-                      into a stunning digital pattern—because every great design
-                      starts with a simple idea!
+                    Tweak, refine, and perfect! Our intuitive tools let you shape your patterns exactly how you envision them—because details make all the difference. 
                     </p>
                   </div>
                 </div>
               </div>
             </div>
+
+
+               {/* Step 5: 3d visualization */}
+               <div className="flex w-full items-center">
+              <div className="h-full flex flex-col items-center mr-4">
+                <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
+                  5
+                </div>
+              </div>
+
+              <div className="w-full bg-cream-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:translate-y-[-4px]">
+                <div className="flex">
+                  <div className="bg-[#b4707e] p-6 flex justify-center items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 15 15"><path fill="#fff" d="M4 2L1 4.5V7h3v6h7V7h3V4.5L11 2H9.5l-2 4l-2-4z" stroke-width="0.5" stroke="#000"/></svg>                  </div>
+                  <div className="p-4 flex-1">
+                    <h3 className="text-2xl font-bold mb-2 font-custom">
+                    3D Mockup Preview
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                    See your designs come to life! Apply your patterns to various clothing styles with our 3D mockups and visualize them in real time.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+               {/* Step 6: Portfolio */}
+               <div className="flex w-full items-center">
+              <div className="h-full flex flex-col items-center mr-4">
+                <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
+                  6
+                </div>
+              </div>
+
+              <div className="w-full bg-cream-100 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:translate-y-[-4px]">
+                <div className="flex">
+                  <div className="bg-[#b4707e] p-6 flex justify-center items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><defs><mask id="ipSPassport0"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path fill="#fff" stroke="#fff" d="M10 10h28v34H10z"/><path stroke="#fff" d="m10 10l22-6v6"/><circle cx="24" cy="24" r="4" fill="#fff" stroke="#000"/><path stroke="#000" d="M20 34h8"/></g></mask></defs><path fill="#fff" d="M0 0h48v48H0z" mask="url(#ipSPassport0)"/></svg>
+                  </div>
+                  <div className="p-4 flex-1">
+                    <h3 className="text-2xl font-bold mb-2 font-custom">
+                      Portfolio Creation & Collabration
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                    Your designs deserve the spotlight! Build a stunning fashion portfolio to showcase your creativity. Connect with fashion brands through our built-in chat, let them view your work, and open doors to exciting collaborations!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
           </div>
 
           <Link href="/ImageGenerator">
@@ -202,7 +279,7 @@ const styles = {
     padding: "40px",
     backgroundColor: "#E7E4D8",
     minHeight: "100vh",
-    marginTop: "40px",
+    marginTop: "20px",
     width: "100%",
   },
   textContainer: {

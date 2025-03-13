@@ -39,7 +39,8 @@ export const PluginContent = () => {
 
   const { selection, applyStyle } = useFashionStore();
 
-  const [portfolioId, setSelectedPortfolio] = useState(1);
+// Get Zustand store state and actions
+const { portfolioId, setPortfolioId } = useFashionStore();
 
   // Create a map where each number points to an array of components from a specific folder
   const componentsMap = {
@@ -65,15 +66,7 @@ export const PluginContent = () => {
     ],
   };
 
-  // In PluginContent.jsx
-  useEffect(() => {
-    // Get the stored portfolio ID when component mounts
-    const storedPortfolio = localStorage.getItem("selectedPortfolio");
-    if (storedPortfolio) {
-      setSelectedPortfolio(parseInt(storedPortfolio, 10));
-    }
-  }, []);
-
+  
   // Get the components for the current portfolio
   const currentPortfolioComponents = componentsMap[portfolioId];
 

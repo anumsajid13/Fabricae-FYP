@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useFashionStore } from "./FashionProvider";
+import { ImageOptionsModal } from "./ImageOptionsModal"; // Import the component
 
 export const  FashionPortfolio =() =>  {
   const [quote, setQuote] = useState("Fashion is the armor to survive the reality of everyday life.");
@@ -317,15 +318,15 @@ const EditableText = ({ content, type, className }) => {
               src={modelImage}
               alt="New Fashion"
               className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
-              onClick={() => modelInputRef.current.click()}
-            />
+              onClick={() => handleImageClick('model')}
+              />
             <input
               type="file"
               accept="image/*"
               ref={modelInputRef}
               className="hidden"
               onChange={(e) => handleImageUpload(e, setModelImage)}
-            />
+              />
             <EditableText
               content={styledContent.label}
               type="label"
