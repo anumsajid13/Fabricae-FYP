@@ -106,11 +106,6 @@ export const  FashionPortfolio =() =>  {
     });
   }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
 
-  const backgroundInputRef = useRef(null);
-  const modelInputRef = useRef(null);
-
-  // Access the fashion context
-  const { handleTextSelection, registerComponent } = useFashionStore();
 
   // Component ID for this component
   const componentId = "fashion-portfolio";
