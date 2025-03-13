@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useFashionStore } from "./FashionProvider";
-import { ImageOptionsModal } from "./ImageOptionsModal"; // Import the component
+import { ImageOptionsModal } from "./ImageOptionsModal";
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
+
 
 export const  FashionPortfolio =() =>  {
   
+  const [activeDraggable, setActiveDraggable] = useState(null);
 
     // Track which field is being edited
     const [editingField, setEditingField] = useState(null);
@@ -101,7 +106,12 @@ export const  FashionPortfolio =() =>  {
     });
   }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
 
-  
+  const backgroundInputRef = useRef(null);
+  const modelInputRef = useRef(null);
+
+  // Access the fashion context
+  const { handleTextSelection, registerComponent } = useFashionStore();
+
   // Component ID for this component
   const componentId = "fashion-portfolio";
 
@@ -110,7 +120,7 @@ export const  FashionPortfolio =() =>  {
     registerComponent(componentId, {
       updateStyles: updateStyles
     });
-    
+
     // No need for a cleanup function as the component registry persists
   }, []);
 
@@ -136,9 +146,14 @@ export const  FashionPortfolio =() =>  {
     }
   };
 
+  const handleDragStart = (key) => {
+    setActiveDraggable(key);
+  };
+
+
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
-    
+
     // Update both the direct state and the styled content
     switch(type) {
       case 'quote':
@@ -165,15 +180,15 @@ export const  FashionPortfolio =() =>  {
 
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
-    
+
     const selection = window.getSelection();
     const text = selection.toString();
-    
+
     if (text.length > 0) {
       const range = selection.getRangeAt(0);
       const startOffset = range.startOffset;
       const endOffset = range.endOffset;
-      
+
       const selectedText = {
         text,
         type,
@@ -181,7 +196,7 @@ export const  FashionPortfolio =() =>  {
         endOffset,
         componentId // Include the component ID
       };
-      
+
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
@@ -191,32 +206,32 @@ export const  FashionPortfolio =() =>  {
 const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
   console.log("Updating styles for", type, "with", styles);
   console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
-  
+
   setStyledContent(prev => {
     const content = prev[type];
-    
+
     if (!content) return prev;
 
     // Use the saved offsets from the context instead of trying to get them from the current selection
     let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
     let endOffset = savedEndOffset !== undefined ? savedEndOffset : content.text.length;
-    
+
     console.log("Applying style from offset", startOffset, "to", endOffset);
-    
+
     // Create new segments based on the selection
     const newSegments = [];
     let currentOffset = 0;
-    
+
     content.segments.forEach(segment => {
       const segmentLength = segment.text.length;
       const segmentEnd = currentOffset + segmentLength;
-      
+
       if (segmentEnd <= startOffset || currentOffset >= endOffset) {
         // This segment is completely outside the selection
         newSegments.push(segment);
       } else {
         // This segment overlaps with the selection
-        
+
         // Add part before selection if it exists
         if (currentOffset < startOffset) {
           newSegments.push({
@@ -224,7 +239,7 @@ const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
             styles: { ...segment.styles }
           });
         }
-        
+
         // Add the selected part with new styles
         newSegments.push({
           text: segment.text.substring(
@@ -233,7 +248,7 @@ const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
           ),
           styles: { ...segment.styles, ...styles }
         });
-        
+
         // Add part after selection if it exists
         if (segmentEnd > endOffset) {
           newSegments.push({
@@ -242,10 +257,10 @@ const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
           });
         }
       }
-      
+
       currentOffset += segmentLength;
     });
-    
+
     return {
       ...prev,
       [type]: {
@@ -262,34 +277,34 @@ const EditableText = ({ content, type, className }) => {
   const textRef = useRef(null);
   const inputRef = useRef(null);
   const [localValue, setLocalValue] = useState('');
-  
+
   // Initialize local value when editing starts
   useEffect(() => {
     if (editingField === type) {
       setLocalValue(content.text);
     }
   }, [editingField, type, content.text]);
-  
+
   const handleInputChange = (e) => {
     const newText = e.target.value;
     setLocalValue(newText);
-    
+
     // Only update the parent state when input loses focus
     // This prevents re-rendering during typing
   };
-  
+
   const handleInputBlur = () => {
     // Update the parent state with final value
     handleTextChange({ target: { value: localValue } }, type);
     setEditingField(null);
   };
-  
+
   const handleInputKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleInputBlur();
     }
   };
-  
+
   if (editingField === type) {
     return (
       <input
@@ -301,7 +316,7 @@ const EditableText = ({ content, type, className }) => {
         onKeyDown={handleInputKeyDown}
         autoFocus
         className={`bg-transparent border-b border-white focus:outline-none ${className}`}
-        style={{ 
+        style={{
           width: '100%',
           boxSizing: 'border-box',
           display: 'block',
@@ -317,7 +332,6 @@ const EditableText = ({ content, type, className }) => {
       className={className}
       onMouseUp={(e) => handleLocalTextSelection(e, type)}
       onClick={() => setEditingField(type)}
-      
     >
       {content.segments.map((segment, index) => (
         <span key={index} style={segment.styles}>
@@ -329,7 +343,9 @@ const EditableText = ({ content, type, className }) => {
 };
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page">
+    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
+    onClick={() => setActiveDraggable(null)} >
+
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
@@ -346,22 +362,70 @@ const EditableText = ({ content, type, className }) => {
 
       />
 
-      <div className="relative flex items-center justify-center h-full">
-        <div className="relative z-30 text-center">
+      <div className="relative flex flex-col items-center justify-center h-full">
+      <Draggable disabled={activeDraggable !== "quote"} bounds="parent">
+        <ResizableBox
+        width={400}
+        height={50}
+        minConstraints={[150, 50]}
+        maxConstraints={[500, 200]}
+        axis="both"
+        resizeHandles={activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []}
+      >
+          <div style={{ transform: "none" }} className="relative z-50 text-center cursor-move"  onClick={(e) => {
+                e.stopPropagation();
+                handleDragStart("quote");
+              }}>
+
           <EditableText
             content={styledContent.quote}
             type="quote"
             className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
           />
 
+        </div>
+        </ResizableBox>
+        </Draggable>
+
+        <Draggable disabled={activeDraggable !== "title"}  bounds="parent">
+        <ResizableBox
+      width={800}
+      height={150}
+      minConstraints={[200, 50]}
+      maxConstraints={[600, 300]}
+      axis="both"
+      resizeHandles={activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []}
+    >
+        <div className="relative z-50 text-center cursor-move"
+         onClick={(e) => {
+                e.stopPropagation();
+                handleDragStart("title");
+              }}>
           <EditableText
             content={styledContent.title}
             type="title"
             className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
           />
-        </div>
+      </div>
+      </ResizableBox>
+      </Draggable>
 
-        <div className="absolute top-1/4 right-10 flex justify-end">
+
+      <Draggable disabled={activeDraggable !== "image"} bounds="parent">
+      <ResizableBox
+          width={300}
+          height={200}
+          minConstraints={[150, 200]}
+          maxConstraints={[500, 600]}
+          axis="both"
+          resizeHandles={activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []}
+          className="absolute top-[3rem] right-10 flex justify-end"
+        >
+       <div className="absolute top-1/4 right-10 flex justify-end"
+       onClick={(e) => {
+        e.stopPropagation();
+        handleDragStart("image");
+      }}>
           <div className="relative max-h-[calc(100%-4rem)]">
             <div className="absolute -inset-5 bg-[#9a7752] rounded-lg z-10"></div>
             <img
@@ -384,17 +448,9 @@ const EditableText = ({ content, type, className }) => {
             />
           </div>
         </div>
+        </ResizableBox>
+      </Draggable>
       </div>
-
-        {/* Image Options Modal */}
-        {showImageOptions && (
-        <ImageOptionsModal
-          onClose={handleCloseModal}
-          onChooseFromComputer={() => handleChooseFromComputer(showImageOptions)}
-          onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
-        />
-      )}
-      
     </div>
   );
 };
