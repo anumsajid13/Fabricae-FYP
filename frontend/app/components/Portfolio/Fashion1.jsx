@@ -269,7 +269,8 @@ const EditableText = ({ content, type, className }) => {
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
-        onClick={() => handleImageClick('background')}
+        onClick={() => backgroundInputRef.current.click()}
+
 
       ></div>
 
@@ -352,7 +353,7 @@ const EditableText = ({ content, type, className }) => {
               src={modelImage}
               alt="New Fashion"
               className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
-              onClick={() => handleImageClick('model')}
+              onClick={() => modelInputRef.current.click()}
               />
             <input
               type="file"
