@@ -3,22 +3,42 @@ import { useFashionStore } from "./FashionProvider";
 import { ImageOptionsModal } from "./ImageOptionsModal"; // Import the component
 
 export const  FashionPortfolio =() =>  {
-  const [quote, setQuote] = useState("Fashion is the armor to survive the reality of everyday life.");
-  const [title, setTitle] = useState("Fashion Portfolio");
-  const [backgroundImage, setBackgroundImage] = useState("/Picture7.jpg");
-  const [modelImage, setModelImage] = useState("/Picture1.jpg");
-  const [label, setLabel] = useState("New Fashion");
-
   
-  // Track which field is being edited
-  const [editingField, setEditingField] = useState(null);
-  const backgroundInputRef = useRef(null);
-  const modelInputRef = useRef(null);
+
+    // Track which field is being edited
+    const [editingField, setEditingField] = useState(null);
+    const backgroundInputRef = useRef(null);
+    const modelInputRef = useRef(null);
+    
+    const { handleTextSelection, registerComponent, applyStyle ,getPageState, updatePageState, selectedPage} = useFashionStore();
   
-  const { handleTextSelection, registerComponent, applyStyle } = useFashionStore();
+  
+    const pageId = `fashion-portfolio-${selectedPage}`;
+    const pageState = getPageState(pageId);
+  
+  
+    const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
+  
+  
+   // Initialize state from pageState if it exists, otherwise use defaults
+   const [quote, setQuote] = useState(
+    pageState.quote || "Fashion is the armor to survive the reality of everyday life."
+  );
+  const [title, setTitle] = useState(
+    pageState.title || "Fashion Portfolio"
+  );
+  const [backgroundImage, setBackgroundImage] = useState(
+    pageState.backgroundImage || "/Picture7.jpg"
+  );
+  const [modelImage, setModelImage] = useState(
+    pageState.modelImage || "/Picture1.jpg"
+  );
+  const [label, setLabel] = useState(
+    pageState.label || "New Fashion"
+  );
 
 
-  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
+
 
   const handleImageClick = (type) => {
     setShowImageOptions(type);
@@ -43,21 +63,43 @@ export const  FashionPortfolio =() =>  {
     setShowImageOptions(null);
   };
 
-  // Store text with styling information
-  const [styledContent, setStyledContent] = useState({
-    quote: {
-      text: quote,
-      segments: [{ text: quote, styles: {} }]
-    },
-    title: {
-      text: title,
-      segments: [{ text: title, styles: {} }]
-    },
-    label: {
-      text: label,
-      segments: [{ text: label, styles: {} }]
+  
+   // Initialize styled content from pageState if it exists
+   const [styledContent, setStyledContent] = useState(() => {
+    // Check if we have stored styled content
+    if (pageState.styledContent) {
+      return pageState.styledContent;
     }
+    
+    // Otherwise create default styled content
+    return {
+      quote: {
+        text: quote,
+        segments: [{ text: quote, styles: {} }]
+      },
+      title: {
+        text: title,
+        segments: [{ text: title, styles: {} }]
+      },
+      label: {
+        text: label,
+        segments: [{ text: label, styles: {} }]
+      }
+    };
   });
+
+  // Update page state whenever any state changes
+  useEffect(() => {
+    updatePageState(pageId, {
+      quote,
+      title,
+      backgroundImage,
+      modelImage,
+      label,
+      // Also save styled content to preserve formatting
+      styledContent
+    });
+  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
 
   
   // Component ID for this component
@@ -72,6 +114,20 @@ export const  FashionPortfolio =() =>  {
     // No need for a cleanup function as the component registry persists
   }, []);
 
+  // Update page state whenever any state changes
+  useEffect(() => {
+    updatePageState(pageId, {
+      quote,
+      title,
+      backgroundImage,
+      modelImage,
+      label,
+      // Also save styled content to preserve formatting
+      styledContent
+    });
+  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
+
+  
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
@@ -200,12 +256,6 @@ const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
   });
 };
 
-// Also update the registerComponent line in the useEffect in FashionPortfolio.jsx to:
-useEffect(() => {
-  registerComponent(componentId, {
-    updateStyles: updateStyles
-  });
-}, []);
 
 
 const EditableText = ({ content, type, className }) => {

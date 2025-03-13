@@ -25,9 +25,9 @@ import { useFashionStore } from "./FashionProvider";
 
 // Inner component that uses the Fashion context
 export const PluginContent = () => {
-  // State to track the selected slide/component
-  const [selectedSlide, setSelectedSlide] = useState(1);
-  const [scale, setScale] = useState(1); // Scale state for zoom functionality
+
+
+const [scale, setScale] = useState(1); // Scale state for zoom functionality
   const componentRef = useRef(null); // Reference to the component for fullscreen
 
   const [fontSize, setFontSize] = useState(16); // Default font size is 16px
@@ -40,7 +40,8 @@ export const PluginContent = () => {
   const { selection, applyStyle } = useFashionStore();
 
 // Get Zustand store state and actions
-const { portfolioId, setPortfolioId } = useFashionStore();
+const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashionStore();
+
 
   // Create a map where each number points to an array of components from a specific folder
   const componentsMap = {
@@ -73,29 +74,50 @@ const { portfolioId, setPortfolioId } = useFashionStore();
   // Get total slides for the current portfolio
   const totalSlides = currentPortfolioComponents.length;
 
-  // Ensure selectedSlide is valid for current portfolio
+  // Ensure selectedPage is valid for current portfolio 
   useEffect(() => {
-    if (selectedSlide > totalSlides) {
-      setSelectedSlide(1);
+    if (selectedPage > totalSlides) {
+      setSelectedPage(1); 
     }
-  }, [portfolioId, totalSlides, selectedSlide]);
+  }, [portfolioId, totalSlides, selectedPage]);
 
   // Function to handle slide selection
   const handleSlideClick = (slide) => {
     if (slide <= totalSlides) {
-      setSelectedSlide(slide);
+      setSelectedPage(slide);
     }
   };
 
-  // Function to handle next/previous slide
   const handleNext = () => {
-    setSelectedSlide((prev) => (prev < totalSlides ? prev + 1 : prev));
+      console.log("Current Page:", selectedPage); // Log current page
+      console.log("Total Slides:", totalSlides); // Log total slides
+  
+      if (selectedPage < totalSlides) {
+        const nextPage = selectedPage + 1;
+        console.log("Next Page:", nextPage); // Log next page
+        setSelectedPage(nextPage); // Pass the new value directly
+      } else {
+        console.log("Already on the last page");
+      }
   };
+  
+  useEffect(() => {
+    console.log("Selected Page Updated:", selectedPage);
+  }, [selectedPage]);
 
   const handlePrevious = () => {
-    setSelectedSlide((prev) => (prev > 1 ? prev - 1 : prev));
+    console.log("Current Page:", selectedPage); // Log current page
+    console.log("Total Slides:", totalSlides); // Log total slides
+  
+    if (selectedPage > 1) {
+      const previousPage = selectedPage - 1;
+      console.log("Previous Page:", previousPage); // Log previous page
+      setSelectedPage(previousPage); // Pass the new value directly
+    } else {
+      console.log("Already on the first page");
+    }
   };
-
+  
   // Function to zoom in
   const handleZoomIn = () => {
     setScale((prevScale) => prevScale + 0.1); // Increase scale by 0.1
@@ -249,7 +271,7 @@ const { portfolioId, setPortfolioId } = useFashionStore();
                   >
                     <div
                       className={`bg-[#E7E4D8] rounded-lg p-3 border-2 ${
-                        selectedSlide === slideNumber
+                        selectedPage === slideNumber
                           ? "border-[#B4707E]"
                           : "border-transparent"
                       } hover:border-[#B4707E] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg`}
@@ -257,7 +279,7 @@ const { portfolioId, setPortfolioId } = useFashionStore();
                       <div className="flex items-center gap-3">
                         <span
                           className={`material-symbols-outlined ${
-                            selectedSlide === slideNumber
+                            selectedPage === slideNumber
                               ? "text-[#822538]"
                               : "text-[#616852]"
                           } group-hover:text-[#822538]`}
@@ -766,7 +788,7 @@ const { portfolioId, setPortfolioId } = useFashionStore();
                 }} // Apply scaling
               >
                 <div className="w-full h-full flex items-center justify-center">
-                  {currentPortfolioComponents[selectedSlide - 1]}
+                  {currentPortfolioComponents[selectedPage - 1]}
                 </div>
               </div>
             </div>
@@ -774,18 +796,18 @@ const { portfolioId, setPortfolioId } = useFashionStore();
               <button
                 className="flex items-center gap-2 px-4 py-2 bg-[#434242] text-[#E7E4D8] rounded-lg hover:bg-[#616852] transition-colors duration-200"
                 onClick={handlePrevious}
-                disabled={selectedSlide === 1}
+                disabled={selectedPage === 1}
               >
                 <span className="material-symbols-outlined">arrow_back</span>
                 <span>Previous</span>
               </button>
               <div className="text-[#434242] font-medium">
-                Page {selectedSlide} of {totalSlides}
+                Page {selectedPage} of {totalSlides}
               </div>
               <button
                 className="flex items-center gap-2 px-4 py-2 bg-[#434242] text-[#E7E4D8] rounded-lg hover:bg-[#616852] transition-colors duration-200"
                 onClick={handleNext}
-                disabled={selectedSlide === totalSlides}
+                disabled={selectedPage === totalSlides}
               >
                 <span>Next</span>
                 <span className="material-symbols-outlined">arrow_forward</span>
