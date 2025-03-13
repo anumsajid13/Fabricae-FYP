@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useFashionStore } from "./FashionProvider";
+import { ImageOptionsModal } from "./ImageOptionsModal"; // Import the component
 import { useFashion } from "./FashionContext";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -262,13 +264,15 @@ const EditableText = ({ content, type, className }) => {
 };
 
   return (
+    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page">
     <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7]"
     onClick={() => setActiveDraggable(null)} >
 
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
-        onClick={() => backgroundInputRef.current.click()}
+        onClick={() => handleImageClick('background')}
+
       ></div>
 
       <input
@@ -277,6 +281,7 @@ const EditableText = ({ content, type, className }) => {
         ref={backgroundInputRef}
         className="hidden"
         onChange={(e) => handleImageUpload(e, setBackgroundImage)}
+
       />
 
       <div className="relative flex flex-col items-center justify-center h-full">
@@ -349,15 +354,15 @@ const EditableText = ({ content, type, className }) => {
               src={modelImage}
               alt="New Fashion"
               className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
-              onClick={() => modelInputRef.current.click()}
-            />
+              onClick={() => handleImageClick('model')}
+              />
             <input
               type="file"
               accept="image/*"
               ref={modelInputRef}
               className="hidden"
               onChange={(e) => handleImageUpload(e, setModelImage)}
-            />
+              />
             <EditableText
               content={styledContent.label}
               type="label"

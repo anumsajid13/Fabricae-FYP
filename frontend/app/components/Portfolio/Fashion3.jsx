@@ -1,7 +1,7 @@
 import React from "react";
 export const Fashion =  () => {
   return (
-    <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex items-center justify-center">
+    <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex items-center justify-center portfolio-page">
       <div className="w-[80%] bg-[#a3846f] bg-opacity-90 p-8 flex flex-col md:flex-row gap-6">
         {/* Left Section with Image */}
         <div className="flex-1 flex justify-center">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useFashionStore } from "./FashionProvider";
 import { useFashion } from "./FashionContext";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -193,7 +194,7 @@ export const FashionLayout  = () =>{
   return (
     <div
       style={{ backgroundImage: `url('${backgroundImage}')` }}
-      className="bg-cover bg-center min-h-screen flex items-center justify-center cursor-pointer"
+      className="bg-cover bg-center min-h-screen flex items-center justify-center cursor-pointer portfolio-page"
       onClick={() => backgroundInputRef.current.click()}
     >
       <input
