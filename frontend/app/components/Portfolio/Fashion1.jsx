@@ -264,8 +264,7 @@ const EditableText = ({ content, type, className }) => {
 };
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page">
-    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7]"
+    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
     onClick={() => setActiveDraggable(null)} >
 
       <div
