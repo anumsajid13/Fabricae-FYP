@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useFashionStore } from "./FashionProvider";
-import { ImageOptionsModal } from "./ImageOptionsModal"; // Import the component
-import { useFashion } from "./FashionContext";
+import { ImageOptionsModal } from "./ImageOptionsModal";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
@@ -39,7 +38,7 @@ export const  FashionPortfolio =() =>  {
   const modelInputRef = useRef(null);
 
   // Access the fashion context
-  const { handleTextSelection, registerComponent } = useFashion();
+  const { handleTextSelection, registerComponent } = useFashionStore();
 
   // Component ID for this component
   const componentId = "fashion-portfolio";

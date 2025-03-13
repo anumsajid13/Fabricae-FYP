@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useFashionStore } from "./FashionProvider";
-import { useFashion } from "./FashionContext";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
@@ -28,7 +27,7 @@ export const FashionLayout  = () =>{
   });
 
   // Access fashion context
-  const { handleTextSelection, registerComponent } = useFashion();
+  const { handleTextSelection, registerComponent } = useFashionStore();
 
   // Component ID for this component
   const componentId = "fashion-layout";
