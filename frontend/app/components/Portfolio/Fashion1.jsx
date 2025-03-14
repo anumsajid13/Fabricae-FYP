@@ -5,45 +5,43 @@ import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
-
-export const  FashionPortfolio =() =>  {
-
+export const FashionPortfolio = () => {
   const [activeDraggable, setActiveDraggable] = useState(null);
 
-    // Track which field is being edited
-    const [editingField, setEditingField] = useState(null);
-    const backgroundInputRef = useRef(null);
-    const modelInputRef = useRef(null);
+  // Track which field is being edited
+  const [editingField, setEditingField] = useState(null);
+  const backgroundInputRef = useRef(null);
+  const modelInputRef = useRef(null);
 
-    const { handleTextSelection, registerComponent, applyStyle ,getPageState, updatePageState, selectedPage, getElementPosition, updateElementPosition} = useFashionStore();
+  const {
+    handleTextSelection,
+    registerComponent,
+    applyStyle,
+    getPageState,
+    updatePageState,
+    selectedPage,
+    getElementPosition,
+    updateElementPosition,
+  } = useFashionStore();
 
+  const pageId = `fashion-portfolio-${selectedPage}`;
+  const pageState = getPageState(pageId);
 
-    const pageId = `fashion-portfolio-${selectedPage}`;
-    const pageState = getPageState(pageId);
+  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
-
-    const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
-
-
-   // Initialize state from pageState if it exists, otherwise use defaults
-   const [quote, setQuote] = useState(
-    pageState.quote || "Fashion is the armor to survive the reality of everyday life"
+  // Initialize state from pageState if it exists, otherwise use defaults
+  const [quote, setQuote] = useState(
+    pageState.quote ||
+      "Fashion is the armor to survive the reality of everyday life"
   );
-  const [title, setTitle] = useState(
-    pageState.title || "Fashion Portfolio"
-  );
+  const [title, setTitle] = useState(pageState.title || "Fashion Portfolio");
   const [backgroundImage, setBackgroundImage] = useState(
     pageState.backgroundImage || "/Picture7.jpg"
   );
   const [modelImage, setModelImage] = useState(
     pageState.modelImage || "/Picture1.jpg"
   );
-  const [label, setLabel] = useState(
-    pageState.label || "New Fashion"
-  );
-
-
-
+  const [label, setLabel] = useState(pageState.label || "New Fashion");
 
   const handleImageClick = (type) => {
     setShowImageOptions(type);
@@ -54,9 +52,9 @@ export const  FashionPortfolio =() =>  {
   };
 
   const handleChooseFromComputer = (type) => {
-    if (type === 'background') {
+    if (type === "background") {
       backgroundInputRef.current.click();
-    } else if (type === 'model') {
+    } else if (type === "model") {
       modelInputRef.current.click();
     }
     setShowImageOptions(null);
@@ -68,9 +66,8 @@ export const  FashionPortfolio =() =>  {
     setShowImageOptions(null);
   };
 
-
-   // Initialize styled content from pageState if it exists
-   const [styledContent, setStyledContent] = useState(() => {
+  // Initialize styled content from pageState if it exists
+  const [styledContent, setStyledContent] = useState(() => {
     // Check if we have stored styled content
     if (pageState.styledContent) {
       return pageState.styledContent;
@@ -80,16 +77,16 @@ export const  FashionPortfolio =() =>  {
     return {
       quote: {
         text: quote,
-        segments: [{ text: quote, styles: {} }]
+        segments: [{ text: quote, styles: {} }],
       },
       title: {
         text: title,
-        segments: [{ text: title, styles: {} }]
+        segments: [{ text: title, styles: {} }],
       },
       label: {
         text: label,
-        segments: [{ text: label, styles: {} }]
-      }
+        segments: [{ text: label, styles: {} }],
+      },
     };
   });
 
@@ -107,10 +104,18 @@ export const  FashionPortfolio =() =>  {
         title: getElementPosition(componentId, "title"),
         image: getElementPosition(componentId, "image"),
       },
-
     });
-  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState, getElementPosition,]);
-
+  }, [
+    quote,
+    title,
+    backgroundImage,
+    modelImage,
+    label,
+    styledContent,
+    pageId,
+    updatePageState,
+    getElementPosition,
+  ]);
 
   // Component ID for this component
   const componentId = "fashion-portfolio";
@@ -122,7 +127,7 @@ export const  FashionPortfolio =() =>  {
   // Register this component with context when it mounts
   useEffect(() => {
     registerComponent(componentId, {
-      updateStyles: updateStyles
+      updateStyles: updateStyles,
     });
 
     // No need for a cleanup function as the component registry persists
@@ -137,10 +142,18 @@ export const  FashionPortfolio =() =>  {
       modelImage,
       label,
       // Also save styled content to preserve formatting
-      styledContent
+      styledContent,
     });
-  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
-
+  }, [
+    quote,
+    title,
+    backgroundImage,
+    modelImage,
+    label,
+    styledContent,
+    pageId,
+    updatePageState,
+  ]);
 
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
@@ -154,31 +167,30 @@ export const  FashionPortfolio =() =>  {
     setActiveDraggable(key);
   };
 
-
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
     // Update both the direct state and the styled content
-    switch(type) {
-      case 'quote':
+    switch (type) {
+      case "quote":
         setQuote(newText);
         break;
-      case 'title':
+      case "title":
         setTitle(newText);
         break;
-      case 'label':
+      case "label":
         setLabel(newText);
         break;
       default:
         break;
     }
 
-    setStyledContent(prev => ({
+    setStyledContent((prev) => ({
       ...prev,
       [type]: {
         text: newText,
-        segments: [{ text: newText, styles: {} }]
-      }
+        segments: [{ text: newText, styles: {} }],
+      },
     }));
   };
 
@@ -198,7 +210,7 @@ export const  FashionPortfolio =() =>  {
         type,
         startOffset,
         endOffset,
-        componentId // Include the component ID
+        componentId, // Include the component ID
       };
 
       // Send selection to the global context
@@ -206,156 +218,154 @@ export const  FashionPortfolio =() =>  {
     }
   };
 
-// This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
-const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
-  console.log("Updating styles for", type, "with", styles);
-  console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
+  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
+  const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+    console.log("Updating styles for", type, "with", styles);
+    console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
 
-  setStyledContent(prev => {
-    const content = prev[type];
+    setStyledContent((prev) => {
+      const content = prev[type];
 
-    if (!content) return prev;
+      if (!content) return prev;
 
-    // Use the saved offsets from the context instead of trying to get them from the current selection
-    let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
-    let endOffset = savedEndOffset !== undefined ? savedEndOffset : content.text.length;
+      // Use the saved offsets from the context instead of trying to get them from the current selection
+      let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
+      let endOffset =
+        savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
-    console.log("Applying style from offset", startOffset, "to", endOffset);
+      console.log("Applying style from offset", startOffset, "to", endOffset);
 
-    // Create new segments based on the selection
-    const newSegments = [];
-    let currentOffset = 0;
+      // Create new segments based on the selection
+      const newSegments = [];
+      let currentOffset = 0;
 
-    content.segments.forEach(segment => {
-      const segmentLength = segment.text.length;
-      const segmentEnd = currentOffset + segmentLength;
+      content.segments.forEach((segment) => {
+        const segmentLength = segment.text.length;
+        const segmentEnd = currentOffset + segmentLength;
 
-      if (segmentEnd <= startOffset || currentOffset >= endOffset) {
-        // This segment is completely outside the selection
-        newSegments.push(segment);
-      } else {
-        // This segment overlaps with the selection
+        if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+          // This segment is completely outside the selection
+          newSegments.push(segment);
+        } else {
+          // This segment overlaps with the selection
 
-        // Add part before selection if it exists
-        if (currentOffset < startOffset) {
+          // Add part before selection if it exists
+          if (currentOffset < startOffset) {
+            newSegments.push({
+              text: segment.text.substring(0, startOffset - currentOffset),
+              styles: { ...segment.styles },
+            });
+          }
+
+          // Add the selected part with new styles
           newSegments.push({
-            text: segment.text.substring(0, startOffset - currentOffset),
-            styles: { ...segment.styles }
+            text: segment.text.substring(
+              Math.max(0, startOffset - currentOffset),
+              Math.min(segmentLength, endOffset - currentOffset)
+            ),
+            styles: { ...segment.styles, ...styles },
           });
+
+          // Add part after selection if it exists
+          if (segmentEnd > endOffset) {
+            newSegments.push({
+              text: segment.text.substring(endOffset - currentOffset),
+              styles: { ...segment.styles },
+            });
+          }
         }
 
-        // Add the selected part with new styles
-        newSegments.push({
-          text: segment.text.substring(
-            Math.max(0, startOffset - currentOffset),
-            Math.min(segmentLength, endOffset - currentOffset)
-          ),
-          styles: { ...segment.styles, ...styles }
-        });
+        currentOffset += segmentLength;
+      });
 
-        // Add part after selection if it exists
-        if (segmentEnd > endOffset) {
-          newSegments.push({
-            text: segment.text.substring(endOffset - currentOffset),
-            styles: { ...segment.styles }
-          });
-        }
-      }
-
-      currentOffset += segmentLength;
+      return {
+        ...prev,
+        [type]: {
+          text: content.text,
+          segments: newSegments,
+        },
+      };
     });
+  };
 
-    return {
-      ...prev,
-      [type]: {
-        text: content.text,
-        segments: newSegments
+  const EditableText = ({ content, type, className }) => {
+    const textRef = useRef(null);
+    const inputRef = useRef(null);
+    const [localValue, setLocalValue] = useState("");
+
+    // Initialize local value when editing starts
+    useEffect(() => {
+      if (editingField === type) {
+        setLocalValue(content.text);
+      }
+    }, [editingField, type, content.text]);
+
+    const handleInputChange = (e) => {
+      const newText = e.target.value;
+      setLocalValue(newText);
+
+      // Only update the parent state when input loses focus
+      // This prevents re-rendering during typing
+    };
+
+    const handleInputBlur = () => {
+      // Update the parent state with final value
+      handleTextChange({ target: { value: localValue } }, type);
+      setEditingField(null);
+    };
+
+    const handleInputKeyDown = (e) => {
+      if (e.key === "Enter") {
+        handleInputBlur();
       }
     };
-  });
-};
 
-
-
-const EditableText = ({ content, type, className }) => {
-  const textRef = useRef(null);
-  const inputRef = useRef(null);
-  const [localValue, setLocalValue] = useState('');
-
-  // Initialize local value when editing starts
-  useEffect(() => {
     if (editingField === type) {
-      setLocalValue(content.text);
+      return (
+        <input
+          ref={inputRef}
+          type="text"
+          value={localValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
+          autoFocus
+          className={`bg-transparent border-b border-white focus:outline-none ${className}`}
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            display: "block",
+            whiteSpace: "pre",
+          }}
+        />
+      );
     }
-  }, [editingField, type, content.text]);
 
-  const handleInputChange = (e) => {
-    const newText = e.target.value;
-    setLocalValue(newText);
-
-    // Only update the parent state when input loses focus
-    // This prevents re-rendering during typing
-  };
-
-  const handleInputBlur = () => {
-    // Update the parent state with final value
-    handleTextChange({ target: { value: localValue } }, type);
-    setEditingField(null);
-  };
-
-  const handleInputKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleInputBlur();
-    }
-  };
-
-  if (editingField === type) {
     return (
-      <input
-        ref={inputRef}
-        type="text"
-        value={localValue}
-        onChange={handleInputChange}
-        onBlur={handleInputBlur}
-        onKeyDown={handleInputKeyDown}
-        autoFocus
-        className={`bg-transparent border-b border-white focus:outline-none ${className}`}
-        style={{
-          width: '100%',
-          boxSizing: 'border-box',
-          display: 'block',
-          whiteSpace: 'pre'
-        }}
-      />
+      <div
+        ref={textRef}
+        className={className}
+        onMouseUp={(e) => handleLocalTextSelection(e, type)}
+        onClick={() => setEditingField(type)}
+      >
+        {content.segments.map((segment, index) => (
+          <span key={index} style={segment.styles}>
+            {segment.text}
+          </span>
+        ))}
+      </div>
     );
-  }
+  };
 
   return (
     <div
-      ref={textRef}
-      className={className}
-      onMouseUp={(e) => handleLocalTextSelection(e, type)}
-      onClick={() => setEditingField(type)}
+      className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
+      onClick={() => setActiveDraggable(null)}
     >
-      {content.segments.map((segment, index) => (
-        <span key={index} style={segment.styles}>
-          {segment.text}
-        </span>
-      ))}
-    </div>
-  );
-};
-
-  return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
-    onClick={() => setActiveDraggable(null)} >
-
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
         onClick={() => backgroundInputRef.current.click()}
-
-
       ></div>
 
       <input
@@ -364,120 +374,139 @@ const EditableText = ({ content, type, className }) => {
         ref={backgroundInputRef}
         className="hidden"
         onChange={(e) => handleImageUpload(e, setBackgroundImage)}
-
       />
 
-      <div className="relative flex flex-col items-center justify-center h-full" style={{ zIndex: 2}}>
-      <div className="relative w-full z-20">
-      <Draggable disabled={activeDraggable !== "quote"} bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
-      defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
-      onStop={(e, data) => {
-        console.log("Updating quote position:", { x: data.x, y: data.y });
-        // Update the position in the global state
-        updateElementPosition(componentId, "quote", {
-          x: data.x,
-          y: data.y,
-          width: quotePosition.width,
-          height: quotePosition.height,
-        });
-      }}>
-        <ResizableBox
-       width={quotePosition.width}
-       height={quotePosition.height}
-        minConstraints={[150, 50]}
-        maxConstraints={[500, 200]}
-        axis="both"
-        resizeHandles={activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []}
-        onResizeStop={(e, { size }) => {
-          // Update the size in the global state
-          updateElementPosition(componentId, "quote", {
-            x: quotePosition.x, // Keep the existing x position
-            y: quotePosition.y,
-            width: size.width,
-            height: size.height,
-          });
-        }}
+      <div
+        className="relative flex flex-col items-center justify-center h-full"
+        style={{ zIndex: 2 }}
       >
-          <div style={{ transform: "none"}} className="relative text-center cursor-move"  onClick={(e) => {
-                e.stopPropagation();
-                handleDragStart("quote");
-              }}>
+        <div className="relative w-full z-20">
+          <Draggable
+            disabled={activeDraggable !== "quote"}
+            bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
+            defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating quote position:", { x: data.x, y: data.y });
+              // Update the position in the global state
+              updateElementPosition(componentId, "quote", {
+                x: data.x,
+                y: data.y,
+                width: quotePosition.width,
+                height: quotePosition.height,
+              });
+            }}
+          >
+            <ResizableBox
+              width={quotePosition.width}
+              height={quotePosition.height}
+              minConstraints={[150, 50]}
+              maxConstraints={[500, 200]}
+              axis="both"
+              resizeHandles={
+                activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []
+              }
+              onResizeStop={(e, { size }) => {
+                // Update the size in the global state
+                updateElementPosition(componentId, "quote", {
+                  x: quotePosition.x, // Keep the existing x position
+                  y: quotePosition.y,
+                  width: size.width,
+                  height: size.height,
+                });
+              }}
+            >
+              <div
+                style={{ transform: "none" }}
+                className="relative text-center cursor-move"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart("quote");
+                }}
+              >
+                <EditableText
+                  content={styledContent.quote}
+                  type="quote"
+                  className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
+                />
+              </div>
+            </ResizableBox>
+          </Draggable>
 
-          <EditableText
-            content={styledContent.quote}
-            type="quote"
-            className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
-          />
-
+          <Draggable
+            disabled={activeDraggable !== "title"}
+            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
+            defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating title position:", { x: data.x, y: data.y });
+              updateElementPosition(componentId, "title", {
+                x: data.x,
+                y: data.y,
+                width: titlePosition.width,
+                height: titlePosition.height,
+              });
+            }}
+          >
+            <ResizableBox
+              width={titlePosition.width}
+              height={titlePosition.height}
+              minConstraints={[200, 50]}
+              maxConstraints={[600, 300]}
+              axis="both"
+              resizeHandles={
+                activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []
+              }
+              onResizeStop={(e, { size }) => {
+                console.log("Updating title size:", size);
+                updateElementPosition(componentId, "title", {
+                  x: titlePosition.x,
+                  y: titlePosition.y,
+                  width: size.width,
+                  height: size.height,
+                });
+              }}
+            >
+              <div
+                className="relative text-center cursor-move"
+                style={{ position: "relative", zIndex: 3 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart("title");
+                }}
+              >
+                <EditableText
+                  content={styledContent.title}
+                  type="title"
+                  className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
+                />
+              </div>
+            </ResizableBox>
+          </Draggable>
         </div>
-        </ResizableBox>
-        </Draggable>
 
-        <Draggable disabled={activeDraggable !== "title"}  bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
-        defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
-        onStop={(e, data) => {
-          console.log("Updating title position:", { x: data.x, y: data.y });
-          updateElementPosition(componentId, "title", {
-            x: data.x,
-            y: data.y,
-            width: titlePosition.width,
-            height: titlePosition.height,
-          });
-        }}
-    >
-        <ResizableBox
-      width={titlePosition.width}
-      height={titlePosition.height}
-      minConstraints={[200, 50]}
-      maxConstraints={[600, 300]}
-      axis="both"
-      resizeHandles={activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []}
-      onResizeStop={(e, { size }) => {
-        console.log("Updating title size:", size);
-        updateElementPosition(componentId, "title", {
-          x: titlePosition.x,
-          y: titlePosition.y,
-          width: size.width,
-          height: size.height,
-        });
-      }}
-    >
-        <div className="relative text-center cursor-move"
-        style={{ position: 'relative', zIndex: 3 }}
-         onClick={(e) => {
-                e.stopPropagation();
-                handleDragStart("title");
-              }}>
-          <EditableText
-            content={styledContent.title}
-            type="title"
-            className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
-          />
-      </div>
-      </ResizableBox>
-      </Draggable>
-    </div>
-
-    <div className="absolute w-full h-full" style={{ zIndex: 10 }}>
-          <Draggable disabled={activeDraggable !== "image"} bounds="parent"
-          defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
-          onStop={(e, data) => {
-            console.log("Updating image position:", { x: data.x, y: data.y });
-            updateElementPosition(componentId, "image", {
-              x: data.x,
-              y: data.y,
-              width: imagePosition.width,
-              height: imagePosition.height,
-            });
-          }}>
-
+        <div className="absolute w-full h-full" style={{ zIndex: 10 }}>
+          <Draggable
+            disabled={activeDraggable !== "image"}
+            bounds="parent"
+            defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating image position:", { x: data.x, y: data.y });
+              updateElementPosition(componentId, "image", {
+                x: data.x,
+                y: data.y,
+                width: imagePosition.width,
+                height: imagePosition.height,
+              });
+            }}
+          >
             <ResizableBox
               width={imagePosition.width}
               height={imagePosition.height}
               minConstraints={[150, 200]}
               maxConstraints={[500, 600]}
               axis="both"
-              resizeHandles={activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []}
+              resizeHandles={
+                activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []
+              }
               className="absolute top-[11rem] right-10"
               onResizeStop={(e, { size }) => {
                 console.log("Updating image size:", size);
@@ -495,7 +524,6 @@ const EditableText = ({ content, type, className }) => {
                   e.stopPropagation();
                   handleDragStart("image");
                 }}
-
               >
                 <div className="absolute -inset-5 bg-[#9a7752] rounded-lg"></div>
                 <img
@@ -523,9 +551,7 @@ const EditableText = ({ content, type, className }) => {
             </ResizableBox>
           </Draggable>
         </div>
-
-    </div>
+      </div>
     </div>
   );
 };
-

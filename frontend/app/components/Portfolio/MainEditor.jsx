@@ -67,17 +67,17 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
     ],
   };
 
-  
+
   // Get the components for the current portfolio
   const currentPortfolioComponents = componentsMap[portfolioId];
 
   // Get total slides for the current portfolio
   const totalSlides = currentPortfolioComponents.length;
 
-  // Ensure selectedPage is valid for current portfolio 
+  // Ensure selectedPage is valid for current portfolio
   useEffect(() => {
     if (selectedPage > totalSlides) {
-      setSelectedPage(1); 
+      setSelectedPage(1);
     }
   }, [portfolioId, totalSlides, selectedPage]);
 
@@ -91,7 +91,7 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
   const handleNext = () => {
       console.log("Current Page:", selectedPage); // Log current page
       console.log("Total Slides:", totalSlides); // Log total slides
-  
+
       if (selectedPage < totalSlides) {
         const nextPage = selectedPage + 1;
         console.log("Next Page:", nextPage); // Log next page
@@ -100,7 +100,7 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
         console.log("Already on the last page");
       }
   };
-  
+
   useEffect(() => {
     console.log("Selected Page Updated:", selectedPage);
   }, [selectedPage]);
@@ -108,7 +108,7 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
   const handlePrevious = () => {
     console.log("Current Page:", selectedPage); // Log current page
     console.log("Total Slides:", totalSlides); // Log total slides
-  
+
     if (selectedPage > 1) {
       const previousPage = selectedPage - 1;
       console.log("Previous Page:", previousPage); // Log previous page
@@ -117,7 +117,7 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
       console.log("Already on the first page");
     }
   };
-  
+
   // Function to zoom in
   const handleZoomIn = () => {
     setScale((prevScale) => prevScale + 0.1); // Increase scale by 0.1
@@ -201,57 +201,89 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
   }, []);
 
   const downloadPDF = async () => {
+    const A4_WIDTH = 297; // A4 landscape width in mm
+    const A4_HEIGHT = 210; // A4 landscape height in mm
+    const SCALE_FACTOR = 2.5; // Increased scale factor for better resolution
+
+    // Create temporary container for rendering
     const tempContainer = document.createElement("div");
-    tempContainer.style.position = "absolute";
-    tempContainer.style.left = "-9999px";
-    tempContainer.style.top = "-9999px";
-    tempContainer.style.width = "210mm"; // Match A4 width
-    tempContainer.style.height = "297mm"; // Match A4 height
-    tempContainer.style.overflow = "hidden"; // Prevent extra space
+    Object.assign(tempContainer.style, {
+      position: "absolute",
+      left: "-9999px",
+      top: "0",
+      width: `${A4_WIDTH * SCALE_FACTOR}px`,
+      backgroundColor: "#ffffff",
+    });
     document.body.appendChild(tempContainer);
+
     try {
-      for (
-        let i = 0;
-        i < Math.min(10, currentPortfolioComponents.length);
-        i++
-      ) {
-        const pageDiv = document.createElement("div");
-        pageDiv.className = "portfolio-page temp-page";
-        tempContainer.appendChild(pageDiv);
+      let canvasArray = [];
 
-        const root = ReactDOM.createRoot(pageDiv);
-        root.render(currentPortfolioComponents[i]);
-
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Ensure components are fully rendered
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const pages = document.querySelectorAll(".temp-page");
-      const pdf = new jsPDF("landscape", "mm", "a4");
-      const imgWidth = 210;
-
-      for (let i = 0; i < pages.length; i++) {
-        const canvas = await html2canvas(pages[i], {
-          scale: 2, // Increased scale for better quality
-          useCORS: true,
-          logging: false,
-          allowTaint: true,
+      for (let i = 0; i < Math.min(10, currentPortfolioComponents.length); i++) {
+        const page = document.createElement("div");
+        Object.assign(page.style, {
+          width: `${A4_WIDTH * SCALE_FACTOR}px`,
+          height: `${A4_HEIGHT * SCALE_FACTOR}px`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+          position: "relative",
+          overflow: "hidden",
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 1.0); // Increased quality
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        tempContainer.appendChild(page);
+        const root = ReactDOM.createRoot(page);
+        root.render(currentPortfolioComponents[i]);
 
-        if (i > 0) pdf.addPage();
+        // Wait for rendering
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight); // Maintain aspect ratio
+        // Capture canvas and store in array
+        const canvas = await html2canvas(page, {
+          scale: SCALE_FACTOR,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          width: A4_WIDTH * SCALE_FACTOR,
+          height: A4_HEIGHT * SCALE_FACTOR,
+        });
+
+        canvasArray.push(canvas);
       }
 
+      // Initialize PDF
+      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+      canvasArray.forEach((canvas, index) => {
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+        const imgWidth = A4_WIDTH;
+        const imgHeight = (canvas.height / canvas.width) * imgWidth;
+        const x = (A4_WIDTH - imgWidth) / 2;
+        const y = (A4_HEIGHT - imgHeight) / 2;
+
+        if (isNaN(x) || isNaN(y) || imgHeight > A4_HEIGHT) {
+          console.error("Invalid image dimensions:", { imgWidth, imgHeight, x, y });
+        } else {
+          if (index > 0) pdf.addPage();
+          pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
+        }
+      });
+
+      // Save PDF
       pdf.save("portfolio.pdf");
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
     } finally {
-      document.body.removeChild(tempContainer);
+      document.body.removeChild(tempContainer); // Clean up container
     }
   };
+
+
+
   return (
     <div id="webcrumbs">
       <div className="w-[1510px] bg-[#E7E4D8] shadow-xl p-6">
