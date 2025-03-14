@@ -85,6 +85,6 @@ export const ImageOptionsModal = ({
           </button>
         </div>
       </div>
-    </div> 
+    </div>
   );
 };

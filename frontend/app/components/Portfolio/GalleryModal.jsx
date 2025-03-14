@@ -26,7 +26,7 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
       console.log(username, patternType);
 
       const response = await fetch(
-        `http://localhost:5000/api/prompt-designs/${username}/${patternType}`
+        `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/${patternType}`
       );
 
       if (!response.ok) {
