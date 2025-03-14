@@ -816,6 +816,7 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

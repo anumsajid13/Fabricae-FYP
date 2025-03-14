@@ -1,14 +1,21 @@
 import React from "react";
 
-export const ImageOptionsModal = ({onClose,onChooseFromComputer,onChooseFromGallery}) => {
+export const ImageOptionsModal = ({ onClose, onChooseFromComputer, onChooseFromGallery }) => {
   return (
-    <div id="webcrumbs">
+    <div
+      id="webcrumbs"
+      style={{ zIndex: 1000 }} // Ensure it's above other elements
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" // Backdrop and centering
+    >
       <div className="w-[400px] bg-[#e7e4d8] rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02]">
         <div className="relative p-5 border-b border-[#616852]/20">
           <h2 className="text-[#822538] text-xl font-bold text-center">
             Choose Image
           </h2>
-          <button onClick={onClose} className="absolute top-5 right-5 text-[#616852] hover:text-[#b4707e] transition-colors duration-200">
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 text-[#616852] hover:text-[#b4707e] transition-colors duration-200"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -27,7 +34,10 @@ export const ImageOptionsModal = ({onClose,onChooseFromComputer,onChooseFromGall
         </div>
 
         <div className="p-6 space-y-4">
-          <button onClick={onChooseFromComputer} className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
+          <button
+            onClick={onChooseFromComputer}
+            className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -45,7 +55,10 @@ export const ImageOptionsModal = ({onClose,onChooseFromComputer,onChooseFromGall
             <span>Choose from Computer</span>
           </button>
 
-          <button onClick={onChooseFromGallery} className="w-full bg-[#b4707e] hover:bg-[#b4707e]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
+          <button
+            onClick={onChooseFromGallery}
+            className="w-full bg-[#b4707e] hover:bg-[#b4707e]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -64,8 +77,6 @@ export const ImageOptionsModal = ({onClose,onChooseFromComputer,onChooseFromGall
           </button>
         </div>
       </div>
-
-     
     </div>
   );
 };

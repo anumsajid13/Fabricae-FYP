@@ -4,7 +4,7 @@ import { ImageOptionsModal } from "./ImageOptionsModal";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import { GalleryModal } from "./GalleryModal";
+import {GalleryModal} from "./GalleryModal"
 
 export const FashionPortfolio = () => {
   const [activeDraggable, setActiveDraggable] = useState(null);
@@ -13,6 +13,8 @@ export const FashionPortfolio = () => {
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
   const modelInputRef = useRef(null);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+
 
   const {
     handleTextSelection,
@@ -21,7 +23,8 @@ export const FashionPortfolio = () => {
     getPageState,
     updatePageState,
     selectedPage,
-    getElementPosition, updateElementPosition
+    getElementPosition,
+    updateElementPosition,
   } = useFashionStore();
 
   const pageId = `fashion-portfolio-${selectedPage}`;
@@ -29,7 +32,6 @@ export const FashionPortfolio = () => {
 
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
 
   // Initialize state from pageState if it exists, otherwise use defaults
   const [quote, setQuote] = useState(
@@ -49,25 +51,23 @@ export const FashionPortfolio = () => {
     setShowImageOptions(type);
   };
 
-
   const handleCloseModal = () => {
     setShowImageOptions(null);
   };
 
   const handleChooseFromComputer = (type) => {
     if (type === "background") {
-      backgroundInputRef.current.click();
+      setBackgroundImage(imageUrl); // Update background image
     } else if (type === "model") {
-      modelInputRef.current.click();
+      setModelImage(imageUrl); // Update model image
     }
     setShowImageOptions(null);
   };
 
   const handleChooseFromGallery = (type) => {
-
     setShowGalleryModal(true); // Show the gallery modal
-    setShowImageOptions(null);
-  };
+    setShowImageOptions(type); 
+    };
 
   const handleSelectImageFromGallery = (imageUrl) => {
     if (showImageOptions === "background") {
@@ -76,14 +76,6 @@ export const FashionPortfolio = () => {
       setModelImage(imageUrl); // Update model image
     }
     setShowGalleryModal(false); // Close the gallery modal
-  };
-
-  const handleImageUpload = (e, setImage) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    }
   };
 
   // Initialize styled content from pageState if it exists
@@ -124,7 +116,6 @@ export const FashionPortfolio = () => {
         title: getElementPosition(componentId, "title"),
         image: getElementPosition(componentId, "image"),
       },
-
     });
   }, [
     quote,
@@ -134,7 +125,9 @@ export const FashionPortfolio = () => {
     label,
     styledContent,
     pageId,
-    updatePageState, getElementPosition,,
+    updatePageState,
+    getElementPosition,
+    ,
   ]);
 
   // Component ID for this component
@@ -164,8 +157,16 @@ export const FashionPortfolio = () => {
       // Also save styled content to preserve formatting
       styledContent,
     });
-  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
-
+  }, [
+    quote,
+    title,
+    backgroundImage,
+    modelImage,
+    label,
+    styledContent,
+    pageId,
+    updatePageState,
+  ]);
 
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
@@ -378,8 +379,6 @@ export const FashionPortfolio = () => {
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
         onClick={() => handleImageClick("background")}
-
-
       ></div>
 
       <input
@@ -390,116 +389,137 @@ export const FashionPortfolio = () => {
         onChange={(e) => handleImageUpload(e, setBackgroundImage)}
       />
 
-      <div className="relative flex flex-col items-center justify-center h-full" style={{ zIndex: 2}}>
-      <div className="relative w-full z-20">
-      <Draggable disabled={activeDraggable !== "quote"} bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
-      defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
-      onStop={(e, data) => {
-        console.log("Updating quote position:", { x: data.x, y: data.y });
-        // Update the position in the global state
-        updateElementPosition(componentId, "quote", {
-          x: data.x,
-          y: data.y,
-          width: quotePosition.width,
-          height: quotePosition.height,
-        });
-      }}>
-        <ResizableBox
-       width={quotePosition.width}
-       height={quotePosition.height}
-        minConstraints={[150, 50]}
-        maxConstraints={[500, 200]}
-        axis="both"
-        resizeHandles={activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []}
-        onResizeStop={(e, { size }) => {
-          // Update the size in the global state
-          updateElementPosition(componentId, "quote", {
-            x: quotePosition.x, // Keep the existing x position
-            y: quotePosition.y,
-            width: size.width,
-            height: size.height,
-          });
-        }}
+      <div
+        className="relative flex flex-col items-center justify-center h-full"
+        style={{ zIndex: 2 }}
       >
-          <div style={{ transform: "none"}} className="relative text-center cursor-move"  onClick={(e) => {
-                e.stopPropagation();
-                handleDragStart("quote");
+        <div className="relative w-full z-20">
+          <Draggable
+            disabled={activeDraggable !== "quote"}
+            bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
+            defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating quote position:", { x: data.x, y: data.y });
+              // Update the position in the global state
+              updateElementPosition(componentId, "quote", {
+                x: data.x,
+                y: data.y,
+                width: quotePosition.width,
+                height: quotePosition.height,
+              });
+            }}
+          >
+            <ResizableBox
+              width={quotePosition.width}
+              height={quotePosition.height}
+              minConstraints={[150, 50]}
+              maxConstraints={[500, 200]}
+              axis="both"
+              resizeHandles={
+                activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []
+              }
+              onResizeStop={(e, { size }) => {
+                // Update the size in the global state
+                updateElementPosition(componentId, "quote", {
+                  x: quotePosition.x, // Keep the existing x position
+                  y: quotePosition.y,
+                  width: size.width,
+                  height: size.height,
+                });
               }}
             >
-              <EditableText
-                content={styledContent.quote}
-                type="quote"
-                className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
-              />
-            </div>
-          </ResizableBox>
-        </Draggable>
+              <div
+                style={{ transform: "none" }}
+                className="relative text-center cursor-move"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart("quote");
+                }}
+              >
+                <EditableText
+                  content={styledContent.quote}
+                  type="quote"
+                  className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
+                />
+              </div>
+            </ResizableBox>
+          </Draggable>
 
-        <Draggable disabled={activeDraggable !== "title"}  bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
-        defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
-        onStop={(e, data) => {
-          console.log("Updating title position:", { x: data.x, y: data.y });
-          updateElementPosition(componentId, "title", {
-            x: data.x,
-            y: data.y,
-            width: titlePosition.width,
-            height: titlePosition.height,
-          });
-        }}
-    >
-        <ResizableBox
-      width={titlePosition.width}
-      height={titlePosition.height}
-      minConstraints={[200, 50]}
-      maxConstraints={[600, 300]}
-      axis="both"
-      resizeHandles={activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []}
-      onResizeStop={(e, { size }) => {
-        console.log("Updating title size:", size);
-        updateElementPosition(componentId, "title", {
-          x: titlePosition.x,
-          y: titlePosition.y,
-          width: size.width,
-          height: size.height,
-        });
-      }}
-    >
-        <div className="relative text-center cursor-move"
-        style={{ position: 'relative', zIndex: 3 }}
-         onClick={(e) => {
-                e.stopPropagation();
-                handleDragStart("title");
-              }}>
-          <EditableText
-            content={styledContent.title}
-            type="title"
-            className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
-          />
-      </div>
-      </ResizableBox>
-      </Draggable>
-    </div>
+          <Draggable
+            disabled={activeDraggable !== "title"}
+            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
+            defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating title position:", { x: data.x, y: data.y });
+              updateElementPosition(componentId, "title", {
+                x: data.x,
+                y: data.y,
+                width: titlePosition.width,
+                height: titlePosition.height,
+              });
+            }}
+          >
+            <ResizableBox
+              width={titlePosition.width}
+              height={titlePosition.height}
+              minConstraints={[200, 50]}
+              maxConstraints={[600, 300]}
+              axis="both"
+              resizeHandles={
+                activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []
+              }
+              onResizeStop={(e, { size }) => {
+                console.log("Updating title size:", size);
+                updateElementPosition(componentId, "title", {
+                  x: titlePosition.x,
+                  y: titlePosition.y,
+                  width: size.width,
+                  height: size.height,
+                });
+              }}
+            >
+              <div
+                className="relative text-center cursor-move"
+                style={{ position: "relative", zIndex: 3 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart("title");
+                }}
+              >
+                <EditableText
+                  content={styledContent.title}
+                  type="title"
+                  className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
+                />
+              </div>
+            </ResizableBox>
+          </Draggable>
+        </div>
 
-    <div className="absolute w-full h-full" style={{ zIndex: 10 }}>
-          <Draggable disabled={activeDraggable !== "image"} bounds="parent"
-          defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
-          onStop={(e, data) => {
-            console.log("Updating image position:", { x: data.x, y: data.y });
-            updateElementPosition(componentId, "image", {
-              x: data.x,
-              y: data.y,
-              width: imagePosition.width,
-              height: imagePosition.height,
-            });
-          }}>
-
+        <div className="absolute w-full h-full" style={{ zIndex: 10 }}>
+          <Draggable
+            disabled={activeDraggable !== "image"}
+            bounds="parent"
+            defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
+            onStop={(e, data) => {
+              console.log("Updating image position:", { x: data.x, y: data.y });
+              updateElementPosition(componentId, "image", {
+                x: data.x,
+                y: data.y,
+                width: imagePosition.width,
+                height: imagePosition.height,
+              });
+            }}
+          >
             <ResizableBox
               width={imagePosition.width}
               height={imagePosition.height}
               minConstraints={[150, 200]}
               maxConstraints={[500, 600]}
               axis="both"
-              resizeHandles={activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []}
+              resizeHandles={
+                activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []
+              }
               className="absolute top-[11rem] right-10"
               onResizeStop={(e, { size }) => {
                 console.log("Updating image size:", size);
@@ -517,7 +537,6 @@ export const FashionPortfolio = () => {
                   e.stopPropagation();
                   handleDragStart("image");
                 }}
-
               >
                 <div className="absolute -inset-5 bg-[#9a7752] rounded-lg"></div>
                 <img
@@ -525,7 +544,7 @@ export const FashionPortfolio = () => {
                   alt="New Fashion"
                   className="relative object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
                   onDoubleClick={(e) => {
-                    e.stopPropagation();
+                    //e.stopPropagation();
                     handleImageClick("model");
                   }}
                 />
@@ -546,10 +565,34 @@ export const FashionPortfolio = () => {
           </Draggable>
         </div>
 
+       
+      </div>
+
+
+       {/* Image Options Modal */}
+       {showImageOptions && (
+          <ImageOptionsModal
+            onClose={handleCloseModal}
+            onChooseFromComputer={() =>
+              handleChooseFromComputer(showImageOptions)
+            }
+            onChooseFromGallery={() =>
+              handleChooseFromGallery(showImageOptions)
+            }
+          />
+        )}
+
+
+
+        {/* Gallery Modal */}
+        {showGalleryModal && (
+                <GalleryModal
+                  onClose={() => setShowGalleryModal(false)}
+                  onSelectImage={handleSelectImageFromGallery}
+                />
+              )}
+      
+
     </div>
-    </div>
-
-
-
   );
 };
