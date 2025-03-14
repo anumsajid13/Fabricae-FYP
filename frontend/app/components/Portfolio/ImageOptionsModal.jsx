@@ -36,7 +36,7 @@ export const ImageOptionsModal = ({
             </svg>
           </button>
         </div>
-        
+
         <div className="p-6 space-y-4">
           {/* Button to trigger file input */}
           <button
@@ -60,7 +60,7 @@ export const ImageOptionsModal = ({
             </svg>
             <span>Choose from Computer</span>
           </button>
-          
+
           {/* Button to choose from gallery */}
           <button
             onClick={onChooseFromGallery}
@@ -85,6 +85,6 @@ export const ImageOptionsModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div> 
   );
 };
