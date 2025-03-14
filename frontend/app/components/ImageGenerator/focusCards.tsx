@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from 'next/link';
-import { FocusCards } from "../ui/focus-cards"; 
-import './global.css';
+import Link from "next/link";
+import { FocusCards } from "../ui/focus-cards";
+import "./global.css";
 import { useCardsStore } from "../../store/useCardsStore";
-import { useSelectedCardsStore} from "../../store/selectedCardsStore"
+import { useSelectedCardsStore } from "../../store/selectedCardsStore";
 
 interface PromptDesign {
   title: string;
@@ -16,19 +16,24 @@ interface PromptDesign {
 }
 
 export function FocusCardsDemo() {
-  const [selectedTab, setSelectedTab] = useState<'explore' | 'myDesigns'>('explore');
+  const [selectedTab, setSelectedTab] = useState<"explore" | "myDesigns">(
+    "explore"
+  );
   const [isDescending, setIsDescending] = useState<boolean>(true);
   const { cards, setCards, updateCards } = useCardsStore();
-  const { selectedCards, setSelectedCards, updateSelectedCards } = useSelectedCardsStore();
+  const { selectedCards, setSelectedCards, updateSelectedCards } =
+    useSelectedCardsStore();
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
     if (hasFetched) return;
     const username = localStorage.getItem("userEmail");
-    
+
     const fetchCards = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`);
+        const response = await fetch(
+          `http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
@@ -36,8 +41,9 @@ export function FocusCardsDemo() {
 
         // Filter out duplicate cards based on both imageUrl and title
         const uniqueCards = data.reduce((acc: PromptDesign[], current) => {
-          const isDuplicate = acc.some(card => 
-            card.imageUrl === current.imageUrl || card.title === current.title
+          const isDuplicate = acc.some(
+            (card) =>
+              card.imageUrl === current.imageUrl || card.title === current.title
           );
           if (!isDuplicate) {
             acc.push(current);
@@ -57,25 +63,25 @@ export function FocusCardsDemo() {
 
   const sortCards = () => {
     if (!cards) return;
-  
+
     const sortedCards = [...cards].sort((a, b) => {
       const dateA = new Date(a.creationDate).getTime();
       const dateB = new Date(b.creationDate).getTime();
       return isDescending ? dateB - dateA : dateA - dateB;
     });
-  
+
     // Generate unique keys for each card
-    const updatedCards = sortedCards.map(card => ({
+    const updatedCards = sortedCards.map((card) => ({
       ...card,
       imageUrl: `${card.imageUrl}?${new Date().getTime()}`, // Cache busting
-      key: `${card.title}-${card.imageUrl}` // Create a composite key
+      key: `${card.title}-${card.imageUrl}`, // Create a composite key
     }));
-  
+
     console.log("Number of unique cards:", updatedCards.length);
     setCards(updatedCards);
     setIsDescending(!isDescending);
   };
-  
+
   const handleCardDelete = (title: string) => {
     console.log("Deleting card:", title);
     updateCards((prevCards) => {
@@ -88,8 +94,10 @@ export function FocusCardsDemo() {
     <div className="bg-[#E7E4D8] min-h-screen py-8">
       <div className="flex justify-center items-center mb-4 relative">
         <button
-          onClick={() => setSelectedTab('explore')}
-          className={`text-[#822538] mx-2  ${selectedTab === 'explore' ? 'font-bold' : ''} hover:text-[#822538]`}
+          onClick={() => setSelectedTab("explore")}
+          className={`text-[#822538] mx-2  ${
+            selectedTab === "explore" ? "font-bold" : ""
+          } hover:text-[#822538]`}
         >
           EXPLORE
         </button>
@@ -97,8 +105,10 @@ export function FocusCardsDemo() {
         <div className="border-l-2 border-[#822538] h-10 mx-4"></div>
 
         <button
-          onClick={() => setSelectedTab('myDesigns')}
-          className={`text-[#822538] mx-2 ${selectedTab === 'myDesigns' ? 'font-bold' : ''} hover:text-[#822538]`}
+          onClick={() => setSelectedTab("myDesigns")}
+          className={`text-[#822538] mx-2 ${
+            selectedTab === "myDesigns" ? "font-bold" : ""
+          } hover:text-[#822538]`}
         >
           MY DESIGNS
         </button>
@@ -106,13 +116,13 @@ export function FocusCardsDemo() {
 
       <div className="flex justify-end px-32">
         <button onClick={sortCards} className="ml-4">
-          <img src='/sort (2).png' alt="Sort" className="w-12 h-12" />
+          <img src="/sort (2).png" alt="Sort" className="w-12 h-12" />
         </button>
       </div>
 
-      {selectedTab === 'myDesigns' ? (
+      {selectedTab === "myDesigns" ? (
         <FocusCards
-          cards={cards.map(card => ({
+          cards={cards.map((card) => ({
             title: card.title,
             src: card.imageUrl,
             key: `${card.title}-${card.imageUrl}`, // Use composite key
@@ -128,8 +138,8 @@ export function FocusCardsDemo() {
       <div className="fixed bottom-4 right-4">
         {selectedCards.length > 0 && (
           <Link href="/3DModels">
-            <img 
-              src="/nextButton.png" 
+            <img
+              src="/nextButton.png"
               alt="Next"
               className="w-16 h-16 cursor-pointer transition-transform transform hover:scale-110"
             />

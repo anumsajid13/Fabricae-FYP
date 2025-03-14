@@ -1,6 +1,10 @@
 import React from "react";
 
-export const ImageOptionsModal = ({ onClose, onChooseFromComputer, onChooseFromGallery }) => {
+export const ImageOptionsModal = ({
+  onClose,
+  onChooseFromComputer,
+  onChooseFromGallery,
+}) => {
   return (
     <div
       id="webcrumbs"
@@ -36,7 +40,8 @@ export const ImageOptionsModal = ({ onClose, onChooseFromComputer, onChooseFromG
         <div className="p-6 space-y-4">
           <button
             onClick={onChooseFromComputer}
-            className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
+            style={{ borderRadius: "40px" }}
+            className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4  flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +62,8 @@ export const ImageOptionsModal = ({ onClose, onChooseFromComputer, onChooseFromG
 
           <button
             onClick={onChooseFromGallery}
-            className="w-full bg-[#b4707e] hover:bg-[#b4707e]/90 text-white py-3 px-4 rounded-md flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
+            style={{ borderRadius: "40px" }}
+            className="w-full bg-[#b4707e] hover:bg-[#b4707e]/90 text-white py-3 px-4 flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

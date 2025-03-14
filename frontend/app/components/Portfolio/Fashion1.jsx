@@ -76,6 +76,7 @@ export const FashionPortfolio = () => {
       setModelImage(imageUrl); // Update model image
     }
     setShowGalleryModal(false); // Close the gallery modal
+    setShowImageOptions(null);
   };
 
   // Initialize styled content from pageState if it exists

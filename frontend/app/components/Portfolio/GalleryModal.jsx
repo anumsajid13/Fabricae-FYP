@@ -1,18 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const GalleryModal = ({ onClose, onSelectImage }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("");
-
-  // Array of image URLs for the gallery
-  const images = [
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
-    "https://images.unsplash.com/photo-1617791160505-6f00504e3519",
-    "https://images.unsplash.com/photo-1626544827763-d516dce335e2",
-    "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4",
-    "https://images.unsplash.com/photo-1633074280586-ddf70578fb6e",
-    "https://images.unsplash.com/photo-1618172193763-c511deb635ca",
-  ];
+  const [selectedFilter, setSelectedFilter] = useState("prompt"); // Default to "prompt"
+  const [images, setImages] = useState([]); // State to store fetched images
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   // Filter options with your specified values
   const filterOptions = [
@@ -21,6 +14,61 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
     { label: "3D Preview", value: "3d" },
     { label: "Edited Designs", value: "edited" },
   ];
+
+  // Fetch images from the backend based on the selected filter
+  const fetchImages = async (patternType) => {
+
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+
+      const username = localStorage.getItem("userEmail");
+
+      console.log (username,patternType)
+
+      const response = await fetch(
+        `http://localhost:5000/api/prompt-designs/${username}/${patternType}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch images");
+      }
+
+      const data = await response.json();
+
+
+      console.log ( data , username)
+      // Filter out duplicate images based on both imageUrl and title
+      const uniqueImages = data.reduce((acc, current) => {
+        const isDuplicate = acc.some(
+          (image) =>
+            image.imageUrl === current.imageUrl || image.title === current.title
+        );
+        if (!isDuplicate) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
+      if (uniqueImages.length === 0) {
+        setError(`No designs found for ${patternType}.`);
+      } else {
+        setImages(uniqueImages); // Set the fetched images
+      }
+    } catch (error) {
+      console.error("Error fetching images:", error);
+      setError("Failed to fetch images. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch images when the selected filter changes
+  useEffect(() => {
+    fetchImages(selectedFilter);
+  }, [selectedFilter]);
 
   const handleFilterSelect = (option) => {
     setSelectedFilter(option.value);
@@ -67,10 +115,14 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-full flex items-center justify-between py-2 px-3 bg-[#616852] text-white rounded-lg text-xs focus:outline-none hover:bg-[#6e7559] transition-all duration-300 border border-[#616852] focus:border-[#b4707e]"
             >
-              <span>{selectedFilter ? filterOptions.find(opt => opt.value === selectedFilter).label : "Select a Folder"}</span>
+              <span>
+                {filterOptions.find((opt) => opt.value === selectedFilter).label}
+              </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-3 w-3 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
+                className={`h-3 w-3 transition-transform duration-300 ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -83,7 +135,7 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
                 />
               </svg>
             </button>
-            
+
             {/* Dropdown Options with Background Color */}
             {isDropdownOpen && (
               <div className="absolute z-10 mt-1 w-full bg-[#f5f4ee] rounded-lg shadow-lg overflow-hidden border border-[#e0ddd1] animate-fadeIn">
@@ -91,7 +143,9 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
                   <div
                     key={index}
                     className={`py-1.5 px-3 cursor-pointer hover:bg-[#e0ddd1] text-xs ${
-                      selectedFilter === option.value ? "bg-[#e0ddd1] text-[#616852] font-medium" : "text-[#616852]"
+                      selectedFilter === option.value
+                        ? "bg-[#e0ddd1] text-[#616852] font-medium"
+                        : "text-[#616852]"
                     } ${index !== 0 ? "border-t border-[#e0ddd1]" : ""}`}
                     onClick={() => handleFilterSelect(option)}
                   >
@@ -102,32 +156,48 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
             )}
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-[#616852]">Loading...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-[#822538]">{error}</p>
+            </div>
+          )}
+
           {/* Image Grid */}
-          <div
-            className="grid grid-cols-2 gap-3 overflow-y-auto"
-            style={{ maxHeight: "230px" }}
-          >
-            {images.map((image, index) => (
-              <div
-                key={index}
-                className="group relative aspect-square overflow-hidden rounded-xl bg-[#f5f4ee] shadow-md hover:shadow-lg transition-all duration-300"
-                onClick={() => onSelectImage(image)}
-              >
-                {/* Image */}
-                <img
-                  src={image}
-                  alt={`Gallery item ${index + 1}`}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                />
-                {/* Image Label */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#616852] p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-white text-xs font-semibold">
-                    Design {index + 1}
-                  </h3>
+          {!isLoading && !error && (
+            <div
+              className="grid grid-cols-2 gap-3 overflow-y-auto"
+              style={{ maxHeight: "230px" }}
+            >
+              {images.map((image, index) => (
+                <div
+                  key={image._id} // Use the unique _id from the backend
+                  className="group relative aspect-square overflow-hidden rounded-xl bg-[#f5f4ee] shadow-md hover:shadow-lg transition-all duration-300"
+                  onClick={() => onSelectImage(image.imageUrl)} // Use imageUrl from the backend
+                >
+                  {/* Image */}
+                  <img
+                    src={image.imageUrl} // Use imageUrl from the backend
+                    alt={image.title || `Design ${index + 1}`} // Use title from the backend
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  />
+                  {/* Image Label */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#616852] p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 className="text-white text-xs font-semibold">
+                      {image.title || `Design ${index + 1}`} // Use title from the backend
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

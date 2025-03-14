@@ -198,7 +198,7 @@ export function SignupFormDemo() {
 
       {/* Right column with form */}
       <div className="w-full md:w-1/2 p-4 md:p-8">
-        <h2 className="font-bold text-3xl text-black">Welcome Back!</h2>
+        <h2 className="font-bold text-3xl text-black font-custom">Welcome Back!</h2>
         <Link href="/Login">
         <p className="text-sm max-w-sm mt-2 text-black">
           Login to Fabricae if you already have an account!
