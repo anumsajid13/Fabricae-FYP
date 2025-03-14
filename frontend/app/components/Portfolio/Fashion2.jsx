@@ -13,6 +13,7 @@ export const FashionLayout  = () =>{
   const [editingField, setEditingField] = useState(null);
   const [bgColor, setBgColor] = useState("#a3846f");
   const backgroundInputRef = useRef(null);
+  const [activeDraggable, setActiveDraggable] = useState(null);
 
   // Store text with styling information
   const [styledContent, setStyledContent] = useState({
@@ -45,6 +46,10 @@ export const FashionLayout  = () =>{
       const imageUrl = URL.createObjectURL(file);
       setBackgroundImage(imageUrl);
     }
+  };
+
+  const handleDragStart = (key) => {
+    setActiveDraggable(key);
   };
 
   const handleTextChange = (e, type) => {
@@ -209,7 +214,7 @@ export const FashionLayout  = () =>{
         style={{ backgroundColor: bgColor }}
       >
         {/* Left Section with Images */}
-        <div className="grid grid-cols-2 gap-4 flex-1">
+        <div className="grid grid-cols-2 gap-4 flex-1 ">
           <img src="/Picture8.jpg" alt="Fashion 1" className="rounded-lg" />
           <img src="/Picture9.jpg" alt="Fashion 2" className="rounded-lg" />
           <img src="/Picture10.jpg" alt="Fashion 3" className="rounded-lg" />
