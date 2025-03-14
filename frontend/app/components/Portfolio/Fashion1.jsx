@@ -32,11 +32,10 @@ export const FashionPortfolio = () => {
 
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
-
   // Initialize state from pageState if it exists, otherwise use defaults
   const [quote, setQuote] = useState(
     pageState.quote ||
-      "Fashion is the armor to survive the reality of everyday life."
+      "Fashion is the armor to survive the reality of everyday life"
   );
   const [title, setTitle] = useState(pageState.title || "Fashion Portfolio");
   const [backgroundImage, setBackgroundImage] = useState(
@@ -74,7 +73,7 @@ export const FashionPortfolio = () => {
   };
   const handleChooseFromGallery = (type) => {
     setShowGalleryModal(true); // Show the gallery modal
-    setShowImageOptions(type); 
+    setShowImageOptions(type);
     };
 
   const handleSelectImageFromGallery = (imageUrl) => {
@@ -568,7 +567,7 @@ export const FashionPortfolio = () => {
           </Draggable>
         </div>
 
-       
+
       </div>
 
 
@@ -594,7 +593,7 @@ export const FashionPortfolio = () => {
                   onSelectImage={handleSelectImageFromGallery}
                 />
               )}
-      
+
 
     </div>
   );
