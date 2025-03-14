@@ -4,6 +4,7 @@ import { ImageOptionsModal } from "./ImageOptionsModal";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+import {GalleryModal} from "./GalleryModal"
 
 export const FashionPortfolio = () => {
   const [activeDraggable, setActiveDraggable] = useState(null);
@@ -12,6 +13,8 @@ export const FashionPortfolio = () => {
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
   const modelInputRef = useRef(null);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+
 
   const {
     handleTextSelection,
@@ -53,16 +56,25 @@ export const FashionPortfolio = () => {
 
   const handleChooseFromComputer = (type) => {
     if (type === "background") {
-      backgroundInputRef.current.click();
+      setBackgroundImage(imageUrl); // Update background image
     } else if (type === "model") {
-      modelInputRef.current.click();
+      setModelImage(imageUrl); // Update model image
     }
     setShowImageOptions(null);
   };
 
   const handleChooseFromGallery = (type) => {
-    // Implement your gallery logic here
-    console.log(`Choose from gallery for ${type}`);
+    setShowGalleryModal(true); // Show the gallery modal
+    setShowImageOptions(type);
+    };
+
+  const handleSelectImageFromGallery = (imageUrl) => {
+    if (showImageOptions === "background") {
+      setBackgroundImage(imageUrl); // Update background image
+    } else if (showImageOptions === "model") {
+      setModelImage(imageUrl); // Update model image
+    }
+    setShowGalleryModal(false); // Close the gallery modal
     setShowImageOptions(null);
   };
 
@@ -115,6 +127,7 @@ export const FashionPortfolio = () => {
     pageId,
     updatePageState,
     getElementPosition,
+    ,
   ]);
 
   // Component ID for this component
@@ -365,7 +378,7 @@ export const FashionPortfolio = () => {
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
-        onClick={() => backgroundInputRef.current.click()}
+        onClick={() => handleImageClick("background")}
       ></div>
 
       <input
@@ -531,8 +544,8 @@ export const FashionPortfolio = () => {
                   alt="New Fashion"
                   className="relative object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
                   onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    modelInputRef.current.click();
+                    //e.stopPropagation();
+                    handleImageClick("model");
                   }}
                 />
                 <input
@@ -551,7 +564,35 @@ export const FashionPortfolio = () => {
             </ResizableBox>
           </Draggable>
         </div>
+
+
       </div>
+
+
+       {/* Image Options Modal */}
+       {showImageOptions && (
+          <ImageOptionsModal
+            onClose={handleCloseModal}
+            onChooseFromComputer={() =>
+              handleChooseFromComputer(showImageOptions)
+            }
+            onChooseFromGallery={() =>
+              handleChooseFromGallery(showImageOptions)
+            }
+          />
+        )}
+
+
+
+        {/* Gallery Modal */}
+        {showGalleryModal && (
+                <GalleryModal
+                  onClose={() => setShowGalleryModal(false)}
+                  onSelectImage={handleSelectImageFromGallery}
+                />
+              )}
+
+
     </div>
   );
 };

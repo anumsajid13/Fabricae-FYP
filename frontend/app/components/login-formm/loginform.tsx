@@ -271,7 +271,7 @@ export function LoginFormDemo() {
 
       {/* Right column with form */}
       <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-start justify-center bg-[#E7E4D8]">
-        <h2 className="font-bold text-3xl text-black">Welcome to Fabricae</h2>
+        <h2 className="font-bold text-3xl text-black font-custom">Welcome to Fabricae</h2>
         <p className="text-sm max-w-sm mt-2 text-black">
           Create an Account if you want to Login!
         </p>

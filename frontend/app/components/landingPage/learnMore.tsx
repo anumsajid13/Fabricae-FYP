@@ -325,6 +325,7 @@ const styles = {
     flex: 1,
     maxWidth: "50%",
     height: "800px",
+    marginTop: "-600px",
   },
   spline: {
     width: "100%",
