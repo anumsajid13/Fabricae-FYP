@@ -7,27 +7,27 @@ import "react-resizable/css/styles.css";
 
 
 export const  FashionPortfolio =() =>  {
-  
+
   const [activeDraggable, setActiveDraggable] = useState(null);
 
     // Track which field is being edited
     const [editingField, setEditingField] = useState(null);
     const backgroundInputRef = useRef(null);
     const modelInputRef = useRef(null);
-    
-    const { handleTextSelection, registerComponent, applyStyle ,getPageState, updatePageState, selectedPage} = useFashionStore();
-  
-  
+
+    const { handleTextSelection, registerComponent, applyStyle ,getPageState, updatePageState, selectedPage, getElementPosition, updateElementPosition} = useFashionStore();
+
+
     const pageId = `fashion-portfolio-${selectedPage}`;
     const pageState = getPageState(pageId);
-  
-  
+
+
     const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
-  
-  
+
+
    // Initialize state from pageState if it exists, otherwise use defaults
    const [quote, setQuote] = useState(
-    pageState.quote || "Fashion is the armor to survive the reality of everyday life."
+    pageState.quote || "Fashion is the armor to survive the reality of everyday life"
   );
   const [title, setTitle] = useState(
     pageState.title || "Fashion Portfolio"
@@ -68,14 +68,14 @@ export const  FashionPortfolio =() =>  {
     setShowImageOptions(null);
   };
 
-  
+
    // Initialize styled content from pageState if it exists
    const [styledContent, setStyledContent] = useState(() => {
     // Check if we have stored styled content
     if (pageState.styledContent) {
       return pageState.styledContent;
     }
-    
+
     // Otherwise create default styled content
     return {
       quote: {
@@ -101,14 +101,23 @@ export const  FashionPortfolio =() =>  {
       backgroundImage,
       modelImage,
       label,
-      // Also save styled content to preserve formatting
-      styledContent
+      styledContent,
+      elementPositions: {
+        quote: getElementPosition(componentId, "quote"),
+        title: getElementPosition(componentId, "title"),
+        image: getElementPosition(componentId, "image"),
+      },
+
     });
-  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
+  }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState, getElementPosition,]);
 
 
   // Component ID for this component
   const componentId = "fashion-portfolio";
+
+  const quotePosition = getElementPosition(componentId, "quote");
+  const titlePosition = getElementPosition(componentId, "title");
+  const imagePosition = getElementPosition(componentId, "image");
 
   // Register this component with context when it mounts
   useEffect(() => {
@@ -132,7 +141,7 @@ export const  FashionPortfolio =() =>  {
     });
   }, [quote, title, backgroundImage, modelImage, label, styledContent, pageId, updatePageState]);
 
-  
+
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
@@ -343,7 +352,7 @@ const EditableText = ({ content, type, className }) => {
 
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
-        style={{ backgroundImage: `url('${backgroundImage}')` }}
+        style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
         onClick={() => backgroundInputRef.current.click()}
 
 
@@ -358,17 +367,38 @@ const EditableText = ({ content, type, className }) => {
 
       />
 
-      <div className="relative flex flex-col items-center justify-center h-full">
-      <Draggable disabled={activeDraggable !== "quote"} bounds="parent">
+      <div className="relative flex flex-col items-center justify-center h-full" style={{ zIndex: 2}}>
+      <div className="relative w-full z-20">
+      <Draggable disabled={activeDraggable !== "quote"} bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
+      defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
+      onStop={(e, data) => {
+        console.log("Updating quote position:", { x: data.x, y: data.y });
+        // Update the position in the global state
+        updateElementPosition(componentId, "quote", {
+          x: data.x,
+          y: data.y,
+          width: quotePosition.width,
+          height: quotePosition.height,
+        });
+      }}>
         <ResizableBox
-        width={400}
-        height={50}
+       width={quotePosition.width}
+       height={quotePosition.height}
         minConstraints={[150, 50]}
         maxConstraints={[500, 200]}
         axis="both"
         resizeHandles={activeDraggable === "quote" ? ["se", "sw", "ne", "nw"] : []}
+        onResizeStop={(e, { size }) => {
+          // Update the size in the global state
+          updateElementPosition(componentId, "quote", {
+            x: quotePosition.x, // Keep the existing x position
+            y: quotePosition.y,
+            width: size.width,
+            height: size.height,
+          });
+        }}
       >
-          <div style={{ transform: "none" }} className="relative z-50 text-center cursor-move"  onClick={(e) => {
+          <div style={{ transform: "none"}} className="relative text-center cursor-move"  onClick={(e) => {
                 e.stopPropagation();
                 handleDragStart("quote");
               }}>
@@ -383,16 +413,37 @@ const EditableText = ({ content, type, className }) => {
         </ResizableBox>
         </Draggable>
 
-        <Draggable disabled={activeDraggable !== "title"}  bounds="parent">
+        <Draggable disabled={activeDraggable !== "title"}  bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
+        defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
+        onStop={(e, data) => {
+          console.log("Updating title position:", { x: data.x, y: data.y });
+          updateElementPosition(componentId, "title", {
+            x: data.x,
+            y: data.y,
+            width: titlePosition.width,
+            height: titlePosition.height,
+          });
+        }}
+    >
         <ResizableBox
-      width={800}
-      height={150}
+      width={titlePosition.width}
+      height={titlePosition.height}
       minConstraints={[200, 50]}
       maxConstraints={[600, 300]}
       axis="both"
       resizeHandles={activeDraggable === "title" ? ["se", "sw", "ne", "nw"] : []}
+      onResizeStop={(e, { size }) => {
+        console.log("Updating title size:", size);
+        updateElementPosition(componentId, "title", {
+          x: titlePosition.x,
+          y: titlePosition.y,
+          width: size.width,
+          height: size.height,
+        });
+      }}
     >
-        <div className="relative z-50 text-center cursor-move"
+        <div className="relative text-center cursor-move"
+        style={{ position: 'relative', zIndex: 3 }}
          onClick={(e) => {
                 e.stopPropagation();
                 handleDragStart("title");
@@ -405,48 +456,75 @@ const EditableText = ({ content, type, className }) => {
       </div>
       </ResizableBox>
       </Draggable>
+    </div>
 
+    <div className="absolute w-full h-full" style={{ zIndex: 10 }}>
+          <Draggable disabled={activeDraggable !== "image"} bounds="parent"
+          defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
+          onStop={(e, data) => {
+            console.log("Updating image position:", { x: data.x, y: data.y });
+            updateElementPosition(componentId, "image", {
+              x: data.x,
+              y: data.y,
+              width: imagePosition.width,
+              height: imagePosition.height,
+            });
+          }}>
 
-      <Draggable disabled={activeDraggable !== "image"} bounds="parent">
-      <ResizableBox
-          width={300}
-          height={200}
-          minConstraints={[150, 200]}
-          maxConstraints={[500, 600]}
-          axis="both"
-          resizeHandles={activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []}
-          className="absolute top-[3rem] right-10 flex justify-end"
-        >
-       <div className="absolute top-1/4 right-10 flex justify-end"
-       onClick={(e) => {
-        e.stopPropagation();
-        handleDragStart("image");
-      }}>
-          <div className="relative max-h-[calc(100%-4rem)]">
-            <div className="absolute -inset-5 bg-[#9a7752] rounded-lg z-10"></div>
-            <img
-              src={modelImage}
-              alt="New Fashion"
-              className="relative z-20 object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
-              onClick={() => modelInputRef.current.click()}
-              />
-            <input
-              type="file"
-              accept="image/*"
-              ref={modelInputRef}
-              className="hidden"
-              onChange={(e) => handleImageUpload(e, setModelImage)}
-              />
-            <EditableText
-              content={styledContent.label}
-              type="label"
-              className="absolute bottom-4 right-4 z-30 bg-white text-[#9a7752] font-bold px-4 py-1 text-xs uppercase tracking-wide rounded cursor-text"
-            />
-          </div>
+            <ResizableBox
+              width={imagePosition.width}
+              height={imagePosition.height}
+              minConstraints={[150, 200]}
+              maxConstraints={[500, 600]}
+              axis="both"
+              resizeHandles={activeDraggable === "image" ? ["se", "sw", "ne", "nw"] : []}
+              className="absolute top-[11rem] right-10"
+              onResizeStop={(e, { size }) => {
+                console.log("Updating image size:", size);
+                updateElementPosition(componentId, "image", {
+                  x: imagePosition.x,
+                  y: imagePosition.y,
+                  width: size.width,
+                  height: size.height,
+                });
+              }}
+            >
+              <div
+                className="relative"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart("image");
+                }}
+
+              >
+                <div className="absolute -inset-5 bg-[#9a7752] rounded-lg"></div>
+                <img
+                  src={modelImage}
+                  alt="New Fashion"
+                  className="relative object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    modelInputRef.current.click();
+                  }}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={modelInputRef}
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e, setModelImage)}
+                />
+                <EditableText
+                  content={styledContent.label}
+                  type="label"
+                  className="absolute bottom-4 right-4 bg-white text-[#9a7752] font-bold px-4 py-1 text-xs uppercase tracking-wide rounded cursor-text"
+                />
+              </div>
+            </ResizableBox>
+          </Draggable>
         </div>
-        </ResizableBox>
-      </Draggable>
-      </div>
+
+    </div>
     </div>
   );
 };
