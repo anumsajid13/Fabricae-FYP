@@ -8,8 +8,8 @@ export const ImageOptionsModal = ({
   return (
     <div
       id="webcrumbs"
-      style={{ zIndex: 1000 }} // Ensure it's above other elements
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" // Backdrop and centering
+      style={{ zIndex: 1000 }}
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
     >
       <div className="w-[400px] bg-[#e7e4d8] rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02]">
         <div className="relative p-5 border-b border-[#616852]/20">
@@ -36,12 +36,13 @@ export const ImageOptionsModal = ({
             </svg>
           </button>
         </div>
-
+        
         <div className="p-6 space-y-4">
+          {/* Button to trigger file input */}
           <button
             onClick={onChooseFromComputer}
             style={{ borderRadius: "40px" }}
-            className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4  flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
+            className="w-full bg-[#616852] hover:bg-[#616852]/90 text-white py-3 px-4 flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +60,8 @@ export const ImageOptionsModal = ({
             </svg>
             <span>Choose from Computer</span>
           </button>
-
+          
+          {/* Button to choose from gallery */}
           <button
             onClick={onChooseFromGallery}
             style={{ borderRadius: "40px" }}

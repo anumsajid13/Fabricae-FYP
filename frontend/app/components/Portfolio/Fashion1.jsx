@@ -56,14 +56,22 @@ export const FashionPortfolio = () => {
   };
 
   const handleChooseFromComputer = (type) => {
+    // Use existing refs to trigger file input
     if (type === "background") {
-      setBackgroundImage(imageUrl); // Update background image
+      backgroundInputRef.current.click();
     } else if (type === "model") {
-      setModelImage(imageUrl); // Update model image
+      modelInputRef.current.click();
     }
-    setShowImageOptions(null);
+    setShowImageOptions(null); // Close the modal
   };
-
+  
+  const handleImageUpload = (e, setImage) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl); // Replace the existing image
+    }
+  };
   const handleChooseFromGallery = (type) => {
     setShowGalleryModal(true); // Show the gallery modal
     setShowImageOptions(type); 
@@ -169,13 +177,7 @@ export const FashionPortfolio = () => {
     updatePageState,
   ]);
 
-  const handleImageUpload = (e, setImage) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    }
-  };
+ 
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);

@@ -17,16 +17,13 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
 
   // Fetch images from the backend based on the selected filter
   const fetchImages = async (patternType) => {
-
-
     setIsLoading(true);
     setError(null);
 
     try {
-
       const username = localStorage.getItem("userEmail");
 
-      console.log (username,patternType)
+      console.log(username, patternType);
 
       const response = await fetch(
         `http://localhost:5000/api/prompt-designs/${username}/${patternType}`
@@ -38,8 +35,7 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
 
       const data = await response.json();
 
-
-      console.log ( data , username)
+      console.log(data, username);
       // Filter out duplicate images based on both imageUrl and title
       const uniqueImages = data.reduce((acc, current) => {
         const isDuplicate = acc.some(
@@ -116,7 +112,10 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
               className="w-full flex items-center justify-between py-2 px-3 bg-[#616852] text-white rounded-lg text-xs focus:outline-none hover:bg-[#6e7559] transition-all duration-300 border border-[#616852] focus:border-[#b4707e]"
             >
               <span>
-                {filterOptions.find((opt) => opt.value === selectedFilter).label}
+                {
+                  filterOptions.find((opt) => opt.value === selectedFilter)
+                    .label
+                }
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -191,7 +190,8 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
                   {/* Image Label */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#616852] p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                     <h3 className="text-white text-xs font-semibold">
-                      {image.title || `Design ${index + 1}`} // Use title from the backend
+                      {image.title || `Design ${index + 1}`} // Use title from
+                      the backend
                     </h3>
                   </div>
                 </div>
