@@ -235,12 +235,6 @@ export const FashionLayout  = () =>{
             className="text-lg cursor-text"
           />
 
-          <button
-            onClick={handleColorChange}
-            className="mt-4 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            Change Background Color
-          </button>
         </div>
       </div>
     </div>
