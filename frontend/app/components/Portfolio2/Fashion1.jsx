@@ -48,11 +48,11 @@ export const AboutMe = () => {
     <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
       <div className="max-w-4xl w-full grid grid-cols-2 gap-8 items-center">
         {/* Left Section - Image */}
-        <div className="border border-black p-2">
+        <div className="border border-black p-1"> {/* Reduced padding */}
           <img
             src="/fourth.jpg"
             alt="Designer portrait"
-            className="w-full h-auto object-cover border"
+            className="w-3/4 h-auto object-cover border mx-auto" // Reduced width and centered
           />
         </div>
         {/* Right Section - Text */}
@@ -75,11 +75,10 @@ export const AboutMe = () => {
 {
   /* Second About Me Section */
 }
-
 export const AboutMe2 = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen bg-[#efe8e4] p-6 space-y-16">
-      <div className="max-w-4xl w-full text-center space-y-6 pb-16">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#efe8e4] p-6 space-y-16">
+      <div className="max-w-4xl w-full text-center space-y-6">
         <h2 className="text-6xl font-serif font-bold">ABOUT ME</h2>
         <p className="text-xl max-w-3xl mx-auto">
           You can give a brief description of the topic you want to talk about
@@ -107,7 +106,6 @@ export const AboutMe2 = () => {
     </div>
   );
 };
-
 export const MyServices = () => {
   const services = [
     {
@@ -164,28 +162,28 @@ export const MyServices = () => {
 
 export const WhatIDo = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
-      <div className="max-w-4xl w-full grid grid-cols-2 gap-8 items-center border border-black p-6">
+    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"> {/* Reduced padding */}
+      <div className="max-w-4xl w-full grid grid-cols-2 gap-6 items-center border border-black p-4 h-96 overflow-y-auto"> {/* Reduced gap, padding, and added overflow-y-auto */}
         <div className="text-center">
-          <h2 className="text-6xl font-serif font-bold">WHAT I DO</h2>
-          <p className="text-xl mt-4">
+          <h2 className="text-4xl font-serif font-bold">WHAT I DO</h2> {/* Reduced font size */}
+          <p className="text-base mt-3"> {/* Reduced font size and margin */}
             Venus has a beautiful name and is the second planet from the Sun.
             It’s terribly hot—even hotter than Mercury—and its atmosphere is
             extremely poisonous. It’s the second-brightest natural object in the
             night sky after the Moon.
           </p>
-          <p className="text-xl mt-4">
+          <p className="text-base mt-3"> {/* Reduced font size and margin */}
             It’s the closest planet to the Sun and the smallest one in the Solar
             System—it’s only a bit larger than our Moon. The planet’s name has
             nothing to do with the liquid metal, since Mercury was named after
             the Roman messenger god.
           </p>
         </div>
-        <div className="border border-black p-2">
+        <div className="border border-black p-1"> 
           <img
             src="/what i do.jpg"
             alt="Fashion model"
-            className="w-full h-auto object-cover border"
+            className="w-full h-48 object-cover border"
           />
         </div>
       </div>
@@ -195,27 +193,27 @@ export const WhatIDo = () => {
 
 export const Research = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
-      <div className="max-w-4xl w-full border border-black p-6 text-center">
-        <h2 className="text-6xl font-serif font-bold">RESEARCH</h2>
-        <div className="grid grid-cols-2 gap-4 mt-6">
+    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"> {/* Reduced padding */}
+      <div className="max-w-3xl w-full border border-black p-3 text-center h-96 overflow-y-auto"> {/* Added overflow-y-auto for scrollable content */}
+        <h2 className="text-3xl font-serif font-bold">RESEARCH</h2> {/* Reduced font size */}
+        <div className="grid grid-cols-2 gap-2 mt-3"> {/* Reduced gap and margin */}
           <img
             src="/research1.jpg"
             alt="Research process 1"
-            className="w-full h-auto object-cover border"
+            className="w-full h-24 object-cover border" 
           />
           <img
             src="/research2.jpg"
             alt="Research process 2"
-            className="w-full h-auto object-cover border"
+            className="w-full h-24 object-cover border" 
           />
         </div>
-        <p className="text-xl mt-6">
+        <p className="text-sm mt-3"> {/* Reduced font size and margin */}
           New collection design inspiration can come from a variety of
           unexpected places. By focusing on the two sorts of research for the
           design process, you can follow this formula:
         </p>
-        <ul className="text-xl text-left list-disc list-inside mt-4">
+        <ul className="text-sm text-left list-disc list-inside mt-2"> {/* Reduced font size and margin */}
           <li>
             Gathering the resources, which include fabrics, trims, and
             fastenings, to create concrete, practical aspects for your
@@ -272,23 +270,23 @@ export const Resume = () => {
 
 export const MyWorkArea1 = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
-      <div className="max-w-4xl w-full grid grid-cols-2 gap-8 items-center border border-black p-6">
+    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"> {/* Reduced padding */}
+      <div className="max-w-4xl w-full grid grid-cols-2 gap-6 items-center border border-black p-4 h-96 overflow-y-auto"> {/* Reduced gap, padding, and added overflow-y-auto */}
         {/* Left Section - Image */}
         <div>
           <img
             src="/mywork.jpg"
             alt="Fashion Design Work"
-            className="w-full h-auto object-cover border"
+            className="w-full h-48 object-cover border" 
           />
         </div>
         {/* Right Section - Text */}
         <div className="text-center">
-          <p className="italic text-gray-600 text-xl">- SUSAN BONES -</p>
-          <h2 className="text-5xl font-serif font-bold">
+          <p className="italic text-gray-600 text-base">- SUSAN BONES -</p> {/* Reduced font size */}
+          <h2 className="text-4xl font-serif font-bold"> {/* Reduced font size */}
             MY WORK - <span className="italic">Area 1</span>
           </h2>
-          <p className="italic text-gray-600 text-xl mt-4">- 2022 -</p>
+          <p className="italic text-gray-600 text-base mt-3">- 2022 -</p> {/* Reduced font size and margin */}
         </div>
       </div>
     </div>
@@ -297,51 +295,75 @@ export const MyWorkArea1 = () => {
 
 export const ProjectInDepth = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
-      <div className="max-w-4xl w-full border border-black p-6">
-        <h2 className="text-5xl font-serif font-bold text-center">
+    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4">
+      <div className="max-w-4xl w-full border border-black p-4">
+        <h2 className="text-4xl font-serif font-bold text-center">
           PROJECT 1: IN DEPTH
         </h2>
-        <div className="grid grid-cols-2 gap-6 mt-8">
-          {/* Image placeholders */}
+        <div className="grid grid-cols-2 gap-8 mt-6"> {/* Increased gap between columns */}
+          {/* Image Grid */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="border border-black w-32 h-32"></div>
-            <div className="border border-black w-32 h-32"></div>
-            <div className="border border-black w-32 h-32"></div>
+            <div className="border border-black w-32 h-32 flex items-center justify-center">
+              <img
+                src="/image1.jpg" 
+                alt="Image 1"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="border border-black w-32 h-32 flex items-center justify-center">
+              <img
+                src="/image2.jpg" 
+                alt="Image 2"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="border border-black w-32 h-32 flex items-center justify-center">
+              <img
+                src="/image3.jpg" 
+                alt="Image 3"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="border border-black w-32 h-32 flex items-center justify-center">
+              <img
+                src="/image4.jpg" 
+                alt="Image 4"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
           {/* Text Content */}
-          <div>
+          <div className="flex flex-col justify-center pl-6"> {/* Added left padding for gap */}
             <h3 className="text-2xl italic font-serif">Jupiter</h3>
-            <p>It’s the biggest planet in the Solar System</p>
+            <p className="text-lg">It’s the biggest planet in the Solar System</p>
             <h3 className="text-2xl italic font-serif mt-4">Saturn</h3>
-            <p>Saturn is a gas giant and has several rings</p>
+            <p className="text-lg">Saturn is a gas giant and has several rings</p>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 export const Project1 = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
-      <div className="max-w-4xl w-full border border-black p-6">
-        <h2 className="text-5xl font-serif font-bold text-center">PROJECT 1</h2>
-        <p className="text-center text-xl mt-4">
+    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"> {/* Reduced padding */}
+      <div className="max-w-4xl w-full border border-black p-4 h-96 "> {/* Reduced padding and added overflow-y-auto */}
+        <h2 className="text-4xl font-serif font-bold text-center">PROJECT 1</h2> {/* Reduced font size */}
+        <p className="text-center text-lg mt-3"> {/* Reduced font size and margin */}
           Jupiter is a gas giant and the biggest planet in the Solar System.
           It's the fourth-brightest object in the night sky. It was named after
           the Roman god of the skies and lightning.
         </p>
-        <div className="grid grid-cols-2 gap-4 mt-8 border border-black p-2">
+        <div className="grid grid-cols-2 gap-4 mt-6 border border-black p-2"> {/* Reduced margin-top and padding */}
           <img
             src="/pro1.jpg"
             alt="Fashion Design Work 1"
-            className="w-full h-auto object-cover border"
+            className="w-full h-48 object-cover border" 
           />
           <img
             src="/pro2.jpg"
             alt="Fashion Design Work 2"
-            className="w-full h-auto object-cover border"
+            className="w-full h-48 object-cover border" 
           />
         </div>
       </div>
