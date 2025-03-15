@@ -164,6 +164,59 @@ export const useFashionStore = create((set, get) => ({
    // Function to get the position and size of an element
    getElementPosition: (componentId, elementType) => {
      return get().elementPositions[componentId]?.[elementType] || { x: 0, y: 0, width: 0, height: 0 };
-   }
+   },
+
+    // Existing state and actions
+  componentsMap: {
+    1: [
+      "FashionPortfolio",
+      "FashionLayout",
+      "Fashion",
+      "FabricMaterialSelection",
+      "SketchesIllustrations",
+      "PortfolioSection",
+    ],
+    2: [
+      "ApparelPortfolio",
+      "AboutMe",
+      "AboutMe2",
+      "MyServices",
+      "WhatIDo",
+      "Research",
+      "Resume",
+      "MyWorkArea1",
+      "ProjectInDepth",
+      "Project1",
+    ],
+  },
+
+  // Function to get components for the current portfolio
+  getComponents: (portfolioId) => {
+    const { componentsMap } = get();
+    return componentsMap[portfolioId] || [];
+  },
+
+  // Function to duplicate a page
+  duplicatePage: () => {
+    const { portfolioId, selectedPage, componentsMap, setSelectedPage } = get();
+
+    const currentComponents = componentsMap[portfolioId];
+    const currentComponent = currentComponents[selectedPage - 1];
+
+    const updatedComponents = [
+      ...currentComponents.slice(0, selectedPage),
+      currentComponent, // Duplicated component
+      ...currentComponents.slice(selectedPage),
+    ];
+
+    set({
+      componentsMap: {
+        ...componentsMap,
+        [portfolioId]: updatedComponents,
+      },
+    });
+
+    setSelectedPage(selectedPage + 1);
+  },
 
 }));

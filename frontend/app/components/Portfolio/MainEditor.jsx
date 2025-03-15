@@ -1,33 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./style.css"; // Make sure you have this CSS file
-import { FashionPortfolio } from "./Fashion1.jsx"; // Your main component
-import { FashionLayout } from "./Fashion2.jsx";
-import { Fashion } from "./Fashion3.jsx";
-import { FabricMaterialSelection } from "./Fashion4.jsx";
-import { SketchesIllustrations } from "./Fashion5.jsx";
-import { PortfolioSection } from "./Fashion6.jsx";
-import {
-  ApparelPortfolio,
-  AboutMe,
-  AboutMe2,
-  MyServices,
-  WhatIDo,
-  Research,
-  Resume,
-  MyWorkArea1,
-  ProjectInDepth,
-  Project1,
-} from "../Portfolio2/Fashion1.jsx";
+
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import ReactDOM from "react-dom/client";
 import { useFashionStore } from "./FashionProvider";
+import { componentsMapping } from "./componentsMapping"; // Import the mapping
 
 // Inner component that uses the Fashion context
 export const PluginContent = () => {
-
-
-const [scale, setScale] = useState(1); // Scale state for zoom functionality
+  const [scale, setScale] = useState(1); // Scale state for zoom functionality
   const componentRef = useRef(null); // Reference to the component for fullscreen
 
   const [fontSize, setFontSize] = useState(16); // Default font size is 16px
@@ -35,41 +17,26 @@ const [scale, setScale] = useState(1); // Scale state for zoom functionality
   // Add state to track which dropdown is currently open
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  // Get context functions
+  const [animatePage, setAnimatePage] = useState(false);
 
-  const { selection, applyStyle } = useFashionStore();
+  // Get Zustand store state and actions
+  const {
+    selection,
+    applyStyle,
+    portfolioId,
+    selectedPage,
+    setSelectedPage,
+    getComponents,
+    duplicatePage,
+  } = useFashionStore();
 
-// Get Zustand store state and actions
-const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashionStore();
+  // Get the component names for the current portfolio
+  const componentNames = getComponents(portfolioId);
 
-
-  // Create a map where each number points to an array of components from a specific folder
-  const componentsMap = {
-    1: [
-      <FashionPortfolio />,
-      <FashionLayout />,
-      <Fashion />,
-      <FabricMaterialSelection />,
-      <SketchesIllustrations />,
-      <PortfolioSection />,
-    ],
-    2: [
-      <ApparelPortfolio />,
-      <AboutMe />,
-      <AboutMe2 />,
-      <MyServices />,
-      <WhatIDo />,
-      <Research />,
-      <Resume />,
-      <MyWorkArea1 />,
-      <ProjectInDepth />,
-      <Project1 />,
-    ],
-  };
-
-
-  // Get the components for the current portfolio
-  const currentPortfolioComponents = componentsMap[portfolioId];
+  // Resolve components using the mapping
+  const currentPortfolioComponents = componentNames.map(
+    (name) => componentsMapping[name]
+  );
 
   // Get total slides for the current portfolio
   const totalSlides = currentPortfolioComponents.length;
@@ -89,16 +56,16 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
   };
 
   const handleNext = () => {
-      console.log("Current Page:", selectedPage); // Log current page
-      console.log("Total Slides:", totalSlides); // Log total slides
+    console.log("Current Page:", selectedPage); // Log current page
+    console.log("Total Slides:", totalSlides); // Log total slides
 
-      if (selectedPage < totalSlides) {
-        const nextPage = selectedPage + 1;
-        console.log("Next Page:", nextPage); // Log next page
-        setSelectedPage(nextPage); // Pass the new value directly
-      } else {
-        console.log("Already on the last page");
-      }
+    if (selectedPage < totalSlides) {
+      const nextPage = selectedPage + 1;
+      console.log("Next Page:", nextPage); // Log next page
+      setSelectedPage(nextPage); // Pass the new value directly
+    } else {
+      console.log("Already on the last page");
+    }
   };
 
   useEffect(() => {
@@ -219,7 +186,11 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
     try {
       let canvasArray = [];
 
-      for (let i = 0; i < Math.min(10, currentPortfolioComponents.length); i++) {
+      for (
+        let i = 0;
+        i < Math.min(10, currentPortfolioComponents.length);
+        i++
+      ) {
         const page = document.createElement("div");
         Object.assign(page.style, {
           width: `${A4_WIDTH * SCALE_FACTOR}px`,
@@ -255,7 +226,11 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
       }
 
       // Initialize PDF
-      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
 
       canvasArray.forEach((canvas, index) => {
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
@@ -265,7 +240,12 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
         const y = (A4_HEIGHT - imgHeight) / 2;
 
         if (isNaN(x) || isNaN(y) || imgHeight > A4_HEIGHT) {
-          console.error("Invalid image dimensions:", { imgWidth, imgHeight, x, y });
+          console.error("Invalid image dimensions:", {
+            imgWidth,
+            imgHeight,
+            x,
+            y,
+          });
         } else {
           if (index > 0) pdf.addPage();
           pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
@@ -274,7 +254,6 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
 
       // Save PDF
       pdf.save("portfolio.pdf");
-
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {
@@ -282,7 +261,11 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
     }
   };
 
-
+  const handleDuplicatePage = () => {
+    duplicatePage(); // Call the Zustand action
+    setAnimatePage(true); // Trigger animation
+    setTimeout(() => setAnimatePage(false), 1000); // Reset after 1 second
+  };
 
   return (
     <div id="webcrumbs">
@@ -380,6 +363,17 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
                     <span className="material-symbols-outlined">download</span>
                     <span className="text-sm">Download</span>
                   </button>
+
+                  <button
+                    onClick={handleDuplicatePage}
+                    className="flex items-center gap-2 p-2 hover:bg-[#E7E4D8] rounded-lg transition-colors duration-200 text-[#E7E4D8] hover:text-[#434242]"
+                  >
+                    <span className="material-symbols-outlined">
+                      content_copy
+                    </span>
+                    <span className="text-sm">Duplicate</span>
+                  </button>
+
                   <details
                     className="relative"
                     open={openDropdown === "font"}
@@ -808,9 +802,12 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
               </div>
             </div>
             {/*displaying comp here*/}
+
             <div
+              className={`bg-[#434242] rounded-lg h-[540px] p-8 container ${
+                animatePage ? "animate-bounce" : ""
+              }`}
               ref={componentRef}
-              className="bg-[#434242] rounded-lg h-[540px] p-8 container"
             >
               <div
                 className="bg-[rgb(231,228,216)] h-full rounded-lg shadow-lg p-6 flex items-center justify-center overflow-hidden"
@@ -820,7 +817,9 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
                 }} // Apply scaling
               >
                 <div className="w-full h-full flex items-center justify-center">
-                  {currentPortfolioComponents[selectedPage - 1]}
+                  {React.createElement(
+                    currentPortfolioComponents[selectedPage - 1]
+                  )}
                 </div>
               </div>
             </div>
@@ -848,7 +847,6 @@ const { portfolioId, setPortfolioId,selectedPage, setSelectedPage  } = useFashio
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
