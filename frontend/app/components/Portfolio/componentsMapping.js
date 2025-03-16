@@ -19,7 +19,7 @@ import {
   ContactMe
 } from "../Portfolio2/Fashion1.jsx";
 
-import { PortfolioHeader, FashionMoodBoard, ResearchWork, FashionCollection, CollectionPage, ContactMe1 ,  CollectionHeader,} from "../Portfolio3/Fashion1.jsx";
+import { PortfolioHeader, FashionMoodBoard, ResearchWork, FashionCollection, CollectionPage, ContactMe1 ,  CollectionHeader,ResumePage} from "../Portfolio3/Fashion1.jsx";
 
 export const componentsMapping = {
   FashionPortfolio,
@@ -40,6 +40,7 @@ export const componentsMapping = {
   Project1,
   ContactMe,
   PortfolioHeader,
+  ResumePage,
   CollectionHeader,
   FashionMoodBoard,
   ResearchWork,

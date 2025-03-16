@@ -198,6 +198,7 @@ export const useFashionStore = create((set, get) => ({
     ],
     3: [
       "PortfolioHeader",
+      "ResumePage",
       "CollectionHeader",
       "FashionMoodBoard",
       "ResearchWork",

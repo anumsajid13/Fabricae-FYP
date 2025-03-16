@@ -23,6 +23,64 @@ export const PortfolioHeader = () => {
   );
  
   };
+
+
+  export const ResumePage = () => {
+    return (
+      <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
+        
+        {/* Title */}
+        <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-6">
+          My Resume
+        </h1>
+  
+        {/* Two-Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Left: Personal Information & Summary */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold mb-3">About Me</h2>
+            <p className="text-base leading-6">
+              Passionate software developer with expertise in MERN stack, web-based systems, and AI-powered applications. Adept at building scalable and user-friendly solutions.
+            </p>
+  
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Skills</h2>
+            <ul className="list-disc list-inside text-base leading-6">
+              <li>Full-Stack Development (MERN)</li>
+              <li>AI & Machine Learning Integration</li>
+              <li>UI/UX Design & Frontend Development</li>
+              <li>Database Management & Security</li>
+            </ul>
+  
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Education</h2>
+            <p className="text-base leading-6">
+              Bachelor’s Degree in Computer Science
+            </p>
+          </div>
+  
+          {/* Right: Experience & Projects */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold mb-3">Work Experience</h2>
+            <p className="text-base leading-6">
+              <strong>Software Developer Intern - Minascode</strong>
+              <br />Developed 'Plan Hour' web app with event planning, budget management, and calendar integration.
+            </p>
+            
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Projects</h2>
+            <ul className="list-disc list-inside text-base leading-6">
+              <li><strong>Fabricae:</strong> AI-powered textile pattern generation platform.</li>
+              <li><strong>Fashion Portfolio App:</strong> MERN-based platform for designers.</li>
+              <li><strong>PowerPoint-style Web App:</strong> Interactive slide editor.</li>
+            </ul>
+          </div>
+        </div>
+  
+      
+      </div>
+    );
+  };
+
+  
 export const CollectionHeader = () => {
   return (
     <div 
