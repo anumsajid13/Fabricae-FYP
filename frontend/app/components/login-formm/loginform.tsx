@@ -10,6 +10,7 @@ import ResetPasswordModal from '../resetPasswordComp/ResetPasswordModal'
 import {  useSearchParams } from "next/navigation";
 import ResetReqModal from '../resetPasswordComp/ResetPassReq'
 import { toast } from "react-toastify";
+import { FiLoader } from "react-icons/fi";
 
 import {
   IconBrandGithub,
@@ -159,23 +160,23 @@ export function LoginFormDemo() {
           
               if (value.trim() === "") {
                 passwordErrors.push("Password is required.");
-              } else {
-                if (value.length < 8) {
-                  passwordErrors.push("Password must be at least 8 characters long.");
-                }
-                if (!/[A-Z]/.test(value)) {
-                  passwordErrors.push("Password must include at least one uppercase letter.");
-                }
-                if (!/[a-z]/.test(value)) {
-                  passwordErrors.push("Password must include at least one lowercase letter.");
-                }
-                if (!/\d/.test(value)) {
-                  passwordErrors.push("Password must include at least one digit.");
-                }
-                if (!/[!@#$%^&*]/.test(value)) {
-                  passwordErrors.push("Password must include at least one special character (e.g., !, @, #, $, %, ^, &).");
-                }
-              }
+              // } else {
+              //   if (value.length < 8) {
+              //     passwordErrors.push("Password must be at least 8 characters long.");
+              //   }
+              //   if (!/[A-Z]/.test(value)) {
+              //     passwordErrors.push("Password must include at least one uppercase letter.");
+              //   }
+              //   if (!/[a-z]/.test(value)) {
+              //     passwordErrors.push("Password must include at least one lowercase letter.");
+              //   }
+              //   if (!/\d/.test(value)) {
+              //     passwordErrors.push("Password must include at least one digit.");
+              //   }
+              //   if (!/[!@#$%^&*]/.test(value)) {
+              //     passwordErrors.push("Password must include at least one special character (e.g., !, @, #, $, %, ^, &).");
+              //   }
+               }
           
               // If there are any password validation errors, add them to the errors object
               if (passwordErrors.length > 0) {
@@ -198,67 +199,46 @@ export function LoginFormDemo() {
     };
   
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    //setError("");
-
-    const updatedErrors: any = {};
-    let hasErrors = false;
-
-    // Validate all fields again
-    Object.entries(formData).forEach(([key, value]) => {
-      validateField(key, value);
-      if (errors[key as keyof typeof errors]) {
-        updatedErrors[key] = errors[key as keyof typeof errors];
-        hasErrors = true;
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoading(true);
+    
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+    
+        const data = await response.json(); // ✅ Read response body once
+    
+        if (!response.ok) {
+          console.log("Error:", data.message);
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            password: data.message || "Incorrect password",
+          }));
+          return; // Stop execution if login fails
+        }
+    
+        const { token, user } = data;
+        console.log("Token is:", token);
+    
+        // Set token in Zustand store
+        useAuthStore.getState().setToken(token);
+        localStorage.setItem("userEmail", user.email);
+    
+        // Redirect to home page
+        router.push("/");
+      } catch (err: any) {
+        setErrorMessage(err.message || "An error occurred.");
+      } finally {
+        setLoading(false);
       }
-    });
-
-    // Set errors state
-    setErrors(updatedErrors);
-
-    if (hasErrors) {
-      setErrorMessage("Please correct the highlighted errors before submitting.");
-      console.log("Validation failed:", updatedErrors);
-      return; // Stop form submission
-    }
-
-    // Clear error message before making the API request
-    setErrorMessage("");
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData), // Send the form data as JSON
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log("Error:", errorData.message);
-        setErrorMessage(errorData.message || "An error occurred. Please try again.");
-      }
-
-      const { token, user } = await response.json();
-      console.log('token is', token);
-  
-      // Set the token in the Zustand store
-      useAuthStore.getState().setToken(token);
-
-      localStorage.setItem("userEmail", user.email);
-  
-      // Redirect to the home page
-      router.push('/');
-      
-    } catch (err: any) {
-      setErrorMessage(err.message || "An error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    
 
   return (
     <div className="flex flex-col md:flex-row max-w-4xl w-full mx-auto mt-20 mb-20 min-h-screen rounded-none md:rounded-2xl bg-black shadow-lg overflow-hidden">
@@ -322,16 +302,23 @@ export function LoginFormDemo() {
         </div>
           )}
 
-          <button
-            className={`bg-gradient-to-br relative group/btn from-zinc-900 to-zinc-900 block bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] custom-radiusI ${
-              loading && "opacity-50 pointer-events-none"
-            }`}
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login →"}
-            <BottomGradient />
-          </button>
+        <button
+          className={`bg-gradient-to-br relative flex items-center justify-center space-x-2 group/btn from-zinc-900 to-zinc-900 block bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] custom-radiusI ${
+            loading && "opacity-50 pointer-events-none"
+          }`}
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <FiLoader className="animate-spin text-lg text-white" /> {/* 🔄 Modern Loader */}
+              <span>Logging in...</span>
+            </>
+          ) : (
+            "Login →"
+          )}
+          <BottomGradient />
+        </button>
 
           {/* Forgot Password Link */}
           <div className="mt-4 text-center">

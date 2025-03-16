@@ -16,7 +16,7 @@ type Card = {
 };
 
 
-export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (title: string) => void }) {
+export function FocusCards({ cards, onDelete,denyAccess }: { cards: Card[]; onDelete: (title: string) => void,denyAccess: boolean; }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -60,6 +60,7 @@ export function FocusCards({ cards, onDelete }: { cards: Card[]; onDelete: (titl
             hovered={hovered}
             setHovered={setHovered}
             onDelete={handleDeleteClick}
+            denyAccess={denyAccess}
             onCardClick={handleCardClick}
             selectedCards={selectedCards}
           />
@@ -78,6 +79,7 @@ const CardComponent = React.memo(
     hovered,
     setHovered,
     onDelete,
+    denyAccess,
     onCardClick,
     selectedCards,
   }: {
@@ -86,6 +88,7 @@ const CardComponent = React.memo(
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
     onDelete: (card: Card, event: React.MouseEvent) => void;
+    denyAccess: boolean;
     onCardClick: (card: Card) => void;
     selectedCards: Card[];
   }) => {
@@ -93,7 +96,7 @@ const CardComponent = React.memo(
       <div
         onMouseEnter={() => setHovered(index)}
         onMouseLeave={() => setHovered(null)}
-        onClick={() => onCardClick(card)}
+        onClick={() => !denyAccess && onCardClick(card)}
         className={cn(
           "rounded-lg relative overflow-hidden w-full h-60 md:h-96 transition-all duration-300 ease-out",
           hovered !== null && hovered !== index && "blur-sm scale-[0.98]",
@@ -112,6 +115,7 @@ const CardComponent = React.memo(
         </div>
 
         {/* Delete Icon */}
+        {!denyAccess && (
         <div
           className={cn(
             "absolute top-2 right-2 transition-opacity duration-300 cursor-pointer transform hover:scale-110",
@@ -121,6 +125,7 @@ const CardComponent = React.memo(
         >
           <FaTrash size={26} color={"#822538"} />
         </div>
+        )}
       </div>
     );
   }

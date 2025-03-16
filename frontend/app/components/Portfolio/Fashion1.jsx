@@ -44,7 +44,7 @@ export const FashionPortfolio = () => {
   const [modelImage, setModelImage] = useState(
     pageState.modelImage || "/Picture1.jpg"
   );
-  const [label, setLabel] = useState(pageState.label || "New Fashion");
+  const [label, setLabel] = useState(pageState.label || "Your Name");
 
   const handleImageClick = (type) => {
     setShowImageOptions(type);
@@ -63,7 +63,7 @@ export const FashionPortfolio = () => {
     }
     setShowImageOptions(null); // Close the modal
   };
-  
+
   const handleImageUpload = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
@@ -176,7 +176,7 @@ export const FashionPortfolio = () => {
     updatePageState,
   ]);
 
- 
+
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);
