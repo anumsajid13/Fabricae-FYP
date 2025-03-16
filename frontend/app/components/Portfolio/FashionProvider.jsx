@@ -146,6 +146,15 @@ export const useFashionStore = create((set, get) => ({
       title: { x: 10, y: 0, width: 800, height: 150 },
       image: { x: 10, y: -3, width: 300, height: 400 },
     },
+    "fashion-layout": {
+      // Default positions and sizes for small images, heading, and description
+      "smallImage-0": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-1": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-2": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-3": { x: 0, y: 0, width: 130, height: 130 },
+      heading: { x: 0, y: 0, width: 400, height: 50 },
+      description: { x: -20, y: 0, width: 380, height: 200 },
+    },
   },
 
   // Function to update the position and size of an element
