@@ -1,7 +1,7 @@
 import Image from "next/image";
 import NavBar from '../components/ImageGenerator/NavBar2';
 import Body from '../components/landingPage/Body'; 
-import BottomBar from '../components/landingPage/BottomBar'; 
+//import BottomBar from '../components/landingPage/BottomBar'; 
 import {PlaceholdersAndVanishInputDemo} from '../components/ImageGenerator/searchbar'; 
 import {BackgroundBeamsDemo} from '../components/ImageGenerator/BackgroundLines'; 
 import FileUploadModal from '../components/ImageGenerator/FileUploadModal'; 
@@ -12,7 +12,7 @@ export default function Home() {
       <NavBar />
       <FileUploadModal/>
       <div className="z-20">
-      <FocusCardsDemo/>
+      <FocusCardsDemo patternType="sketch" />  
       </div>
      
       

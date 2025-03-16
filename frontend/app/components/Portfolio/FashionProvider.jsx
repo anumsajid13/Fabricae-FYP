@@ -139,8 +139,8 @@ export const useFashionStore = create((set, get) => ({
     set({ selectedPage: pageId });
   },
 
-   // State to track positions and sizes of elements
-   elementPositions: {
+  // State to track positions and sizes of elements
+  elementPositions: {
     "fashion-portfolio": {
       quote: { x: 130, y: 80, width: 380, height: 100 },
       title: { x: 10, y: 0, width: 800, height: 150 },
@@ -148,25 +148,32 @@ export const useFashionStore = create((set, get) => ({
     },
   },
 
-   // Function to update the position and size of an element
-   updateElementPosition: (componentId, elementType, position) => {
-     set((state) => ({
-       elementPositions: {
-         ...state.elementPositions,
-         [componentId]: {
-           ...(state.elementPositions[componentId] || {}),
-           [elementType]: position,
-         },
-       },
-     }));
-   },
+  // Function to update the position and size of an element
+  updateElementPosition: (componentId, elementType, position) => {
+    set((state) => ({
+      elementPositions: {
+        ...state.elementPositions,
+        [componentId]: {
+          ...(state.elementPositions[componentId] || {}),
+          [elementType]: position,
+        },
+      },
+    }));
+  },
 
-   // Function to get the position and size of an element
-   getElementPosition: (componentId, elementType) => {
-     return get().elementPositions[componentId]?.[elementType] || { x: 0, y: 0, width: 0, height: 0 };
-   },
+  // Function to get the position and size of an element
+  getElementPosition: (componentId, elementType) => {
+    return (
+      get().elementPositions[componentId]?.[elementType] || {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      }
+    );
+  },
 
-    // Existing state and actions
+  // Existing state and actions
   componentsMap: {
     1: [
       "FashionPortfolio",
@@ -187,7 +194,17 @@ export const useFashionStore = create((set, get) => ({
       "MyWorkArea1",
       "ProjectInDepth",
       "Project1",
+      "ContactMe",
     ],
+    3: [
+      "PortfolioHeader",
+      "CollectionHeader",
+      "FashionMoodBoard",
+      "ResearchWork",
+      "FashionCollection",
+      "CollectionPage",
+      "ContactMe1",
+    ]
   },
 
   // Function to get components for the current portfolio
@@ -218,5 +235,4 @@ export const useFashionStore = create((set, get) => ({
 
     setSelectedPage(selectedPage + 1);
   },
-
 }));

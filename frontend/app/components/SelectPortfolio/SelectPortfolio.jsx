@@ -131,7 +131,8 @@ const { portfolioId, setPortfolioId } = useFashionStore();
                                 </div>
                             </div>
 
-                            <div className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2">
+                            <div className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2\
+                            " onClick={() => handlePortfolioSelection('3')}>
                                 <div className="h-64 overflow-hidden relative">
                                     <img
                                         src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
@@ -171,7 +172,7 @@ const { portfolioId, setPortfolioId } = useFashionStore();
                                 </div>
                             </div>
 
-                            <div className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2">
+                            <div className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2" nClick={() => handlePortfolioSelection('4')}>
                                 <div className="h-64 overflow-hidden relative">
                                     <img
                                         src="https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
