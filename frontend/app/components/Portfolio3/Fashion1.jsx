@@ -23,6 +23,64 @@ export const PortfolioHeader = () => {
   );
  
   };
+
+
+  export const ResumePage = () => {
+    return (
+      <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
+        
+        {/* Title */}
+        <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-6">
+          My Resume
+        </h1>
+  
+        {/* Two-Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Left: Personal Information & Summary */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold mb-3">About Me</h2>
+            <p className="text-base leading-6">
+              Passionate software developer with expertise in MERN stack, web-based systems, and AI-powered applications. Adept at building scalable and user-friendly solutions.
+            </p>
+  
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Skills</h2>
+            <ul className="list-disc list-inside text-base leading-6">
+              <li>Full-Stack Development (MERN)</li>
+              <li>AI & Machine Learning Integration</li>
+              <li>UI/UX Design & Frontend Development</li>
+              <li>Database Management & Security</li>
+            </ul>
+  
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Education</h2>
+            <p className="text-base leading-6">
+              Bachelor’s Degree in Computer Science
+            </p>
+          </div>
+  
+          {/* Right: Experience & Projects */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold mb-3">Work Experience</h2>
+            <p className="text-base leading-6">
+              <strong>Software Developer Intern - Minascode</strong>
+              <br />Developed 'Plan Hour' web app with event planning, budget management, and calendar integration.
+            </p>
+            
+            <h2 className="text-2xl font-semibold mt-5 mb-3">Projects</h2>
+            <ul className="list-disc list-inside text-base leading-6">
+              <li><strong>Fabricae:</strong> AI-powered textile pattern generation platform.</li>
+              <li><strong>Fashion Portfolio App:</strong> MERN-based platform for designers.</li>
+              <li><strong>PowerPoint-style Web App:</strong> Interactive slide editor.</li>
+            </ul>
+          </div>
+        </div>
+  
+      
+      </div>
+    );
+  };
+
+  
 export const CollectionHeader = () => {
   return (
     <div 
@@ -256,43 +314,36 @@ export const FashionCollection = () => {
 
 export const CollectionPage = () => {
   return (
-    <div className="max-w-5xl mx-auto p-8 bg-[#5C0E0A] text-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
       
       {/* Title */}
-      <h1 className="text-5xl font-bold uppercase tracking-wide text-center mb-8">
-        Collection 1: A Journey of Textures & Elegance
+      <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-6">
+        Collection 1: Textures & Elegance
       </h1>
 
       {/* Two-Column Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Left: Textual Content */}
         <div className="flex flex-col justify-center">
-          <h2 className="text-3xl font-semibold mb-4">The Vision</h2>
-          <p className="text-lg leading-7">
-            This collection is a blend of **classic sophistication** and **modern storytelling**.  
-            Inspired by **timeless textiles and fluid silhouettes**, each piece in this collection tells  
-            a unique narrative—one that embodies grace, power, and a deep connection to heritage.
+          <h2 className="text-2xl font-semibold mb-3">The Vision</h2>
+          <p className="text-base leading-6">
+            A blend of **classic sophistication** and **modern storytelling**. Inspired by **timeless textiles**, each piece embodies grace, power, and heritage.
           </p>
 
-          <h2 className="text-3xl font-semibold mt-6 mb-4">The Inspiration</h2>
-          <p className="text-lg leading-7">
-            The collection draws inspiration from **ancient craftsmanship**, **architectural elegance**,  
-            and the **subtle beauty of nature**.  
-            Soft drapes, intricate embroidery, and a carefully curated color palette  
-            reflect a fusion of **tradition and contemporary edge**.
+          <h2 className="text-2xl font-semibold mt-5 mb-3">The Inspiration</h2>
+          <p className="text-base leading-6">
+            Rooted in **ancient craftsmanship**, **architectural elegance**, and **nature’s beauty**. Soft drapes, intricate embroidery, and a refined color palette merge **tradition with modernity**.
           </p>
 
-          <h2 className="text-3xl font-semibold mt-6 mb-4">The Goal</h2>
-          <p className="text-lg leading-7">
-            This line seeks to redefine **luxury fashion** with a focus on **sustainability**  
-            and **ethical craftsmanship**. Every piece is meticulously designed to resonate  
-            with individuals who appreciate **artistry, quality, and timeless beauty**.
+          <h2 className="text-2xl font-semibold mt-5 mb-3">The Goal</h2>
+          <p className="text-base leading-6">
+            Redefining **luxury fashion** through **sustainability** and **ethical craftsmanship**. Designed for those who appreciate **artistry, quality, and timeless beauty**.
           </p>
         </div>
 
         {/* Right: Image Collage */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <img src="/collection1-1.jpg" alt="Design 1" className="w-full h-auto rounded-lg shadow-md"/>
           <img src="/collection1-2.jpg" alt="Design 2" className="w-full h-auto rounded-lg shadow-md"/>
           <img src="/collection1-3.jpg" alt="Design 3" className="w-full h-auto rounded-lg shadow-md"/>
@@ -301,13 +352,12 @@ export const CollectionPage = () => {
       </div>
 
       {/* Final Call-to-Action */}
-      <div className="text-center mt-10">
-        <p className="text-lg">Interested in learning more about this collection?</p>
-        <button className="mt-4 px-6 py-3 bg-white text-[#5C0E0A] font-semibold text-lg rounded-lg shadow-md hover:bg-gray-200 transition duration-300">
+      <div className="text-center mt-8">
+        <p className="text-base">Want to explore more?</p>
+        <button className="mt-3 px-5 py-2 bg-white text-[#5C0E0A] font-semibold text-base rounded-lg shadow-md hover:bg-gray-200 transition duration-300">
           Contact the Designer
         </button>
       </div>
-
     </div>
   );
 };

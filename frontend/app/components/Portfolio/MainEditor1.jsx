@@ -342,23 +342,21 @@ export const MainEditor1 = () => {
               </div>
 
               {/* Font Size */}
-              <div
-                open={openDropdown === "size"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleDropdownToggle("size");
-                }}
-              >
+              <div>
                 <label className="block text-sm font-medium mb-2 text-white">
                   Font Size
                 </label>
                 <div className="flex items-center">
                   <button
-                    className="p-2 
-                  bg-[#e7e4d8] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#e7e4d8] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setFontSize((prev) => Math.max(8, prev - 1)); // Decrease font size (min 8px)
+                      const newSize = Math.max(8, fontSize - 1); // Decrease font size (min 8px)
+                      setFontSize(newSize);
+                      // Apply the new font size to the selected text
+                      if (selection?.type) {
+                        handleApplyStyle("size", `${newSize}px`);
+                      }
                     }}
                   >
                     <span className="material-symbols-outlined text-sm">
@@ -371,7 +369,12 @@ export const MainEditor1 = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setFontSize((prev) => Math.min(72, prev + 1)); // Increase font size (max 72px)
+                      const newSize = Math.min(72, fontSize + 1); // Increase font size (max 72px)
+                      setFontSize(newSize);
+                      // Apply the new font size to the selected text
+                      if (selection?.type) {
+                        handleApplyStyle("size", `${newSize}px`);
+                      }
                     }}
                     className="p-2 bg-[#e7e4d8] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
@@ -381,7 +384,6 @@ export const MainEditor1 = () => {
                   </button>
                 </div>
               </div>
-
               {/* Color Options */}
               <div
                 open={openDropdown === "color"}
@@ -562,6 +564,7 @@ export const MainEditor1 = () => {
                     transformOrigin: "center",
                   }}
                   className="w-full h-full flex items-center justify-center"
+                  ref={componentRef}
                 >
                   {React.createElement(
                     currentPortfolioComponents[selectedPage - 1]
