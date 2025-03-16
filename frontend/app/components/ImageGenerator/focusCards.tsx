@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FocusCards } from "../ui/focus-cards";
-import "./global.css";
+//import "./global.css";
 import { useCardsStore } from "../../store/useCardsStore";
 import { useSelectedCardsStore } from "../../store/selectedCardsStore";
 
@@ -15,7 +15,7 @@ interface PromptDesign {
   prompt: string;
 }
 
-export function FocusCardsDemo() {
+export function FocusCardsDemo({ patternType }: { patternType: string }) {
   const [selectedTab, setSelectedTab] = useState<"explore" | "myDesigns">(
     "explore"
   );
@@ -26,20 +26,27 @@ export function FocusCardsDemo() {
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    if (hasFetched) return;
-    const username = localStorage.getItem("userEmail");
-
     const fetchCards = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`
-        );
+        let response;
+        if (selectedTab === "myDesigns") {
+          const username = localStorage.getItem("userEmail");
+          response = await fetch(
+            `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/${patternType}`
+          );
+        } else {
+          response = await fetch(
+            `http://localhost:5000/api/prompt-designs/retrieve-by-patternType/${patternType}`
+          ); 
+        }
+    
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
+    
         const data: PromptDesign[] = await response.json();
-
-        // Filter out duplicate cards based on both imageUrl and title
+    
+        // Filter out duplicate cards based on imageUrl and title
         const uniqueCards = data.reduce((acc: PromptDesign[], current) => {
           const isDuplicate = acc.some(
             (card) =>
@@ -50,16 +57,18 @@ export function FocusCardsDemo() {
           }
           return acc;
         }, []);
-
+    
         setCards(uniqueCards);
         setHasFetched(true);
       } catch (error) {
         console.error("Error fetching cards:", error);
       }
     };
-
+    
+  
     fetchCards();
-  }, [hasFetched, setCards, selectedCards]);
+  }, [selectedTab]); // ✅ Re-fetch when selectedTab changes
+  
 
   const sortCards = () => {
     if (!cards) return;
@@ -125,15 +134,24 @@ export function FocusCardsDemo() {
           cards={cards.map((card) => ({
             title: card.title,
             src: card.imageUrl,
-            key: `${card.title}-${card.imageUrl}`, // Use composite key
+            key: `${card.title}-${card.imageUrl}`,
           }))}
           onDelete={handleCardDelete}
+          denyAccess={selectedTab !== "myDesigns"}
+
         />
       ) : (
-        <div className="text-[#822538] text-center">
-          <h2>Nothing To Show Yet</h2>
-        </div>
+        <FocusCards
+          cards={cards.map((card) => ({
+            title: card.title,
+            src: card.imageUrl,
+            key: `${card.title}-${card.imageUrl}`,
+          }))}
+          onDelete={handleCardDelete}
+          denyAccess={selectedTab === "explore"}
+        />
       )}
+
 
       <div className="fixed bottom-4 right-4">
         {selectedCards.length > 0 && (

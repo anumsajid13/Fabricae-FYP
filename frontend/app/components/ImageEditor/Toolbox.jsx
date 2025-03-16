@@ -5,15 +5,25 @@ import { faImage, faFont, faPencilAlt, faTrash, faDownload,faRotate,faExchangeAl
 import { SwapColor } from "../../../colorSwapFilter";
 import * as fabric from "fabric";
 import { SketchPicker } from "react-color";
+//import { ChromePicker } from "react-color";
+import { v4 as uuidv4 } from "uuid"; 
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase"; 
+import { toast } from "react-toastify";
+import ImageGalleryPopup from "./ImageGalleryPopup"
 
 
-const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
+
+const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   const [drawingMode, setDrawingMode] = useState(false);
   const [sourceColor, setSourceColor] = useState("#ffffff");
   const [destinationColor, setDestinationColor] = useState("#000000");
   const [swapFiltersVisible, setSwapFiltersVisible] = useState(false);
   const [filtersMenuVisible, setFiltersMenuVisible] = useState(false);
   const [filterPreviews, setFilterPreviews] = useState({});
+  const [showSourcePicker, setShowSourcePicker] = useState(false);
+  const [showDestinationPicker, setShowDestinationPicker] = useState(false);
+
 
   const fileHandler = (e) => {
     const file = e.target.files[0];
@@ -344,19 +354,77 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
     grayscale: "/grayscale.PNG",
   };
 
+ 
+  const [isSaving, setIsSaving] = useState(false); 
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false); 
+
+  const handleSaveImage = async () => {
+    if (!canvas) {
+      console.error("Canvas not initialized.");
+      return;
+    }
+  
+    try {
+      setIsSaving(true); // ✅ Show loader
+  
+      // Convert canvas to Base64 image
+      const imageSrc = canvas.toDataURL("image/png");
+  
+      // Generate a unique ID for the image
+      const uniqueId = uuidv4();
+      const storageRef = ref(storage, `images/generated_image_${uniqueId}`);
+  
+      // Upload the Base64 image to Firebase Storage
+      await uploadString(storageRef, imageSrc, "data_url");
+  
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+  
+      // Retrieve user email from local storage (for associating with user)
+      const userEmail = localStorage.getItem("userEmail");
+  
+      // Metadata to be stored in MongoDB
+      const metadata = {
+        title: `Image_${uniqueId}`,
+        imageUrl: downloadURL,
+        username: userEmail || "anonymous",
+        patternType: "edited-pattern",
+        prompt: "No prompt provided",
+      };
+  
+      // Send data to MongoDB via API
+      const res = await fetch("http://localhost:5000/api/prompt-designs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(metadata),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Database save failed with status: " + res.statusText);
+      }
+  
+      toast.success("Image successfully saved to database!");
+      openGallery();
+    } catch (error) {
+      console.error("Error during save:", error);
+      toast.error("Error saving the image.");
+    } finally {
+      setIsSaving(false); // ✅ Hide loader
+    }
+  };
+  
+
+
 
   return (
 
-      <div className="flex flex-col items-start space-y-6 p-4 bg-[#822538] shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
+      <div className="flex flex-col items-start space-y-4 p-4 bg-[#9e4557] shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
         
-        <label className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6">
-          <FontAwesomeIcon icon={faImage} size="xl" style={{color: "black"}}  />
-          <input
-            type="file"
-            accept=".png, .jpg, .jpeg"
-            onChange={fileHandler}
-            className="hidden"
-          />
+        <label
+            className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
+            onClick={openGallery} 
+          >
+            <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "black" }} />
         </label>
   
         <button
@@ -383,7 +451,14 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
   
          {/* Filters Sub-Menu */}
          {filtersMenuVisible && (
-          <div className="absolute bg-transparent p-4 shadow-md rounded-xl grid grid-cols- gap-4 top-[0rem] left-20 w-auto h-[calc(87vh-4rem)]">
+          <div className="absolute bg-transparent p-4 shadow-md rounded-xl grid grid-cols- gap-4 top-[0rem] left-20 w-auto h-[calc(87vh-4rem)]"
+           style={{
+            maxHeight: "700px",
+            overflowY: "auto",  // Enables scrolling
+            scrollbarWidth: "none",  // Firefox
+            msOverflowStyle: "none",  // Internet Explorer/Edge
+          }}
+          >
             {Object.entries(filterImages).map(([filterName, imgSrc]) => (
               <div key={filterName} className="flex flex-col items-center">
                 <button 
@@ -412,47 +487,63 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
           <img src='/Frame.png' className='w-8'></img>
         </button>
   
-        {/* Swap Filters Box */}
-        {swapFiltersVisible && (
-          <div className="absolute bottom-0 left-[5rem] bg-transparent p-3 shadow-lg rounded-xl space-y-3 w-[180px]">
-            {/* <h3 className="text-gray-800 font-semibold text-md text-center">Swap Colors</h3> */}
+      
+  
+       {/* Swap Filters Box */}
+{swapFiltersVisible && (
+  <div
+    className="absolute bottom-16 left-[4rem] bg-transparent p-3 space-y-3 w-[200px] "
+    // style={{
+    //   maxHeight: "400px",
+    //   overflowY: "auto",  // Enables scrolling
+    //   scrollbarWidth: "none",  // Firefox
+    //   msOverflowStyle: "none",  // Internet Explorer/Edge
+    // }}
+  >
+    <div className="flex flex-col space-y-3">
+      
+      {/* Source Color Picker */}
+      <div className="flex flex-col items-center">
+        <span className="text-gray-600 text-xs">Source Color</span>
+        <div className="w-full flex justify-center items-center">
+          <SketchPicker
+            color={sourceColor}
+            onChangeComplete={(color) => setSourceColor(color.hex)}
+            className="shadow-md rounded-lg"
+            width="130px"
+            presetColors={[]}
+          />
+        </div>
+      </div>
 
-            <div className="flex flex-col space-y-3">
-              {/* Source Color Picker */}
-              <div className="flex flex-col items-center">
-                <span className="text-gray-600 text-xs">Source Color</span>
-                <div className="w-full flex justify-center items-center">
-                  <SketchPicker
-                    color={sourceColor}
-                    onChangeComplete={(color) => setSourceColor(color.hex)}
-                    className="shadow-md rounded-lg w-[170px]"
-                    width="170px"
-                  />
-                </div>
-              </div>
+      {/* Destination Color Picker */}
+      <div className="flex flex-col items-center">
+        <span className="text-gray-600 text-xs">Destination Color</span>
+        <div className="w-full flex justify-center items-center">
+          <SketchPicker
+            color={destinationColor}
+            onChangeComplete={(color) => setDestinationColor(color.hex)}
+            className="shadow-md rounded-lg"
+            width="130px"
+            presetColors={[]}
+          />
+        </div>
+      </div>
+      
+    </div>
 
-              {/* Destination Color Picker */}
-              <div className="flex flex-col items-center">
-                <span className="text-gray-600 text-xs">Destination Color</span>
-                <div className="w-full flex justify-center items-center">
-                  <SketchPicker
-                    color={destinationColor}
-                    onChangeComplete={(color) => setDestinationColor(color.hex)}
-                    className="shadow-md rounded-lg w-[170px]"
-                    width="170px"
-                  />
-                </div>
-              </div>
-            </div>
+    {/* Hide scrollbar in Chrome, Safari, and Opera using inline CSS */}
+    <style>{`
+      div::-webkit-scrollbar {
+        display: none;
+      }
+    `}</style>
+  </div>
+)}
 
-            {/* <button
-              onClick={() => setCurrentFilter("swapColor")}
-              className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 w-full text-center text-sm"
-            >
-              Apply Swap
-            </button> */}
-          </div>
-        )}
+
+
+
         {/* Rotation Menu Button for 90° Rotations & Flips */}
         <button
         title="Rotate"
@@ -502,7 +593,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
 
 
       {/* Fixed Rotation Slider (Always Visible at Bottom of Canvas) */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-[600px] bg-transparent p-3 rounded-xl shadow-lg flex flex-col items-center">
+      <div className=" fixed bottom-6 left-[45%] transform -translate-x-1/2 w-[600px] bg-transparent p-3 rounded-xl shadow-lg flex flex-col items-center">
         <label className="text-[#822538] text-lg font-semibold mb-2">
           Rotate: {rotationAngle}°
         </label>
@@ -561,13 +652,26 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
         >
           <FontAwesomeIcon icon={faTrash} size="xl" style={{color: "black"}} />
         </button>
+        
         <button
-          title="Download as image"
-          onClick={downloadImage}
-          className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
-        >
-          <FontAwesomeIcon icon={faDownload} size="xl" style={{color: "black"}}/>
-        </button>
+        title="Save Image to Database"
+        onClick={handleSaveImage}
+        className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
+        disabled={isSaving} // ✅ Disable button while saving
+      >
+        {isSaving ? (
+          <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        ) : (
+          <FontAwesomeIcon icon={faDownload} size="xl" style={{ color: "black" }} />
+        )}
+      </button>
+
+      {/* Fullscreen Loader (Only shown when saving) */}
+      {isSaving && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center  bg-opacity-50 z-50">
+          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
 
         <button
@@ -591,6 +695,11 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter }) => {
           Apply Crop
         </button>
       )}
+
+      {/* {isGalleryOpen && (
+        <ImageGalleryPopup isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} username={localStorage.getItem("userEmail")} />
+      )} */}
+
       </div>
 
 

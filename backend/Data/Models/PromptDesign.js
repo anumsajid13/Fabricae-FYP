@@ -7,7 +7,7 @@ const promptDesignSchema = new mongoose.Schema({
   creationDate: { type: Date, default: Date.now },
   username: { type: String, required: true },
   patternType: { type: String, required: true },
-  prompt:{ type: String, required: true }
+  prompt: { type: String, required: true, default: "No prompt provided" }
 });
 
 module.exports = mongoose.model("PromptDesign", promptDesignSchema);

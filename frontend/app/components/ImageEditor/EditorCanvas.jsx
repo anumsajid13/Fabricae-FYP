@@ -1,14 +1,23 @@
 import { useEffect, forwardRef, useState } from "react";
 import * as fabric from "fabric";
-import { Image} from 'fabric';
+import { Image } from "fabric";
 
 const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
   const [activeObject, setActiveObject] = useState(null);
 
+  // Define the desired canvas size
+  const CANVAS_WIDTH = 700;
+  const CANVAS_HEIGHT = 400;
+
   useEffect(() => {
     if (!canvas) return;
-
+  
+    // Resize the Fabric.js canvas to match the desired dimensions
+    canvas.setWidth(CANVAS_WIDTH);
+    canvas.setHeight(CANVAS_HEIGHT);
+    canvas.renderAll(); // Update the rendering
+  
     function handleKeyDown(e) {
       if (e.key === "Delete") {
         for (const obj of canvas.getActiveObjects()) {
@@ -17,35 +26,33 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
         }
       }
     }
-
+  
     function handleSelection(e) {
       const obj = e.selected?.length === 1 ? e.selected[0] : null;
       const filter = obj?.filters?.at(0);
       setCurrentFilter(filter ? filter.type.toLowerCase() : null);
-      setActiveObject(obj); // Save the active object
+      setActiveObject(obj);
     }
-
-    // Right-click event to show the context menu
+  
     function handleRightClick(e) {
-      e.preventDefault(); // Prevent the default context menu
+      e.preventDefault();
       const pointer = canvas.getPointer(e);
-
+  
       if (activeObject && activeObject.type === "image") {
         setContextMenu({
           visible: true,
-          x: e.clientX, // Position the context menu
+          x: e.clientX,
           y: e.clientY,
         });
       } else {
         setContextMenu({ visible: false, x: 0, y: 0 });
       }
     }
-
-    // Close context menu on canvas click
+  
     function handleCanvasClick() {
       setContextMenu({ visible: false, x: 0, y: 0 });
     }
-
+  
     document.addEventListener("keydown", handleKeyDown, false);
     canvas.on({
       "selection:created": handleSelection,
@@ -53,8 +60,12 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
       "selection:cleared": handleSelection,
       "mouse:down": handleCanvasClick,
     });
-    canvas.wrapperEl.addEventListener("contextmenu", handleRightClick);
-
+  
+    // ✅ Ensure `canvas.wrapperEl` exists before adding event listener
+    if (canvas.wrapperEl) {
+      canvas.wrapperEl.addEventListener("contextmenu", handleRightClick);
+    }
+  
     return () => {
       document.removeEventListener("keydown", handleKeyDown, false);
       canvas.off({
@@ -63,42 +74,41 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
         "selection:cleared": handleSelection,
         "mouse:down": handleCanvasClick,
       });
-      canvas.wrapperEl.removeEventListener("contextmenu", handleRightClick);
+  
+      // ✅ Ensure `canvas.wrapperEl` exists before removing event listener
+      if (canvas.wrapperEl) {
+        canvas.wrapperEl.removeEventListener("contextmenu", handleRightClick);
+      }
     };
   }, [canvas, setCurrentFilter, activeObject]);
+  
 
-  // Function to duplicate the image
-  const duplicateImage = async() => {
-    console.log("activeObject",activeObject)
-    console.log("activeObject.type",activeObject.type.toLowerCase())
+  const duplicateImage = async () => {
     if (activeObject && activeObject.type.toLowerCase() === "image") {
-      
-      const { src, left, top } = activeObject;
+      const { left, top } = activeObject;
       const clonedImg = await Image.fromURL(activeObject.getSrc());
-        clonedImg.set({
-          left: (left || 0) + 100,
-          top: (top || 0) + 100,
-          scaleX: activeObject.scaleX,
-          scaleY: activeObject.scaleY,
-        });
-        console.log("clonedImg",clonedImg)
-        canvas.add(clonedImg);
-        canvas.setActiveObject(clonedImg);
-        canvas.renderAll();
-        console.log("Cloned Image Added:", clonedImg);
-   
+      clonedImg.set({
+        left: (left || 0) + 100,
+        top: (top || 0) + 100,
+        scaleX: activeObject.scaleX,
+        scaleY: activeObject.scaleY,
+      });
+      canvas.add(clonedImg);
+      canvas.setActiveObject(clonedImg);
+      canvas.renderAll();
     } else {
       console.warn("Active object is not an image or does not exist.");
     }
-  
+
     setContextMenu({ visible: false, x: 0, y: 0 });
   };
-  
 
   return (
-    <div className="ml-[18rem] mt-[6rem] relative">
-      {/* Canvas */}
-      <canvas ref={ref} width="800" height="900"></canvas>
+    <div className="left-[20%] mt-[4rem] relative">
+      {/* Canvas Wrapper with Fixed Size */}
+      <div className="border border-gray-300 shadow-md" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+        <canvas ref={ref}></canvas>
+      </div>
 
       {/* Custom Context Menu */}
       {contextMenu.visible && (
