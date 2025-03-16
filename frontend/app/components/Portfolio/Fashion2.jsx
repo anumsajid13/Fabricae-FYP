@@ -51,15 +51,6 @@ export const FashionLayout = () => {
     });
   }, []);
 
-  // Handle background image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setBackgroundImage(imageUrl);
-    }
-  };
-
   // Handle small image upload
   const handleSmallImageUpload = (e, index) => {
     const file = e.target.files[0];
@@ -185,37 +176,102 @@ export const FashionLayout = () => {
 
   // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
-    if (editingField === type) {
-      return (
-        <textarea
-          value={content.text}
-          onChange={(e) => handleTextChange(e, type)}
-          onBlur={() => setEditingField(null)}
-          autoFocus
-          className={`bg-transparent border border-white focus:outline-none w-full ${className}`}
-        />
-      );
-    }
+    const textRef = useRef(null);
+    const inputRef = useRef(null);
+    const [localValue, setLocalValue] = useState("");
+
+    useEffect(() => {
+      if (editingField === type) {
+        setLocalValue(content.text);
+      }
+    }, [editingField, type, content.text]);
+
+    const handleInputChange = (e) => {
+      setLocalValue(e.target.value);
+    };
+
+    const handleInputBlur = () => {
+      handleTextChange({ target: { value: localValue } }, type);
+      setEditingField(null);
+    };
+
+    const handleInputKeyDown = (e) => {
+      if (e.key === "Enter" && type === "heading") {
+        handleInputBlur();
+      }
+    };
 
     return (
       <div
-        className={className}
-        onMouseUp={(e) => handleLocalTextSelection(e, type)}
-        onClick={() => setEditingField(type)}
+        className={`relative w-full ${className}`}
+        style={{
+          minHeight: type === "heading" ? "50px" : "80px", // Ensures height doesn't collapse
+          position: "relative",
+        }}
       >
-        {content.segments.map((segment, index) => (
-          <span key={index} style={segment.styles}>
-            {segment.text.split("\n").map((line, i) => (
-              <React.Fragment key={i}>
-                {line}
-                <br />
-              </React.Fragment>
+        {editingField === type ? (
+          type === "heading" ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={localValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              onKeyDown={handleInputKeyDown}
+              autoFocus
+              className="bg-transparent border-b border-white focus:outline-none w-full"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "50px",
+              }}
+            />
+          ) : (
+            <textarea
+              ref={inputRef}
+              value={localValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              autoFocus
+              className="bg-transparent border border-white focus:outline-none w-full"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                minHeight: "80px",
+                maxHeight: "150px",
+                resize: "none",
+                overflow: "hidden",
+              }}
+            />
+          )
+        ) : (
+          <div
+            ref={textRef}
+            className="cursor-text w-full"
+            onClick={() => setEditingField(type)}
+            style={{
+              minHeight: type === "heading" ? "50px" : "80px", // Reserves space even when not editing
+            }}
+          >
+            {content.segments.map((segment, index) => (
+              <span key={index} style={segment.styles}>
+                {segment.text}
+              </span>
             ))}
-          </span>
-        ))}
+          </div>
+        )}
       </div>
     );
   };
+
+
+
+
   // Handle background image upload
   const handleBackgroundImageUpload = (e) => {
     const file = e.target.files[0];
@@ -231,8 +287,12 @@ export const FashionLayout = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setInnerContainerImage(imageUrl);
+
+      // Reset input field to allow the same file to be selected again
+      e.target.value = "";
     }
   };
+
 
   // Handle double-click to trigger file input for background
   const handleDoubleClickBackground = (e) => {
@@ -243,10 +303,9 @@ export const FashionLayout = () => {
    // Handle double-click to trigger file input for inner container
    const handleDoubleClickInnerContainer = (e) => {
     e.stopPropagation(); // Prevent event bubbling
-    if (!innerContainerImage) { // Only trigger file input if there's no image
-      innerContainerInputRef.current.click();
-    }
+    innerContainerInputRef.current.click();
   };
+
   // Handle double-click to trigger file input for small images
   const handleDoubleClickSmallImage = (e, index) => {
     e.stopPropagation(); // Prevent event bubbling
@@ -283,43 +342,43 @@ export const FashionLayout = () => {
         onChange={handleInnerContainerImageUpload}
       />
 
-      <div
-        className="w-[80%] bg-opacity-90 p-8 flex flex-col md:flex-row gap-6"
-        style={{ backgroundColor: bgColor, height: "390px", backgroundImage: innerContainerImage ? `url('${innerContainerImage}')` : "none", }}
-        onDoubleClick={handleDoubleClickInnerContainer}
-      >
-        {/* Left Section with Images */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
-          {smallImages.map((img, index) => (
-            <div
-              key={index}
-              className="col-span-1 row-span-1 cursor-pointer"
-              onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)} // Trigger file input on double-click
-            >
-              <img
-                src={img}
-                alt={`Fashion ${index}`}
-                className="rounded-lg w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
+<div className="w-[80%] bg-opacity-90 p-8 flex flex-col md:flex-row gap-6"
+     style={{ backgroundColor: bgColor, height: "390px", backgroundImage: innerContainerImage ? `url('${innerContainerImage}')` : "none" }}
+     onDoubleClick={handleDoubleClickInnerContainer}>
 
-        {/* Right Section with Text */}
-        <div className="flex-1 text-white">
-          <EditableText
-            content={styledContent.heading}
-            type="heading"
-            className="text-4xl font-bold mb-4 cursor-text text-center"
-          />
-
-          <EditableText
-            content={styledContent.description}
-            type="description"
-            className="text-lg cursor-text text-center"
-          />
-        </div>
+  {/* Left Section with Images */}
+  <div className="grid grid-cols-2 grid-rows-2 gap-4" style={{ flex: "0 0 auto" }}>
+    {smallImages.map((img, index) => (
+      <div key={index} className="col-span-1 row-span-1 cursor-pointer">
+        <img src={img} alt={`Fashion ${index}`} className="rounded-lg w-full h-full object-cover" />
       </div>
+    ))}
+  </div>
+
+{/* Right Section with Text */}
+<div className="flex-1 text-white flex flex-col items-center gap-4">
+  {/* Heading - Fixed Position */}
+  <div className="w-full flex justify-center" style={{ minHeight: "50px" }}>
+    <EditableText
+      content={styledContent.heading}
+      type="heading"
+      className="text-4xl font-bold cursor-text text-center w-full"
+    />
+  </div>
+
+  {/* Description - Prevent Overflow */}
+  <div className="w-full flex justify-center" >
+    <EditableText
+      content={styledContent.description}
+      type="description"
+      className="text-lg cursor-text text-center w-full"
+    />
+  </div>
+</div>
+
+
+</div>
+
     </div>
   );
 };
