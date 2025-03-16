@@ -16,7 +16,10 @@ import {
   MyWorkArea1,
   ProjectInDepth,
   Project1,
+  ContactMe
 } from "../Portfolio2/Fashion1.jsx";
+
+import { PortfolioHeader, FashionMoodBoard, ResearchWork, FashionCollection, CollectionPage, ContactMe1 ,  CollectionHeader,} from "../Portfolio3/Fashion1.jsx";
 
 export const componentsMapping = {
   FashionPortfolio,
@@ -35,4 +38,12 @@ export const componentsMapping = {
   MyWorkArea1,
   ProjectInDepth,
   Project1,
+  ContactMe,
+  PortfolioHeader,
+  CollectionHeader,
+  FashionMoodBoard,
+  ResearchWork,
+  FashionCollection ,
+  CollectionPage,
+  ContactMe1
 };
