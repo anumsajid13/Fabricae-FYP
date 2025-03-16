@@ -241,10 +241,12 @@ export const FashionLayout = () => {
   };
 
    // Handle double-click to trigger file input for inner container
-   const handleDoubleClickInnerContainer = () => {
-    innerContainerInputRef.current.click();
+   const handleDoubleClickInnerContainer = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    if (!innerContainerImage) { // Only trigger file input if there's no image
+      innerContainerInputRef.current.click();
+    }
   };
-
   // Handle double-click to trigger file input for small images
   const handleDoubleClickSmallImage = (e, index) => {
     e.stopPropagation(); // Prevent event bubbling
