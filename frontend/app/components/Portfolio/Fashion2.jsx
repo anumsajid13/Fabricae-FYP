@@ -3,28 +3,39 @@ import { useFashionStore } from "./FashionProvider";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+import { ChromePicker } from "react-color";
 
-export const FashionLayout  = () =>{
+export const FashionLayout = () => {
   const [backgroundImage, setBackgroundImage] = useState("/Picture7.jpg");
-  const [heading, setHeading] = useState("Technical Drawings");
-  const [description, setDescription] = useState(
-    "Demonstrate your technical proficiency by including detailed technical drawings of your garments. Show measurements, seam placements, construction details, and any unique features that make your designs stand out."
-  );
-  const [editingField, setEditingField] = useState(null);
+  const [innerContainerImage, setInnerContainerImage] = useState(null);
   const [bgColor, setBgColor] = useState("#a3846f");
+  const [heading, setHeading] = useState("My Vision");
+  const [description, setDescription] = useState([
+    "- My work is inspired by [Culture, Art, Nature etc.]",
+    "- I believe in creating fashion that is [Sustainable, Timeless, Experimental etc.]",
+    "- Each piece tells a story and is designed with [Craftsmanship, Ethical practices]",
+  ]);
+  const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
+  const innerContainerInputRef = useRef(null);
+  const [smallImages, setSmallImages] = useState([
+    "/Picture8.jpg",
+    "/Picture9.jpg",
+    "/Picture10.jpg",
+    "/Picture11.jpg",
+  ]);
   const [activeDraggable, setActiveDraggable] = useState(null);
 
   // Store text with styling information
   const [styledContent, setStyledContent] = useState({
     heading: {
       text: heading,
-      segments: [{ text: heading, styles: {} }]
+      segments: [{ text: heading, styles: {} }],
     },
     description: {
-      text: description,
-      segments: [{ text: description, styles: {} }]
-    }
+      text: description.join("\n"), // Join array into a single string for editing
+      segments: [{ text: description.join("\n"), styles: {} }],
+    },
   });
 
   // Access fashion context
@@ -36,10 +47,11 @@ export const FashionLayout  = () =>{
   // Register this component with context
   useEffect(() => {
     registerComponent(componentId, {
-      updateStyles: updateStyles
+      updateStyles: updateStyles,
     });
   }, []);
 
+  // Handle background image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -48,29 +60,40 @@ export const FashionLayout  = () =>{
     }
   };
 
-  const handleDragStart = (key) => {
-    setActiveDraggable(key);
+  // Handle small image upload
+  const handleSmallImageUpload = (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setSmallImages((prevImages) => {
+        const updatedImages = [...prevImages];
+        updatedImages[index] = imageUrl;
+        return updatedImages;
+      });
+    }
+    e.target.value = ""; // Reset the file input
   };
 
+  // Handle text change for heading or description
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    // Update both the direct state and the styled content
-    if (type === 'heading') {
+    if (type === "heading") {
       setHeading(newText);
-    } else if (type === 'description') {
-      setDescription(newText);
+    } else if (type === "description") {
+      setDescription(newText.split("\n")); // Split text into array for bullet points
     }
 
-    setStyledContent(prev => ({
+    setStyledContent((prev) => ({
       ...prev,
       [type]: {
         text: newText,
-        segments: [{ text: newText, styles: {} }]
-      }
+        segments: [{ text: newText, styles: {} }],
+      },
     }));
   };
 
+  // Handle local text selection for styling
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
 
@@ -87,7 +110,7 @@ export const FashionLayout  = () =>{
         type,
         startOffset,
         endOffset,
-        componentId // Include the component ID
+        componentId, // Include the component ID
       };
 
       // Send selection to the global context
@@ -95,8 +118,9 @@ export const FashionLayout  = () =>{
     }
   };
 
+  // Update styles for selected text
   const updateStyles = (type, styles) => {
-    setStyledContent(prev => {
+    setStyledContent((prev) => {
       const content = prev[type];
       if (!content) return prev;
 
@@ -104,10 +128,10 @@ export const FashionLayout  = () =>{
       const selection = {
         startOffset: 0,
         endOffset: content.text.length,
-        ...window.getSelection && {
+        ...(window.getSelection && {
           startOffset: window.getSelection().getRangeAt(0).startOffset,
-          endOffset: window.getSelection().getRangeAt(0).endOffset
-        }
+          endOffset: window.getSelection().getRangeAt(0).endOffset,
+        }),
       };
 
       const { startOffset, endOffset } = selection;
@@ -115,7 +139,7 @@ export const FashionLayout  = () =>{
       const newSegments = [];
       let currentOffset = 0;
 
-      content.segments.forEach(segment => {
+      content.segments.forEach((segment) => {
         const segmentLength = segment.text.length;
 
         if (currentOffset + segmentLength <= startOffset) {
@@ -126,7 +150,7 @@ export const FashionLayout  = () =>{
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
-              styles: { ...segment.styles }
+              styles: { ...segment.styles },
             });
           }
 
@@ -135,13 +159,13 @@ export const FashionLayout  = () =>{
               Math.max(0, startOffset - currentOffset),
               Math.min(segmentLength, endOffset - currentOffset)
             ),
-            styles: { ...segment.styles, ...styles }
+            styles: { ...segment.styles, ...styles },
           });
 
           if (currentOffset + segmentLength > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
-              styles: { ...segment.styles }
+              styles: { ...segment.styles },
             });
           }
         }
@@ -153,12 +177,13 @@ export const FashionLayout  = () =>{
         ...prev,
         [type]: {
           text: content.text,
-          segments: newSegments
-        }
+          segments: newSegments,
+        },
       };
     });
   };
 
+  // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
     if (editingField === type) {
       return (
@@ -180,45 +205,104 @@ export const FashionLayout  = () =>{
       >
         {content.segments.map((segment, index) => (
           <span key={index} style={segment.styles}>
-            {segment.text}
+            {segment.text.split("\n").map((line, i) => (
+              <React.Fragment key={i}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
           </span>
         ))}
       </div>
     );
   };
+  // Handle background image upload
+  const handleBackgroundImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBackgroundImage(imageUrl);
+    }
+  };
 
-  const handleColorChange = () => {
-    // Toggle between a few colors
-    const colors = ['#a3846f', '#616852', '#B4707E', '#434242'];
-    const currentIndex = colors.indexOf(bgColor);
-    const nextIndex = (currentIndex + 1) % colors.length;
-    setBgColor(colors[nextIndex]);
+  // Handle inner container image upload
+  const handleInnerContainerImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setInnerContainerImage(imageUrl);
+    }
+  };
+
+  // Handle double-click to trigger file input for background
+  const handleDoubleClickBackground = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    backgroundInputRef.current.click();
+  };
+
+   // Handle double-click to trigger file input for inner container
+   const handleDoubleClickInnerContainer = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    if (!innerContainerImage) { // Only trigger file input if there's no image
+      innerContainerInputRef.current.click();
+    }
+  };
+  // Handle double-click to trigger file input for small images
+  const handleDoubleClickSmallImage = (e, index) => {
+    e.stopPropagation(); // Prevent event bubbling
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = (e) => handleSmallImageUpload(e, index);
+    fileInput.click();
   };
 
   return (
     <div
-      style={{ backgroundImage: `url('${backgroundImage}')` }}
+      style={{
+        backgroundImage: `url('${backgroundImage}')`
+      }}
       className="bg-cover bg-center min-h-screen flex items-center justify-center cursor-pointer portfolio-page"
-      onClick={() => backgroundInputRef.current.click()}
+      onDoubleClick={handleDoubleClickBackground} // Trigger file input on double-click
     >
+      {/* File input for background image */}
       <input
         type="file"
         accept="image/*"
         ref={backgroundInputRef}
         className="hidden"
-        onChange={handleImageUpload}
+        onChange={handleBackgroundImageUpload}
+      />
+
+      {/* File input for inner container image */}
+      <input
+        type="file"
+        accept="image/*"
+        ref={innerContainerInputRef}
+        className="hidden"
+        onChange={handleInnerContainerImageUpload}
       />
 
       <div
         className="w-[80%] bg-opacity-90 p-8 flex flex-col md:flex-row gap-6"
-        style={{ backgroundColor: bgColor }}
+        style={{ backgroundColor: bgColor, height: "390px", backgroundImage: innerContainerImage ? `url('${innerContainerImage}')` : "none", }}
+        onDoubleClick={handleDoubleClickInnerContainer}
       >
         {/* Left Section with Images */}
-        <div className="grid grid-cols-2 gap-4 flex-1 ">
-          <img src="/Picture8.jpg" alt="Fashion 1" className="rounded-lg" />
-          <img src="/Picture9.jpg" alt="Fashion 2" className="rounded-lg" />
-          <img src="/Picture10.jpg" alt="Fashion 3" className="rounded-lg" />
-          <img src="/Picture11.jpg" alt="Fashion 4" className="rounded-lg" />
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
+          {smallImages.map((img, index) => (
+            <div
+              key={index}
+              className="col-span-1 row-span-1 cursor-pointer"
+              onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)} // Trigger file input on double-click
+            >
+              <img
+                src={img}
+                alt={`Fashion ${index}`}
+                className="rounded-lg w-full h-full object-cover"
+              />
+            </div>
+          ))}
         </div>
 
         {/* Right Section with Text */}
@@ -226,24 +310,16 @@ export const FashionLayout  = () =>{
           <EditableText
             content={styledContent.heading}
             type="heading"
-            className="text-3xl font-bold mb-4 cursor-text"
+            className="text-4xl font-bold mb-4 cursor-text text-center"
           />
 
           <EditableText
             content={styledContent.description}
             type="description"
-            className="text-lg cursor-text"
+            className="text-lg cursor-text text-center"
           />
-
-          <button
-            onClick={handleColorChange}
-            className="mt-4 px-4 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            Change Background Color
-          </button>
         </div>
       </div>
     </div>
   );
 };
-

@@ -804,7 +804,7 @@ export const PluginContent = () => {
             {/*displaying comp here*/}
 
             <div
-              className={`bg-[#434242] rounded-lg h-[540px] p-8 container ${
+              className={`bg-[#434242] rounded-lg h-[540px] p-4 container ${
                 animatePage ? "animate-bounce" : ""
               }`}
               ref={componentRef}
