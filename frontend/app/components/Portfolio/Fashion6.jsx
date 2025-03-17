@@ -18,7 +18,7 @@ export const PortfolioSection =() => {
       style={{
         backgroundColor: bgColor,
         marginLeft: "110px",
-        marginRight: "110px",
+        marginRight: "110px", 
       }}
       >
         {/* Image Grid */}
