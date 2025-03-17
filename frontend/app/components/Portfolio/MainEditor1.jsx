@@ -393,7 +393,7 @@ export const MainEditor1 = () => {
                 </label>
                 <div className="flex items-center">
                   <button
-                    className="p-2 bg-[#e7e4d8] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#b4707e]  rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
                     onClick={(e) => {
                       e.stopPropagation();
                       const newSize = Math.max(8, fontSize - 1); // Decrease font size (min 8px)
@@ -408,7 +408,7 @@ export const MainEditor1 = () => {
                       remove
                     </span>
                   </button>
-                  <span className=" px-4 py-2 bg-white border-t border-b border-[#e7e4d8]">
+                  <span className=" px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
                     {fontSize}px
                   </span>
                   <button
@@ -421,7 +421,7 @@ export const MainEditor1 = () => {
                         handleApplyStyle("size", `${newSize}px`);
                       }
                     }}
-                    className="p-2 bg-[#e7e4d8] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2  bg-[#b4707e]  rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
                     <span className="material-symbols-outlined text-sm">
                       add
@@ -444,52 +444,49 @@ export const MainEditor1 = () => {
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#ffffff]"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#ffffff");
                     }}
                   ></div>
+
+<div
+    className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#000000]"
+    onClick={(e) => {
+      handleApplyStyle("color", "#000000"); // Apply black color
+    }}></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#e7e4d8]"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#e7e4d8");
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#616852]"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#616852");
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#b4707e]"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#b4707e");
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#822538]"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#822538");
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-purple-500"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#a855f7");
-                      setOpenDropdown(null);
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-pink-500"
                     onClick={(e) => {
-                      e.stopPropagation();
                       handleApplyStyle("color", "#ec4899");
-                      setOpenDropdown(null);
                     }}
                   ></div>
                   <div
@@ -497,15 +494,13 @@ export const MainEditor1 = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       handleApplyStyle("color", "#14b8a6");
-                      setOpenDropdown(null);
                     }}
                   ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-orange-500"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleApplyStyle("color", "##f97316");
-                      setOpenDropdown(null);
+                      handleApplyStyle("color", "#f97316");
                     }}
                   ></div>
                 </div>
@@ -522,7 +517,7 @@ export const MainEditor1 = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     className="flex items-center justify-center
-                   gap-1 py-2 bg-[#e7e4d8] rounded-full hover:bg-[#c9c6bc] 
+                   gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc] 
                    transition-colors duration-300 text-sm"
                     onClick={handleDuplicatePage}
                   >
@@ -533,7 +528,7 @@ export const MainEditor1 = () => {
                   </button>
                   <button
                     onClick={handleFullscreen}
-                    className="flex items-center justify-center gap-1 py-2 bg-[#e7e4d8] rounded-full hover:bg-[#c9c6bc] transition-colors duration-300 text-sm"
+                    className="flex items-center justify-center gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc] transition-colors duration-300 text-sm"
                   >
                     <span className="material-symbols-outlined text-sm">
                       fullscreen
@@ -551,18 +546,18 @@ export const MainEditor1 = () => {
                 <div className="flex items-center">
                   <button
                     onClick={handleZoomOut}
-                    className="p-2 bg-[#e7e4d8] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#b4707e] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
                     <span className="material-symbols-outlined text-sm">
                       zoom_out
                     </span>
                   </button>
-                  <span className="px-4 py-2 bg-white border-t border-b border-[#e7e4d8]">
+                  <span className="px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
                     {Math.round(scale * 100)}%
                   </span>
-                  <button
+                  <button 
                     onClick={handleZoomIn}
-                    className="p-2 bg-[#e7e4d8] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#b4707e] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
                     <span className="material-symbols-outlined text-sm">
                       zoom_in
@@ -602,9 +597,11 @@ export const MainEditor1 = () => {
           {/* Document Viewer Content */}
           <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
             <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
-            <div className={`h-full p-8 overflow-auto ${
-  animatePage ? "animate-bounce duration-1000" : ""
-}`}>
+              <div
+                className={`h-full p-8 overflow-auto ${
+                  animatePage ? "animate-bounce duration-1000" : ""
+                }`}
+              >
                 <div
                   style={{
                     transform: `scale(${scale})`,
@@ -625,7 +622,7 @@ export const MainEditor1 = () => {
           <div className="bg-[#E7E4D8] p-4 border-t border-gray-200 flex justify-center items-center">
             <div className="flex items-center gap-8 max-w-md w-full">
               <button
-                className="px-4 text-white py-2 bg-[#616852] rounded-md hover:bg-[#50563f] 
+                className="px-4 text-white py-2 bg-[#b4707e] rounded-md hover:bg-[#50563f] 
               transition-colors duration-300 flex items-center gap-1"
                 onClick={handlePrevious}
                 disabled={selectedPage === 1}
@@ -637,7 +634,7 @@ export const MainEditor1 = () => {
                 Page {selectedPage} of {totalSlides}
               </div>
               <button
-                className="text-white px-4 py-2 bg-[#616852] rounded-md
+                className="text-white px-4 py-2 bg-[#b4707e] rounded-md
                hover:bg-[#50563f] transition-colors duration-300 flex items-center gap-1"
                 onClick={handleNext}
                 disabled={selectedPage === totalSlides}
