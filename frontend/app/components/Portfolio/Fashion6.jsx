@@ -8,17 +8,41 @@ import { ImageOptionsModal } from "./ImageOptionsModal";
 
 export const PortfolioSection =() => {
 
-        const [bgColor, setBgColor] = useState("#a3846f");
+   const {
+           handleTextSelection,
+           registerComponent,
+           applyStyle,
+           getPageState,
+           updatePageState,
+           selectedPage,
+           getElementPosition,
+           updateElementPosition,
+         } = useFashionStore();
+
+         const pageId = `fashion-portfolio-${selectedPage}`;
+         const pageState = getPageState(pageId);
+
+         // Component ID for this component
+         const componentId = "fashion-collab";
+       const [bgColor, setBgColor] = useState("#a3846f");
+        const [backgroundImage, setBackgroundImage] = useState(
+           pageState.backgroundImage || "/Picture7.jpg"
+         );
+
   return (
     <div
-    className="bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
-    style={{ backgroundImage: "url('/Picture7.jpg')" }}
+    style={{
+      backgroundImage: `url('${backgroundImage}')`,
+    }}
+    className="w-[828px] bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
+
   >
-      <div className="text-white w-[90%] min-w-[380px] bg-opacity-90 p-8 flex flex-row items-center"
+      <div className="text-white w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-row items-center"
       style={{
         backgroundColor: bgColor,
+        height: "400px",
         marginLeft: "110px",
-        marginRight: "110px", 
+        marginRight: "110px",
       }}
       >
         {/* Image Grid */}

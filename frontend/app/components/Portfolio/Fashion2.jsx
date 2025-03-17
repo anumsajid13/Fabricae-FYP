@@ -535,7 +535,7 @@ export const FashionLayout = () => {
       style={{
         backgroundImage: `url('${backgroundImage}')`,
       }}
-      className="bg-cover bg-center min-h-screen flex flex-row items-center justify-center cursor-pointer portfolio-page"
+      className="w-[828px] bg-cover bg-center min-h-screen flex flex-row items-center justify-center cursor-pointer portfolio-page"
       onDoubleClick={handleDoubleClickBackground}
       onClick={() => setActiveDraggable(null)}
     >
