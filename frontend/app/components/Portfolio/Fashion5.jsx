@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useFashionStore } from "./FashionProvider";
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
+import { GalleryModal } from "./GalleryModal";
+import { ImageOptionsModal } from "./ImageOptionsModal";
 
 export const SketchesIllustrations =() =>{
+ 
+  const [bgColor, setBgColor] = useState("#a3846f");
  return (
    <div
-     className="relative bg-cover bg-center py-20 portfolio-page"
+     className="bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
      style={{ backgroundImage: "url('/Picture7.jpg')" }}
    >
-     <div className="bg-[#b4967a] p-8 mx-8 md:mx-16 rounded-lg grid md:grid-cols-2 items-center">
+     <div className="text-white w-[90%] min-w-[380px] bg-opacity-90 p-8 flex flex-row items-center"
+      style={{
+        backgroundColor: bgColor,
+        marginLeft: "110px",
+        marginRight: "110px",
+      }}
+      >
        <div className="text-white">
-         <h1 className="text-4xl font-semibold mb-4">Sketches and Illustrations</h1>
+         <h1 className="text-4xl font-semibold mb-4">Work Process</h1>
          <p className="text-lg mb-6">
            Display your design skills through fashion sketches and illustrations.
            Include both rough sketches and polished drawings to showcase your range.
@@ -19,7 +33,7 @@ export const SketchesIllustrations =() =>{
          <img
            src="/Picture16.jpg"
            alt="Fashion Illustration"
-           className="rounded-lg object-cover max-h-72 md:max-h-80"
+           className="rounded-lg object-cover w-[550px] max-h-72 md:max-h-100"
          />
        </div>
      </div>

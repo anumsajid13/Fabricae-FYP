@@ -374,7 +374,7 @@ export const FashionPortfolio = () => {
 
   return (
     <div
-      className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
+      className="max-w-[830px] relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
       onClick={() => setActiveDraggable(null)}
     >
       <div
