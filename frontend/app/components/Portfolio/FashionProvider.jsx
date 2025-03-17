@@ -156,7 +156,6 @@ export const useFashionStore = create((set, get) => ({
       description: { x: -20, y: 0, width: 380, height: 200 },
     },
     "fashion-project": {
-
       "smallImage-0": { x: 0, y: 0, width: 150, height: 120 },
       "smallImage-1": { x: 0, y: 0, width: 150, height: 120 },
       "smallImage-2": { x: 0, y: 0, width: 150, height: 120 },
@@ -174,6 +173,14 @@ export const useFashionStore = create((set, get) => ({
       description: { x: 0, y: 60, width: 400, height: 150 },
       illustration: { x: 10, y: -100, width: 250, height: 150 },
     },
+    "fashion-collab": {
+      "smallImage1-0": { x: 150, y: -40, width: 130, height: 200 },
+      "smallImage1-1": { x: -100, y: -30, width: 150, height: 20 },
+      "smallImage1-2": { x: 0, y: 50, width: 100, height: 10 },
+      "smallImage1-3": { x: 180, y: -100, width: 180, height: 10 },
+      heading: { x: 80, y: 0, width: 400, height: 50 },
+      description: { x: 150, y: 0, width: 150, height: 150 },
+    }
   },
 
   // Function to update the position and size of an element
