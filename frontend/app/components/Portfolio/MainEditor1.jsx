@@ -323,9 +323,9 @@ export const MainEditor1 = () => {
                   Font
                 </label>
                 <details className="relative w-full">
-                  <summary className="flex items-center justify-between w-full p-3 bg-[#e7e4d8] rounded-full cursor-pointer hover:bg-[#c9c6bc] transition-colors duration-300">
+                  <summary className="flex items-center justify-between w-full p-3 bg-[#b4707e] rounded-full cursor-pointer hover:bg-[#c9c6bc] transition-colors duration-300">
                     <span className="pl-2">Roboto</span>
-                    <span className="material-symbols-outlined pr-2">
+                    <span className="material-symbols-outlined pr-2 text-white">
                       arrow_drop_down
                     </span>
                   </summary>
@@ -404,7 +404,7 @@ export const MainEditor1 = () => {
                       }
                     }}
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       remove
                     </span>
                   </button>
@@ -423,7 +423,7 @@ export const MainEditor1 = () => {
                     }}
                     className="p-2  bg-[#b4707e]  rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       add
                     </span>
                   </button>
@@ -448,11 +448,12 @@ export const MainEditor1 = () => {
                     }}
                   ></div>
 
-<div
-    className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#000000]"
-    onClick={(e) => {
-      handleApplyStyle("color", "#000000"); // Apply black color
-    }}></div>
+                  <div
+                    className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#000000]"
+                    onClick={(e) => {
+                      handleApplyStyle("color", "#000000"); // Apply black color
+                    }}
+                  ></div>
                   <div
                     className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-md bg-[#e7e4d8]"
                     onClick={(e) => {
@@ -514,23 +515,23 @@ export const MainEditor1 = () => {
                 <label className="block text-sm font-medium mb-2 text-white">
                   Actions
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 text-white">
                   <button
                     className="flex items-center justify-center
                    gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc] 
                    transition-colors duration-300 text-sm"
                     onClick={handleDuplicatePage}
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       content_copy
                     </span>
-                    <span>Duplicate</span>
+                    <span >Duplicate</span>
                   </button>
                   <button
                     onClick={handleFullscreen}
                     className="flex items-center justify-center gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc] transition-colors duration-300 text-sm"
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       fullscreen
                     </span>
                     <span>Fullscreen</span>
@@ -543,23 +544,23 @@ export const MainEditor1 = () => {
                 <label className="block text-sm font-medium mb-2 text-white">
                   Zoom
                 </label>
-                <div className="flex items-center">
+                <div className="flex items-center ">
                   <button
                     onClick={handleZoomOut}
                     className="p-2 bg-[#b4707e] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       zoom_out
                     </span>
                   </button>
                   <span className="px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
                     {Math.round(scale * 100)}%
                   </span>
-                  <button 
+                  <button
                     onClick={handleZoomIn}
                     className="p-2 bg-[#b4707e] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm text-white">
                       zoom_in
                     </span>
                   </button>
