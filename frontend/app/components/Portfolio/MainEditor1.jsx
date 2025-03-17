@@ -14,6 +14,8 @@ export const MainEditor1 = () => {
 
   const [fontSize, setFontSize] = useState(16); // Default font size is 16px
 
+  const [selectedFont, setSelectedFont] = useState("Roboto"); // Default font is Roboto
+
   // Add state to track which dropdown is currently open
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -121,6 +123,9 @@ export const MainEditor1 = () => {
     switch (type) {
       case "font":
         applyStyle(selection.type, { fontFamily: value });
+        setSelectedFont(value); // Update the selected font state
+        setOpenDropdown(null); // Close the dropdown
+        break;
         break;
       case "size":
         applyStyle(selection.type, { fontSize: value });
@@ -324,7 +329,7 @@ export const MainEditor1 = () => {
                 </label>
                 <details className="relative w-full">
                   <summary className="flex items-center justify-between w-full p-3 bg-[#b4707e] rounded-full cursor-pointer hover:bg-[#c9c6bc] transition-colors duration-300">
-                    <span className="pl-2">Roboto</span>
+                    <span className="pl-2 text-white">{selectedFont}</span>
                     <span className="material-symbols-outlined pr-2 text-white">
                       arrow_drop_down
                     </span>
@@ -525,7 +530,7 @@ export const MainEditor1 = () => {
                     <span className="material-symbols-outlined text-sm text-white">
                       content_copy
                     </span>
-                    <span >Duplicate</span>
+                    <span>Duplicate</span>
                   </button>
                   <button
                     onClick={handleFullscreen}
