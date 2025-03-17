@@ -6,7 +6,8 @@ import jsPDF from "jspdf";
 import ReactDOM from "react-dom/client";
 import { useFashionStore } from "./FashionProvider";
 import { componentsMapping } from "./componentsMapping"; // Import the mapping
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export const MainEditor1 = () => {
   const [scale, setScale] = useState(1); // Scale state for zoom functionality
   const componentRef = useRef(null); // Reference to the component for fullscreen
@@ -160,99 +161,141 @@ export const MainEditor1 = () => {
   }, []);
 
   const downloadPDF = async () => {
-    const A4_WIDTH = 297; // A4 landscape width in mm
-    const A4_HEIGHT = 210; // A4 landscape height in mm
-    const SCALE_FACTOR = 2.5; // Increased scale factor for better resolution
-
-    // Create temporary container for rendering
-    const tempContainer = document.createElement("div");
-    Object.assign(tempContainer.style, {
-      position: "absolute",
-      left: "-9999px",
-      top: "0",
-      width: `${A4_WIDTH * SCALE_FACTOR}px`,
-      backgroundColor: "#ffffff",
+    // Show loading toast
+    toast.info("Generating PDF... Please wait.", {
+      autoClose: false,
+      closeButton: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      theme: "colored",
+      style: {
+        backgroundColor: "#616852",
+        color: "#ffffff",
+      },
     });
-    document.body.appendChild(tempContainer);
+
+    // Define 16:9 dimensions (1920x1080)
+    const COMPONENT_WIDTH = 1920;
+    const COMPONENT_HEIGHT = 1080;
 
     try {
-      let canvasArray = [];
+      // Store the current selected page to restore later
+      const originalSelectedPage = selectedPage;
 
+      // Create PDF with 16:9 aspect ratio
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "pt",
+        format: [COMPONENT_WIDTH, COMPONENT_HEIGHT],
+      });
+
+      // Create a dedicated container for PDF rendering
+      const pdfContainer = document.createElement("div");
+      Object.assign(pdfContainer.style, {
+        position: "fixed",
+        left: "0",
+        top: "0",
+        width: `${COMPONENT_WIDTH}px`,
+        height: `${COMPONENT_HEIGHT}px`,
+        backgroundColor: "#ffffff",
+        zIndex: "-1000",
+        overflow: "hidden",
+      });
+      document.body.appendChild(pdfContainer);
+
+      // Create a wrapper for the component
+      const componentWrapper = document.createElement("div");
+      Object.assign(componentWrapper.style, {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      });
+      pdfContainer.appendChild(componentWrapper);
+
+      // Create a root for React rendering
+      const root = ReactDOM.createRoot(componentWrapper);
+
+      // Process each component
       for (
         let i = 0;
         i < Math.min(10, currentPortfolioComponents.length);
         i++
       ) {
-        const page = document.createElement("div");
-        Object.assign(page.style, {
-          width: `${A4_WIDTH * SCALE_FACTOR}px`,
-          height: `${A4_HEIGHT * SCALE_FACTOR}px`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "white",
-          position: "relative",
-          overflow: "hidden",
-        });
+        console.log(
+          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
+        );
 
-        tempContainer.appendChild(page);
-        const root = ReactDOM.createRoot(page);
-        root.render(currentPortfolioComponents[i]);
+        // Get the component
+        const Component = currentPortfolioComponents[i];
+        if (!Component) {
+          console.error(`Component at index ${i} is undefined`);
+          continue;
+        }
 
-        // Wait for rendering
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        // Render the component to our container
+        root.render(React.createElement(Component));
 
-        // Capture canvas and store in array
-        const canvas = await html2canvas(page, {
-          scale: SCALE_FACTOR,
+        // Wait for component to render (longer wait time)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        // Force layout recalculation
+        pdfContainer.getBoundingClientRect();
+
+        // Capture the rendered component
+        const canvas = await html2canvas(pdfContainer, {
+          width: COMPONENT_WIDTH,
+          height: COMPONENT_HEIGHT,
+          scale: 1,
           useCORS: true,
+          allowTaint: true,
           backgroundColor: "#ffffff",
-          logging: false,
-          scrollX: 0,
-          scrollY: 0,
-          width: A4_WIDTH * SCALE_FACTOR,
-          height: A4_HEIGHT * SCALE_FACTOR,
+          logging: true,
+          onclone: (clonedDoc) => {
+            // Make sure the cloned element is visible
+            const clonedElement = clonedDoc.querySelector("body > div");
+            if (clonedElement) {
+              clonedElement.style.display = "block";
+              clonedElement.style.visibility = "visible";
+            }
+          },
         });
 
-        canvasArray.push(canvas);
+        console.log(
+          `Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`
+        );
+
+        // Add page to PDF (after first page)
+        if (i > 0) {
+          pdf.addPage([COMPONENT_WIDTH, COMPONENT_HEIGHT], "landscape");
+        }
+
+        // Add image to PDF with exact dimensions
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+        pdf.addImage(imgData, "JPEG", 0, 0, COMPONENT_WIDTH, COMPONENT_HEIGHT);
+
+        console.log(`Added page ${i + 1} to PDF`);
       }
 
-      // Initialize PDF
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: "a4",
-      });
-
-      canvasArray.forEach((canvas, index) => {
-        const imgData = canvas.toDataURL("image/jpeg", 1.0);
-        const imgWidth = A4_WIDTH;
-        const imgHeight = (canvas.height / canvas.width) * imgWidth;
-        const x = (A4_WIDTH - imgWidth) / 2;
-        const y = (A4_HEIGHT - imgHeight) / 2;
-
-        if (isNaN(x) || isNaN(y) || imgHeight > A4_HEIGHT) {
-          console.error("Invalid image dimensions:", {
-            imgWidth,
-            imgHeight,
-            x,
-            y,
-          });
-        } else {
-          if (index > 0) pdf.addPage();
-          pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
-        }
-      });
-
-      // Save PDF
+      // Save the PDF
       pdf.save("portfolio.pdf");
+      console.log("PDF saved successfully with 16:9 dimensions");
+
+      // Restore original selected page
+      setSelectedPage(originalSelectedPage);
+
+      // Clean up
+      if (pdfContainer && pdfContainer.parentNode) {
+        pdfContainer.parentNode.removeChild(pdfContainer);
+      }
+
+      toast.dismiss();
     } catch (error) {
       console.error("Error generating PDF:", error);
-    } finally {
-      document.body.removeChild(tempContainer); // Clean up container
     }
   };
-
   const handleDuplicatePage = () => {
     duplicatePage(); // Call the Zustand action
     setAnimatePage(true); // Trigger animation
@@ -261,6 +304,8 @@ export const MainEditor1 = () => {
 
   return (
     <div id="webcrumbs">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
       <div className="flex h-[700px] bg-[#E7E4D8] shadow-lg overflow-hidden">
         {/* Left Sidebar - Toolbar */}
         <div className="w-[280px] bg-[#434242] p-4 flex flex-col">
@@ -363,13 +408,13 @@ export const MainEditor1 = () => {
                       remove
                     </span>
                   </button>
-                  <span className="px-4 py-2 bg-white border-t border-b border-[#e7e4d8]">
+                  <span className=" px-4 py-2 bg-white border-t border-b border-[#e7e4d8]">
                     {fontSize}px
                   </span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newSize = Math.min(72, fontSize + 1); // Increase font size (max 72px)
+                      const newSize = Math.min(120, fontSize + 1); // Increase font size (max 72px)
                       setFontSize(newSize);
                       // Apply the new font size to the selected text
                       if (selection?.type) {
@@ -557,7 +602,9 @@ export const MainEditor1 = () => {
           {/* Document Viewer Content */}
           <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
             <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
-              <div className="h-full p-8 overflow-auto ">
+            <div className={`h-full p-8 overflow-auto ${
+  animatePage ? "animate-bounce duration-1000" : ""
+}`}>
                 <div
                   style={{
                     transform: `scale(${scale})`,
