@@ -166,7 +166,6 @@ export const MainEditor1 = () => {
   }, []);
 
   const downloadPDF = async () => {
-    // Show loading toast
     toast.info("Generating PDF... Please wait.", {
       autoClose: false,
       closeButton: false,
@@ -180,22 +179,18 @@ export const MainEditor1 = () => {
       },
     });
 
-    // Define 16:9 dimensions (1920x1080)
-    const COMPONENT_WIDTH = 1920;
-    const COMPONENT_HEIGHT = 1080;
+    // Define smaller dimensions 
+    const COMPONENT_WIDTH = 1000;
+    const COMPONENT_HEIGHT = 750;
 
     try {
-      // Store the current selected page to restore later
       const originalSelectedPage = selectedPage;
-
-      // Create PDF with 16:9 aspect ratio
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "pt",
         format: [COMPONENT_WIDTH, COMPONENT_HEIGHT],
       });
 
-      // Create a dedicated container for PDF rendering
       const pdfContainer = document.createElement("div");
       Object.assign(pdfContainer.style, {
         position: "fixed",
@@ -209,7 +204,6 @@ export const MainEditor1 = () => {
       });
       document.body.appendChild(pdfContainer);
 
-      // Create a wrapper for the component
       const componentWrapper = document.createElement("div");
       Object.assign(componentWrapper.style, {
         width: "100%",
@@ -220,36 +214,23 @@ export const MainEditor1 = () => {
       });
       pdfContainer.appendChild(componentWrapper);
 
-      // Create a root for React rendering
       const root = ReactDOM.createRoot(componentWrapper);
 
-      // Process each component
-      for (
-        let i = 0;
-        i < Math.min(10, currentPortfolioComponents.length);
-        i++
-      ) {
-        console.log(
-          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
-        );
+      for (let i = 0; i < Math.min(10, currentPortfolioComponents.length); i++) {
+        console.log(`Processing page ${i + 1} of ${currentPortfolioComponents.length}`);
 
-        // Get the component
         const Component = currentPortfolioComponents[i];
         if (!Component) {
           console.error(`Component at index ${i} is undefined`);
           continue;
         }
 
-        // Render the component to our container
         root.render(React.createElement(Component));
 
-        // Wait for component to render (longer wait time)
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        // Force layout recalculation
         pdfContainer.getBoundingClientRect();
 
-        // Capture the rendered component
         const canvas = await html2canvas(pdfContainer, {
           width: COMPONENT_WIDTH,
           height: COMPONENT_HEIGHT,
@@ -259,7 +240,6 @@ export const MainEditor1 = () => {
           backgroundColor: "#ffffff",
           logging: true,
           onclone: (clonedDoc) => {
-            // Make sure the cloned element is visible
             const clonedElement = clonedDoc.querySelector("body > div");
             if (clonedElement) {
               clonedElement.style.display = "block";
@@ -268,30 +248,23 @@ export const MainEditor1 = () => {
           },
         });
 
-        console.log(
-          `Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`
-        );
+        console.log(`Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`);
 
-        // Add page to PDF (after first page)
         if (i > 0) {
           pdf.addPage([COMPONENT_WIDTH, COMPONENT_HEIGHT], "landscape");
         }
 
-        // Add image to PDF with exact dimensions
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
         pdf.addImage(imgData, "JPEG", 0, 0, COMPONENT_WIDTH, COMPONENT_HEIGHT);
 
         console.log(`Added page ${i + 1} to PDF`);
       }
 
-      // Save the PDF
       pdf.save("portfolio.pdf");
-      console.log("PDF saved successfully with 16:9 dimensions");
+      console.log("PDF saved successfully with smaller dimensions");
 
-      // Restore original selected page
       setSelectedPage(originalSelectedPage);
 
-      // Clean up
       if (pdfContainer && pdfContainer.parentNode) {
         pdfContainer.parentNode.removeChild(pdfContainer);
       }
@@ -523,7 +496,7 @@ export const MainEditor1 = () => {
                 <div className="grid grid-cols-2 gap-3 text-white">
                   <button
                     className="flex items-center justify-center
-                   gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc] 
+                   gap-1 py-2 bg-[#b4707e] rounded-full hover:bg-[#c9c6bc]
                    transition-colors duration-300 text-sm"
                     onClick={handleDuplicatePage}
                   >
@@ -628,7 +601,7 @@ export const MainEditor1 = () => {
           <div className="bg-[#E7E4D8] p-4 border-t border-gray-200 flex justify-center items-center">
             <div className="flex items-center gap-8 max-w-md w-full">
               <button
-                className="px-4 text-white py-2 bg-[#b4707e] rounded-md hover:bg-[#50563f] 
+                className="px-4 text-white py-2 bg-[#b4707e] rounded-md hover:bg-[#50563f]
               transition-colors duration-300 flex items-center gap-1"
                 onClick={handlePrevious}
                 disabled={selectedPage === 1}
