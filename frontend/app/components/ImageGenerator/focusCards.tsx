@@ -37,15 +37,15 @@ export function FocusCardsDemo({ patternType }: { patternType: string }) {
         } else {
           response = await fetch(
             `http://localhost:5000/api/prompt-designs/retrieve-by-patternType/${patternType}`
-          ); 
+          );
         }
-    
+
         if (!response.ok) {
           throw new Error("Failed to fetch cards");
         }
-    
+
         const data: PromptDesign[] = await response.json();
-    
+
         // Filter out duplicate cards based on imageUrl and title
         const uniqueCards = data.reduce((acc: PromptDesign[], current) => {
           const isDuplicate = acc.some(
@@ -57,18 +57,16 @@ export function FocusCardsDemo({ patternType }: { patternType: string }) {
           }
           return acc;
         }, []);
-    
+
         setCards(uniqueCards);
         setHasFetched(true);
       } catch (error) {
         console.error("Error fetching cards:", error);
       }
     };
-    
-  
+
     fetchCards();
   }, [selectedTab]); // ✅ Re-fetch when selectedTab changes
-  
 
   const sortCards = () => {
     if (!cards) return;
@@ -138,7 +136,6 @@ export function FocusCardsDemo({ patternType }: { patternType: string }) {
           }))}
           onDelete={handleCardDelete}
           denyAccess={selectedTab !== "myDesigns"}
-
         />
       ) : (
         <FocusCards
@@ -151,7 +148,6 @@ export function FocusCardsDemo({ patternType }: { patternType: string }) {
           denyAccess={selectedTab === "explore"}
         />
       )}
-
 
       <div className="fixed bottom-4 right-4">
         {selectedCards.length > 0 && (

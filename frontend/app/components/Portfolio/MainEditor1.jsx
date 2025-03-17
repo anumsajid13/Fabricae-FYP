@@ -8,6 +8,7 @@ import { useFashionStore } from "./FashionProvider";
 import { componentsMapping } from "./componentsMapping"; // Import the mapping
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 export const MainEditor1 = () => {
   const [scale, setScale] = useState(1); // Scale state for zoom functionality
   const componentRef = useRef(null); // Reference to the component for fullscreen
@@ -21,6 +22,7 @@ export const MainEditor1 = () => {
 
   const [animatePage, setAnimatePage] = useState(false);
 
+
   // Get Zustand store state and actions
   const {
     selection,
@@ -30,6 +32,7 @@ export const MainEditor1 = () => {
     setSelectedPage,
     getComponents,
     duplicatePage,
+    savePortfolioState
   } = useFashionStore();
 
   // Get the component names for the current portfolio
@@ -179,7 +182,7 @@ export const MainEditor1 = () => {
       },
     });
 
-    // Define smaller dimensions 
+    // Define smaller dimensions
     const COMPONENT_WIDTH = 1000;
     const COMPONENT_HEIGHT = 750;
 
@@ -216,8 +219,14 @@ export const MainEditor1 = () => {
 
       const root = ReactDOM.createRoot(componentWrapper);
 
-      for (let i = 0; i < Math.min(10, currentPortfolioComponents.length); i++) {
-        console.log(`Processing page ${i + 1} of ${currentPortfolioComponents.length}`);
+      for (
+        let i = 0;
+        i < Math.min(10, currentPortfolioComponents.length);
+        i++
+      ) {
+        console.log(
+          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
+        );
 
         const Component = currentPortfolioComponents[i];
         if (!Component) {
@@ -248,7 +257,9 @@ export const MainEditor1 = () => {
           },
         });
 
-        console.log(`Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`);
+        console.log(
+          `Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`
+        );
 
         if (i > 0) {
           pdf.addPage([COMPONENT_WIDTH, COMPONENT_HEIGHT], "landscape");
@@ -279,6 +290,19 @@ export const MainEditor1 = () => {
     setAnimatePage(true); // Trigger animation
     setTimeout(() => setAnimatePage(false), 1000); // Reset after 1 second
   };
+
+  const handleSave = () => {
+    console.log('Save button clicked');
+    console.log('savePortfolioState exists:', !!savePortfolioState);
+    
+    if (savePortfolioState) {
+      console.log('Calling savePortfolioState function');
+      savePortfolioState();
+    } else {
+      console.error("saveState function is not registered yet!");
+    }
+  };
+  
 
   return (
     <div id="webcrumbs">
@@ -565,7 +589,10 @@ export const MainEditor1 = () => {
                 </span>
               </button>
 
-              <button className="p-2 bg-[#434242] rounded-md hover:bg-[#616852] transition-colors duration-300">
+              <button
+                onClick={handleSave}
+                className="p-2 bg-[#434242] rounded-md hover:bg-[#616852] transition-colors duration-300"
+              >
                 <span className="material-symbols-outlined text-white">
                   save
                 </span>

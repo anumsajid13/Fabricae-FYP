@@ -271,4 +271,8 @@ export const useFashionStore = create((set, get) => ({
 
     setSelectedPage(selectedPage + 1);
   },
+  savePortfolioState: () => {
+    console.warn("savePortfolioState is not registered yet!");
+  }, // Default no-op function
+  setSavePortfolioState: (fn) => set({ savePortfolioState: fn }),
 }));

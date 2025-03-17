@@ -6,8 +6,9 @@ const promptDesignRoutes = require("./routes/promptDesign");
 const authRoutes = require("./routes/authRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const path = require("path");
+const Portfolio = require("./data/models/Portfolio.js"); // Import the Portfolio model
 
-const pptxRoutes = require("./routes/portRoutes");
+const portfolioRoutes = require("./routes/portRoutes"); // ✅ Import portfolio routes
 
 dotenv.config();
 
@@ -32,8 +33,7 @@ app.use("/api/model-routes", modelRoutes);
 // Serve static files from the "uploads" directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Use PPTX routes
-app.use("/api", pptxRoutes);
+app.use("/api", portfolioRoutes); 
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
