@@ -410,6 +410,126 @@ export const FashionLayout = () => {
     setShowImageOptions(null);
   };
 
+
+  const handleSave = async () => {
+    try {
+      console.log("handleSave function called");
+  
+      const username = localStorage.getItem("userEmail"); // Get username from local storage
+  
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+  
+      // Prepare the state to save
+      const stateToSave = {
+        username, // Include username in the request body
+        backgroundImage,
+        modelImage: innerContainerImage,
+        styledContent,
+        elementPositions: {
+          heading: getElementPosition(componentId, "heading"),
+          description: getElementPosition(componentId, "description"),
+          smallImages: smallImages.map((_, index) =>
+            getElementPosition(componentId, `smallImage-${index}`)
+          ),
+        },
+        smallImages,
+        heading,
+        description,
+        bgColor,
+      };
+  
+      console.log("State to save:", stateToSave);
+  
+      // Send the state to the backend
+      const response = await fetch("http://localhost:5000/api/save-portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          username: username, // Send username in headers
+        },
+        body: JSON.stringify(stateToSave),
+      });
+  
+      if (!response.ok) throw new Error("Failed to save portfolio");
+      const result = await response.json();
+      console.log("Portfolio saved successfully:", result);
+    } catch (error) {
+      console.error("Error in handleSave function:", error);
+    }
+  };
+
+  const loadState = async () => {
+    try {
+      console.log("Attempting to load portfolio state");
+  
+      const username = localStorage.getItem("userEmail"); // Get username from local storage
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+  
+      // Fetch the saved state from the backend
+      const response = await fetch("http://localhost:5000/api/load-portfolio", {
+        method: "GET",
+        headers: {
+          username: username, // Send username in headers
+        },
+      });
+  
+      console.log("Response status:", response.status);
+      if (!response.ok) throw new Error("Failed to load portfolio");
+  
+      const savedState = await response.json();
+      console.log("Loaded state from API:", savedState);
+  
+      if (!savedState || typeof savedState !== "object") {
+        console.error("Invalid state loaded:", savedState);
+        return;
+      }
+  
+      // Update the component's state with the loaded data
+      if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
+      if (savedState.modelImage) setInnerContainerImage(savedState.modelImage);
+      if (savedState.smallImages) setSmallImages(savedState.smallImages);
+      if (savedState.heading) setHeading(savedState.heading);
+      if (savedState.description) setDescription(savedState.description);
+      if (savedState.bgColor) setBgColor(savedState.bgColor);
+  
+      // Update styledContent if it exists
+      if (savedState.styledContent) {
+        setStyledContent(savedState.styledContent);
+      }
+  
+      // Update element positions if they exist
+      if (savedState.elementPositions) {
+        if (savedState.elementPositions.heading) {
+          updateElementPosition(componentId, "heading", savedState.elementPositions.heading);
+        }
+        if (savedState.elementPositions.description) {
+          updateElementPosition(componentId, "description", savedState.elementPositions.description);
+        }
+        if (savedState.elementPositions.smallImages) {
+          savedState.elementPositions.smallImages.forEach((position, index) => {
+            updateElementPosition(componentId, `smallImage-${index}`, position);
+          });
+        }
+      }
+  
+      console.log("Portfolio loaded successfully");
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+    }
+  };
+
+   // Load portfolio state when the component mounts
+   useEffect(() => {
+    loadState();
+  }, []); // Empty dependency array ensures this runs only once on mount
+  
+
   return (
     <div
       style={{
@@ -453,6 +573,10 @@ export const FashionLayout = () => {
           className="grid grid-cols-2 grid-rows-2 gap-8"
           style={{ flex: "0 0 40%", height: "100%" }}
         >
+           <button className="text-black" onClick={handleSave}>
+            Save
+          </button>
+
           {smallImages.map((img, index) => {
             const imagePosition = getElementPosition(
               componentId,
