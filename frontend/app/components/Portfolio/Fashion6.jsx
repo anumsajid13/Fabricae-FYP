@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useFashionStore } from "./FashionProvider";
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
+import { GalleryModal } from "./GalleryModal";
+import { ImageOptionsModal } from "./ImageOptionsModal";
 
 export const PortfolioSection =() => {
+
+        const [bgColor, setBgColor] = useState("#a3846f");
   return (
-    <div className="bg-[url('/Picture7.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center portfolio-page">
-      <div className="bg-[#c2a18a] p-6 rounded-lg shadow-lg max-w-7xl flex flex-col md:flex-row items-center bg-opacity-80 h-[700px]">
+    <div
+    className="bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
+    style={{ backgroundImage: "url('/Picture7.jpg')" }}
+  >
+      <div className="text-white w-[90%] min-w-[380px] bg-opacity-90 p-8 flex flex-row items-center"
+      style={{
+        backgroundColor: bgColor,
+        marginLeft: "110px",
+        marginRight: "110px",
+      }}
+      >
         {/* Image Grid */}
         <div className="grid grid-cols-3 gap-4 md:w-2/3">
           <div className="row-span-2">
@@ -32,11 +49,11 @@ export const PortfolioSection =() => {
 
         {/* Text Content */}
         <div className="md:w-1/3 text-white p-6 text-center md:text-left">
-          <h2 className="text-3xl font-bold text-white">Client Work or Collaborations</h2>
+          <h2 className="text-3xl font-bold text-white">Contact & Social Media</h2>
           <p className="mt-4 text-white text-sm">
-            If you have worked with clients or collaborated with other brands or artists,
-            showcase the projects and highlight your role and contribution.
-            Include any press clippings or media coverage related to these collaborations.
+          Email: [Your Email]
+          Website: [Your Portfolio Link]
+          Instagram: [@YourHandle]
           </p>
           <div className="mt-6 text-lg font-bold">NEW FASHION</div>
         </div>

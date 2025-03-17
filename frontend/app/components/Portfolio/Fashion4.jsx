@@ -1,46 +1,53 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useFashionStore } from "./FashionProvider";
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
+import { GalleryModal } from "./GalleryModal";
+import { ImageOptionsModal } from "./ImageOptionsModal";
 
-export const  FabricMaterialSelection = () =>{
+export const FabricMaterialSelection = () => {
+  const [bgColor, setBgColor] = useState("#a3846f");
+  const [text, setText] = useState(""); // State to manage the text area content
+
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center portfolio-page"
+      className="bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
       style={{ backgroundImage: "url('/Picture7.jpg')" }}
     >
-      <div className="bg-[#b4967a] p-8 m-16 rounded-lg grid md:grid-cols-2">
-      <div className="text-white">
-          <h1 className="text-4xl font-semibold mb-4">Fabric and Material Selection</h1>
-          <p className="text-lg mb-6">
-            Present a selection of fabric swatches, material samples, and texture
-            references that you have chosen for your collection. Explain why you
-            selected these materials and how they contribute to the overall aesthetic
-            and functionality of your designs.
-          </p>
-          <h2 className="font-bold text-xl">NEW FASHION</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+      <div
+        className="text-white w-[90%] min-w-[380px] bg-opacity-90 p-8 flex flex-col items-center"
+        style={{
+          backgroundColor: bgColor,
+          marginLeft: "110px",
+          marginRight: "110px",
+        }}
+      >
+        <h1 className="text-4xl font-semibold mb-4">Final Designs</h1>
+        <div className="w-[500px] h-[210px] grid grid-cols-4 gap-4">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="rounded-lg p-2 w-70 h-10 resize-none"
+            placeholder="Enter your text here..."
+          />
           <img
             src="/Picture12.jpg"
             alt="Fashion 1"
-            className="rounded-lg object-cover w-full h-full"
-          />
-          <img
-            src="/Picture13.jpg"
-            alt="Fashion 2"
-            className="rounded-lg object-cover w-full h-full"
+            className="rounded-lg object-cover w-60 h-40"
           />
           <img
             src="/Picture14.jpg"
             alt="Fashion 3"
-            className="rounded-lg object-cover w-full h-full"
+            className="rounded-lg object-cover w-70 h-50"
           />
           <img
             src="/Picture15.jpg"
             alt="Fashion 4"
-            className="rounded-lg object-cover w-full h-full"
+            className="rounded-lg object-cover w-60 h-60"
           />
         </div>
       </div>
     </div>
   );
 };
-
