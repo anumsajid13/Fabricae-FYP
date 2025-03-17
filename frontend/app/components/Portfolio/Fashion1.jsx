@@ -27,7 +27,7 @@ export const FashionPortfolio = () => {
     updateElementPosition,
   } = useFashionStore();
 
-  const pageId = `fashion-portfolio-${selectedPage}`;
+  const pageId = fashion-portfolio-${selectedPage};
   const pageState = getPageState(pageId);
 
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
@@ -345,7 +345,7 @@ export const FashionPortfolio = () => {
           onBlur={handleInputBlur}
           onKeyDown={handleInputKeyDown}
           autoFocus
-          className={`bg-transparent border-b border-white focus:outline-none ${className}`}
+          className={bg-transparent border-b border-white focus:outline-none ${className}}
           style={{
             width: "100%",
             boxSizing: "border-box",
@@ -379,7 +379,7 @@ export const FashionPortfolio = () => {
     >
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
-        style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
+        style={{ backgroundImage: url('${backgroundImage}'), zIndex: 1 }}
         onClick={() => handleImageClick("background")}
       ></div>
 
