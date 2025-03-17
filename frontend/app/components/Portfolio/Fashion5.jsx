@@ -7,16 +7,39 @@ import { GalleryModal } from "./GalleryModal";
 import { ImageOptionsModal } from "./ImageOptionsModal";
 
 export const SketchesIllustrations =() =>{
- 
-  const [bgColor, setBgColor] = useState("#a3846f");
+
+   const {
+        handleTextSelection,
+        registerComponent,
+        applyStyle,
+        getPageState,
+        updatePageState,
+        selectedPage,
+        getElementPosition,
+        updateElementPosition,
+      } = useFashionStore();
+
+      const pageId = `fashion-portfolio-${selectedPage}`;
+      const pageState = getPageState(pageId);
+
+      // Component ID for this component
+      const componentId = "fashion-work";
+    const [bgColor, setBgColor] = useState("#a3846f");
+     const [backgroundImage, setBackgroundImage] = useState(
+        pageState.backgroundImage || "/Picture7.jpg"
+      );
+
  return (
    <div
-     className="bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
-     style={{ backgroundImage: "url('/Picture7.jpg')" }}
+   style={{
+    backgroundImage: `url('${backgroundImage}')`,
+  }}
+  className="w-[828px] bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
    >
-     <div className="text-white w-[90%] min-w-[380px] bg-opacity-90 p-8 flex flex-row items-center"
+     <div className="text-white w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-row items-center"
       style={{
         backgroundColor: bgColor,
+        height: "400px",
         marginLeft: "110px",
         marginRight: "110px",
       }}
@@ -24,8 +47,8 @@ export const SketchesIllustrations =() =>{
        <div className="text-white">
          <h1 className="text-4xl font-semibold mb-4">Work Process</h1>
          <p className="text-lg mb-6">
-           Display your design skills through fashion sketches and illustrations.
-           Include both rough sketches and polished drawings to showcase your range.
+          Brands I’ve Worked With: [List any brands, designers, or influencers]
+          Media Features: [Mention magazines, blogs, or press coverage]
          </p>
          <h2 className="font-bold text-xl">NEW FASHION</h2>
        </div>

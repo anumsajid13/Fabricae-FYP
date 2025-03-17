@@ -341,7 +341,7 @@ export const Fashion = () => {
 
       {/* Inner Container */}
       <div
-        className="w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-col items-center"
+        className="text-white w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-col items-center"
         style={{
           backgroundColor: bgColor,
           marginLeft: "110px",
