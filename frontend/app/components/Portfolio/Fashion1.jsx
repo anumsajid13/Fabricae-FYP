@@ -251,6 +251,21 @@ export const FashionPortfolio = () => {
     }
   };
 
+  // Handle background image upload
+  const handleBackgroundImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBackgroundImage(imageUrl);
+    }
+  };
+
+   // Handle double-click to trigger file input for background
+   const handleDoubleClickBackground = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowImageOptions("background");
+  };
+
   const handleImageClick = (type) => {
     setShowImageOptions(type);
   };
@@ -595,22 +610,27 @@ export const FashionPortfolio = () => {
 
   return (
     <div
-      className="max-w-[830px] relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
+      style={{
+        backgroundImage: `url('${backgroundImage}')`,
+      }}
+      className="max-w-[830px] relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] cursor-pointer portfolio-page"
       onClick={() => setActiveDraggable(null)}
+      onDoubleClick={handleDoubleClickBackground}
     >
+      <input
+        type="file"
+        accept="image/*"
+        ref={backgroundInputRef}
+        className="hidden"
+        onChange={handleBackgroundImageUpload}
+      />
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
         style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
         onClick={() => handleImageClick("background")}
       ></div>
 
-      <input
-        type="file"
-        accept="image/*"
-        ref={backgroundInputRef}
-        className="hidden"
-        onChange={(e) => handleImageUpload(e, setBackgroundImage)}
-      />
+
 
       <div
         className="relative flex flex-col items-center justify-center h-full"
