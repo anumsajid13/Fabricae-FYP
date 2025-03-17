@@ -185,7 +185,48 @@ export const FashionPortfolio = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    // Update both the direct state and the styled content
+    setStyledContent((prev) => {
+      const content = prev[type];
+
+      if (!content) return prev;
+
+      const oldSegments = content.segments || [{ text: content.text, styles: {} }];
+      const newSegments = [];
+
+      let remainingText = newText;
+      let index = 0;
+
+      // Preserve styles for as many characters as possible
+      for (let segment of oldSegments) {
+        if (remainingText.length === 0) break;
+
+        const segmentText = segment.text;
+        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
+
+        newSegments.push({
+          text: remainingText.substring(0, lengthToCopy),
+          styles: { ...segment.styles },
+        });
+
+        remainingText = remainingText.substring(lengthToCopy);
+        index += lengthToCopy;
+      }
+
+      // If there's any remaining text, add it as a new unstyled segment
+      if (remainingText.length > 0) {
+        newSegments.push({ text: remainingText, styles: {} });
+      }
+
+      return {
+        ...prev,
+        [type]: {
+          text: newText,
+          segments: newSegments,
+        },
+      };
+    });
+
+    // Update the plain text state as well
     switch (type) {
       case "quote":
         setQuote(newText);
@@ -199,15 +240,8 @@ export const FashionPortfolio = () => {
       default:
         break;
     }
-
-    setStyledContent((prev) => ({
-      ...prev,
-      [type]: {
-        text: newText,
-        segments: [{ text: newText, styles: {} }],
-      },
-    }));
   };
+
 
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing

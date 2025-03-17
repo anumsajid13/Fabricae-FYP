@@ -90,7 +90,6 @@ export const Fashion = () => {
     setShowImageOptions(null);
   };
 
-
   const handleSelectImageFromGallery = (imageUrl) => {
     if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
@@ -103,19 +102,20 @@ export const Fashion = () => {
     setShowImageOptions(null);
   };
 
-    // Handle inner container image upload
-    const handleInnerContainerImageUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const imageUrl = URL.createObjectURL(file);
-        setInnerContainerImage(imageUrl);
+  // Handle inner container image upload
+  const handleInnerContainerImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setInnerContainerImage(imageUrl);
 
-        // Reset input field to allow the same file to be selected again
-        e.target.value = "";
-      }
-         // Close the modal after setting the image
-       setShowImageOptions(null);
-    };
+      // Reset input field to allow the same file to be selected again
+      e.target.value = "";
+    }
+    // Close the modal after setting the image
+    setShowImageOptions(null);
+  };
+
   // Handle small image upload
   const handleSmallImageUpload = (e, index) => {
     const file = e.target.files[0];
@@ -127,7 +127,7 @@ export const Fashion = () => {
         return updatedImages;
       });
       // Close the modal after setting the image
-    setShowImageOptions(null);
+      setShowImageOptions(null);
     }
     e.target.value = ""; // Reset the file input
   };
@@ -149,12 +149,11 @@ export const Fashion = () => {
     setShowImageOptions("background");
   };
 
-    // Handle double-click to trigger file input for inner container
-    const handleDoubleClickInnerContainer = (e) => {
-      e.stopPropagation(); // Prevent event bubbling
-      setShowImageOptions("inner");
-    };
-
+  // Handle double-click to trigger file input for inner container
+  const handleDoubleClickInnerContainer = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowImageOptions("inner");
+  };
 
   // Handle double-click to trigger file input for small images
   const handleDoubleClickSmallImage = (e, index) => {
@@ -331,8 +330,8 @@ export const Fashion = () => {
         onChange={handleBackgroundImageUpload}
       />
 
-       {/* File input for inner container image */}
-       <input
+      {/* File input for inner container image */}
+      <input
         type="file"
         accept="image/*"
         ref={innerContainerInputRef}
@@ -344,7 +343,6 @@ export const Fashion = () => {
       <div
         className="w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-col items-center"
         style={{
-
           backgroundColor: bgColor,
           marginLeft: "110px",
           marginRight: "110px",
@@ -451,7 +449,6 @@ export const Fashion = () => {
                       src={img}
                       alt={`Fashion ${index}`}
                       className="rounded-lg w-40 h-40 object-cover"
-
                     />
                     <EditableText
                       content={smallImageTexts[index]}
@@ -474,7 +471,7 @@ export const Fashion = () => {
           onChooseFromComputer={() => {
             if (showImageOptions === "background") {
               backgroundInputRef.current.click();
-            }else if (showImageOptions === "inner") {
+            } else if (showImageOptions === "inner") {
               innerContainerInputRef.current.click();
             } else if (showImageOptions === "smallImage") {
               const fileInput = document.createElement("input");
