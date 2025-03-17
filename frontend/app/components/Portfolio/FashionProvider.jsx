@@ -155,6 +155,13 @@ export const useFashionStore = create((set, get) => ({
       heading: { x: 0, y: 0, width: 400, height: 50 },
       description: { x: -20, y: 0, width: 380, height: 200 },
     },
+    "fashion-project": {
+
+      "smallImage-0": { x: 0, y: 0, width: 150, height: 120 },
+      "smallImage-1": { x: 0, y: 0, width: 150, height: 120 },
+      "smallImage-2": { x: 0, y: 0, width: 150, height: 120 },
+      heading: { x: 0, y: 0, width: 420, height: 50 },
+    },
   },
 
   // Function to update the position and size of an element
