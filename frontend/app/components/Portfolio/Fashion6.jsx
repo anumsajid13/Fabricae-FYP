@@ -29,15 +29,21 @@ export const PortfolioSection = () => {
   );
 
   // State for images in the grid
-  const [images, setImages] = useState([
-    "/Picture17.jpg",
-    "/Picture18.jpg",
-    "/Picture19.jpg",
-    "/Picture20.jpg",
-  ]);
+  const [smallImages, setSmallImages] = useState(
+    pageState.smallImages || [
+      "/Picture17.jpg",
+      "/Picture18.jpg",
+      "/Picture19.jpg",
+      "/Picture20.jpg",
+    ]
+  );
 
   const [activeDraggable, setActiveDraggable] = useState(null);
   const backgroundInputRef = useRef(null);
+  const innerContainerInputRef = useRef(null);
+  const [innerContainerImage, setInnerContainerImage] = useState(
+    pageState.innerContainerImage || null
+  );
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or specific image index
   const [activeSmallImageIndex, setActiveSmallImageIndex] = useState(null);
@@ -82,14 +88,16 @@ export const PortfolioSection = () => {
       heading,
       description,
       styledContent,
-      images,
+      innerContainerImage,
+      smallImages,
     });
   }, [
     backgroundImage,
     heading,
     description,
     styledContent,
-    images,
+    innerContainerImage,
+    smallImages,
     pageId,
     updatePageState,
   ]);
@@ -106,19 +114,85 @@ export const PortfolioSection = () => {
     setShowImageOptions(null);
   };
 
-  const handleChooseFromComputer = (type) => {
-    if (type === "background") {
-      backgroundInputRef.current.click();
-    }
-    setShowImageOptions(null); // Close the modal
-  };
-
-  const handleImageUpload = (e, setImage) => {
+  // Handle small image upload
+  const handleSmallImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      setSmallImages((prevImages) => {
+        const updatedImages = [...prevImages];
+        updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
+        return updatedImages;
+      });
     }
+    e.target.value = ""; // Reset the file input
+  };
+
+  // Handle small image selection from gallery
+  const handleSelectSmallImageFromGallery = (imageUrl) => {
+    setSmallImages((prevImages) => {
+      const updatedImages = [...prevImages];
+      updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
+      return updatedImages;
+    });
+    setShowGalleryModal(false); // Close the gallery modal
+    setShowImageOptions(null); // Close the options modal
+  };
+
+  // Handle background image upload
+  const handleBackgroundImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBackgroundImage(imageUrl);
+    }
+  };
+
+  // Handle inner container image upload
+  const handleInnerContainerImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setInnerContainerImage(imageUrl);
+
+      // Reset input field to allow the same file to be selected again
+      e.target.value = "";
+    }
+  };
+
+  // Handle double-click to trigger file input for background
+  const handleDoubleClickBackground = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowImageOptions("background");
+  };
+
+  // Handle double-click to trigger file input for inner container
+  const handleDoubleClickInnerContainer = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowImageOptions("inner");
+  };
+
+  // Handle double-click to trigger file input for small images
+  const handleDoubleClickSmallImage = (e, index) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setActiveSmallImageIndex(index); // Set the active small image index
+    setShowImageOptions("smallImage");
+  };
+
+  const handleChooseFromComputer = (type) => {
+    // Use existing refs to trigger file input
+    if (type === "background") {
+      backgroundInputRef.current.click();
+    } else if (type === "inner") {
+      innerContainerInputRef.current.click();
+    } else if (type === "smallImage") {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.onchange = handleSmallImageUpload; // Handle small image upload
+      fileInput.click();
+    }
+    setShowImageOptions(null); // Close the modal
   };
 
   const handleChooseFromGallery = (type) => {
@@ -127,13 +201,12 @@ export const PortfolioSection = () => {
   };
 
   const handleSelectImageFromGallery = (imageUrl) => {
-    if (typeof showImageOptions === "number") {
-      // Update the specific image in the grid
-      const newImages = [...images];
-      newImages[showImageOptions] = imageUrl;
-      setImages(newImages);
-    } else if (showImageOptions === "background") {
+    if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
+    } else if (showImageOptions === "inner") {
+      setInnerContainerImage(imageUrl); // Update model image
+    } else if (showImageOptions === "smallImage") {
+      handleSelectSmallImageFromGallery(imageUrl); // Update small image
     }
     setShowGalleryModal(false); // Close the gallery modal
     setShowImageOptions(null);
@@ -312,15 +385,24 @@ export const PortfolioSection = () => {
       }}
       className="w-[828px] bg-cover bg-center min-h-screen flex flex-col items-center justify-center cursor-pointer portfolio-page"
       onClick={() => setActiveDraggable(null)} // Click outside to deactivate
+      onDoubleClick={handleDoubleClickBackground}
     >
       <input
         type="file"
         accept="image/*"
         ref={backgroundInputRef}
         className="hidden"
-        onChange={(e) => handleImageUpload(e, setBackgroundImage)}
+        onChange={handleBackgroundImageUpload}
       />
 
+      {/* File input for inner container image */}
+      <input
+        type="file"
+        accept="image/*"
+        ref={innerContainerInputRef}
+        className="hidden"
+        onChange={handleInnerContainerImageUpload}
+      />
       <div
         className="text-white w-[90%] min-w-[500px] h-[400px] bg-opacity-90 p-8 flex flex-row items-center"
         style={{
@@ -328,11 +410,15 @@ export const PortfolioSection = () => {
           height: "400px",
           marginLeft: "110px",
           marginRight: "110px",
+          backgroundImage: innerContainerImage
+            ? `url('${innerContainerImage}')`
+            : "none",
         }}
+        onDoubleClick={handleDoubleClickInnerContainer}
       >
         {/* Image Grid */}
         <div className="grid grid-cols-3 gap-4 md:w-2/3">
-          {images.map((image, index) => {
+          {smallImages.map((image, index) => {
             const imagePosition = getElementPosition(
               componentId,
               `smallImage1-${index}`
@@ -344,7 +430,7 @@ export const PortfolioSection = () => {
                 defaultPosition={{ x: imagePosition.x, y: imagePosition.y }}
                 onStop={(e, data) => {
                   updateElementPosition(componentId, `smallImage1-${index}`, {
-                    x: data.x, 
+                    x: data.x,
                     y: data.y,
                     width: imagePosition.width,
                     height: imagePosition.height,
@@ -373,7 +459,7 @@ export const PortfolioSection = () => {
                 >
                   <div
                     className="col-span-1 row-span-1 cursor-pointer relative"
-                    onDoubleClick={() => handleImageClick(index)}
+                    onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDragStart(`smallImage1-${index}`);
@@ -427,7 +513,7 @@ export const PortfolioSection = () => {
               }}
             >
               <div
-                className="relative text-center cursor-move"
+                className="relative cursor-move text-justify"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDragStart("heading");
@@ -464,7 +550,9 @@ export const PortfolioSection = () => {
               maxConstraints={[600, 300]}
               axis="both"
               resizeHandles={
-                activeDraggable === "description" ? ["se", "sw", "ne", "nw"] : []
+                activeDraggable === "description"
+                  ? ["se", "sw", "ne", "nw"]
+                  : []
               }
               onResizeStop={(e, { size }) => {
                 updateElementPosition(componentId, "description", {
@@ -476,7 +564,7 @@ export const PortfolioSection = () => {
               }}
             >
               <div
-                className="relative text-center cursor-move"
+                className="relative text-justify cursor-move"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDragStart("description");
@@ -497,7 +585,9 @@ export const PortfolioSection = () => {
       {showImageOptions !== null && (
         <ImageOptionsModal
           onClose={handleCloseModal}
-          onChooseFromComputer={() => handleChooseFromComputer(showImageOptions)}
+          onChooseFromComputer={() =>
+            handleChooseFromComputer(showImageOptions)
+          }
           onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
         />
       )}
