@@ -169,6 +169,11 @@ export const useFashionStore = create((set, get) => ({
       model4: { x: 40, y: 50, width: 310, height: 200 },
       model5: { x: 80, y: 50, width: 250, height: 400 },
     },
+    "fashion-work": {
+      heading: { x: 0, y: 0, width: 400, height: 50 },
+      description: { x: 0, y: 60, width: 400, height: 150 },
+      illustration: { x: 10, y: -100, width: 250, height: 150 },
+    },
   },
 
   // Function to update the position and size of an element
