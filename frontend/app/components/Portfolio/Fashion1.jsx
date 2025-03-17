@@ -120,17 +120,17 @@ export const FashionPortfolio = () => {
   const saveState = async () => {
     try {
       console.log("saveState function called");
-  
+
       const username = localStorage.getItem("userEmail");
-  
+
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 1; // Hardcoded pageId
-  
+
       const stateToSave = {
         portfolioId, // Include portfolioId in the request body
         pageId, // Include pageId in the request body
@@ -147,9 +147,9 @@ export const FashionPortfolio = () => {
           image: getElementPosition(componentId, "image"),
         },
       };
-  
+
       console.log("State to save:", stateToSave);
-  
+
       const response = await fetch("http://localhost:5000/api/save-portfolio", {
         method: "POST",
         headers: {
@@ -158,7 +158,7 @@ export const FashionPortfolio = () => {
         },
         body: JSON.stringify(stateToSave),
       });
-  
+
       if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
@@ -166,20 +166,20 @@ export const FashionPortfolio = () => {
       console.error("Error in saveState function:", error);
     }
   };
-  
+
   const loadState = async () => {
     try {
       console.log("Attempting to load portfolio state");
-  
+
       const username = localStorage.getItem("userEmail");
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 1; // Hardcoded pageId
-  
+
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
         {
@@ -189,25 +189,29 @@ export const FashionPortfolio = () => {
           },
         }
       );
-  
+
       console.log("Response status:", response.status);
       if (!response.ok) throw new Error("Failed to load portfolio");
-  
-      const savedState = await response.json();
+
+
+      const savedStateArray = await response.json();
+      const savedState = savedStateArray[0];
       console.log("Loaded state from API:", savedState);
-  
+
+      console.log("Quote in savedState:", savedState.quote);
+
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
-  
+
       // Update states with loaded data
       if (savedState.quote) setQuote(savedState.quote);
       if (savedState.title) setTitle(savedState.title);
       if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage) setModelImage(savedState.modelImage);
       if (savedState.label) setLabel(savedState.label);
-  
+
       // Ensure styledContent is properly structured before setting it
       if (savedState.styledContent) {
         const loadedStyledContent = {
@@ -227,7 +231,7 @@ export const FashionPortfolio = () => {
         console.log("Setting styled content to:", loadedStyledContent);
         setStyledContent(loadedStyledContent);
       }
-  
+
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.quote) {
@@ -240,13 +244,13 @@ export const FashionPortfolio = () => {
           updateElementPosition(componentId, "image", savedState.elementPositions.image);
         }
       }
-  
+
       console.log("Portfolio loaded successfully");
     } catch (error) {
       console.error("Error loading portfolio:", error);
     }
   };
-  
+
   const handleImageClick = (type) => {
     setShowImageOptions(type);
   };
@@ -583,12 +587,12 @@ export const FashionPortfolio = () => {
   };
 
 
-  
+
   // Load portfolio state when the component mounts
   useEffect(() => {
     loadState();
   }, []); // Empty dependency array ensures this runs only once on mount
-  
+
   return (
     <div
       className="max-w-[830px] relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"

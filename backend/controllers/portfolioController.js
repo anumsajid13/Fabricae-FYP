@@ -77,17 +77,33 @@ exports.savePortfolio = async (req, res) => {
 exports.loadPortfolio = async (req, res) => {
   try {
     const username = req.headers.username; // Get username from request headers
+    const { portfolioId, pageId } = req.query; // Get portfolioId and pageId from query parameters
 
     if (!username) {
       return res.status(400).json({ message: "Username is required" });
     }
 
-    const portfolios = await Portfolio.find({ username }); // Fetch all portfolios for the user
+    // Build the query object
+    const query = { username };
+
+    // Add portfolioId to the query if provided
+    if (portfolioId) {
+      query.portfolioId = portfolioId;
+    }
+
+    // Add pageId to the query if provided
+    if (pageId) {
+      query.pageId = pageId;
+    }
+
+    // Fetch portfolios based on the query
+    const portfolios = await Portfolio.find(query);
 
     if (!portfolios.length) {
       return res.status(404).json({ message: "No portfolios found for this user" });
     }
 
+    // Return the filtered portfolios
     res.status(200).json(portfolios);
   } catch (error) {
     res.status(500).json({ message: "Error loading portfolio", error });
