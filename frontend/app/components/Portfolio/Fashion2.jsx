@@ -51,6 +51,10 @@ export const FashionLayout = () => {
       "/Picture11.jpg",
     ]
   );
+  const [activeSmallImageIndex, setActiveSmallImageIndex] = useState(null);
+
+  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
+
   // Store text with styling information
   const [styledContent, setStyledContent] = useState({
     heading: {
@@ -98,17 +102,28 @@ export const FashionLayout = () => {
   };
 
   // Handle small image upload
-  const handleSmallImageUpload = (e, index) => {
+  const handleSmallImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setSmallImages((prevImages) => {
         const updatedImages = [...prevImages];
-        updatedImages[index] = imageUrl;
+        updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
         return updatedImages;
       });
     }
     e.target.value = ""; // Reset the file input
+  };
+
+  // Handle small image selection from gallery
+  const handleSelectSmallImageFromGallery = (imageUrl) => {
+    setSmallImages((prevImages) => {
+      const updatedImages = [...prevImages];
+      updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
+      return updatedImages;
+    });
+    setShowGalleryModal(false); // Close the gallery modal
+    setShowImageOptions(null); // Close the options modal
   };
 
   // Handle text change for heading or description
@@ -289,7 +304,6 @@ export const FashionLayout = () => {
                 left: 0,
                 width: "100%",
                 height: "100%", // Take up full height
-
               }}
             />
           )
@@ -343,23 +357,57 @@ export const FashionLayout = () => {
   // Handle double-click to trigger file input for background
   const handleDoubleClickBackground = (e) => {
     e.stopPropagation(); // Prevent event bubbling
-    backgroundInputRef.current.click();
+    setShowImageOptions("background");
   };
 
   // Handle double-click to trigger file input for inner container
   const handleDoubleClickInnerContainer = (e) => {
     e.stopPropagation(); // Prevent event bubbling
-    innerContainerInputRef.current.click();
+    setShowImageOptions("inner");
   };
 
   // Handle double-click to trigger file input for small images
   const handleDoubleClickSmallImage = (e, index) => {
     e.stopPropagation(); // Prevent event bubbling
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.onchange = (e) => handleSmallImageUpload(e, index);
-    fileInput.click();
+    setActiveSmallImageIndex(index); // Set the active small image index
+    setShowImageOptions("smallImage");
+  };
+
+  const handleCloseModal = () => {
+    setShowImageOptions(null);
+  };
+
+  const handleChooseFromComputer = (type) => {
+    // Use existing refs to trigger file input
+    if (type === "background") {
+      backgroundInputRef.current.click();
+    } else if (type === "inner") {
+      innerContainerInputRef.current.click();
+    } else if (type === "smallImage") {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.onchange = handleSmallImageUpload; // Handle small image upload
+      fileInput.click();
+    }
+    setShowImageOptions(null); // Close the modal
+  };
+
+  const handleChooseFromGallery = (type) => {
+    setShowGalleryModal(true); // Show the gallery modal
+    setShowImageOptions(type);
+  };
+
+  const handleSelectImageFromGallery = (imageUrl) => {
+    if (showImageOptions === "background") {
+      setBackgroundImage(imageUrl); // Update background image
+    } else if (showImageOptions === "inner") {
+      setInnerContainerImage(imageUrl); // Update model image
+    } else if (showImageOptions === "smallImage") {
+      handleSelectSmallImageFromGallery(imageUrl); // Update small image
+    }
+    setShowGalleryModal(false); // Close the gallery modal
+    setShowImageOptions(null);
   };
 
   return (
@@ -368,7 +416,7 @@ export const FashionLayout = () => {
         backgroundImage: `url('${backgroundImage}')`,
       }}
       className="bg-cover bg-center min-h-screen flex flex-row items-center justify-center cursor-pointer portfolio-page"
-      onDoubleClick={handleDoubleClickBackground} // Trigger file input on double-click
+      onDoubleClick={handleDoubleClickBackground}
       onClick={() => setActiveDraggable(null)}
     >
       {/* File input for background image */}
@@ -590,6 +638,25 @@ export const FashionLayout = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Options Modal */}
+      {showImageOptions && (
+        <ImageOptionsModal
+          onClose={handleCloseModal}
+          onChooseFromComputer={() =>
+            handleChooseFromComputer(showImageOptions)
+          }
+          onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
+        />
+      )}
+
+      {/* Gallery Modal */}
+      {showGalleryModal && (
+        <GalleryModal
+          onClose={() => setShowGalleryModal(false)}
+          onSelectImage={handleSelectImageFromGallery}
+        />
+      )}
     </div>
   );
 };
