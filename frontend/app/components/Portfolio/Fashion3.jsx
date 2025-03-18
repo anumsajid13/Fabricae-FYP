@@ -49,6 +49,22 @@ export const Fashion = () => {
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [activeDraggable, setActiveDraggable] = useState(null);
 
+  const [styledContent, setStyledContent] = useState(() => {
+    if (pageState?.styledContent) {
+      return pageState.styledContent;
+    }
+    return {
+      heading: {
+        text: heading,
+        segments: [{ text: heading, styles: {} }],
+      },
+      smallImageTexts: smallImageTexts.map((text) => ({
+        text,
+        segments: [{ text, styles: {} }],
+      })),
+    };
+  });
+
   // Register this component with context
   useEffect(() => {
     registerComponent(componentId, {
@@ -64,6 +80,7 @@ export const Fashion = () => {
       smallImageTexts,
       backgroundImage,
       innerContainerImage,
+      styledContent,
     });
   }, [
     heading,
@@ -71,6 +88,7 @@ export const Fashion = () => {
     smallImageTexts,
     backgroundImage,
     innerContainerImage,
+    styledContent,
     pageId,
     updatePageState,
   ]);
@@ -162,155 +180,188 @@ export const Fashion = () => {
     setShowImageOptions("smallImage");
   };
 
-  // Handle text change for heading or small image texts
-  const handleTextChange = (e, type, index) => {
-    const newText = e.target.value;
+ // Handle text change for heading or small image texts
+ const handleTextChange = (e, type, index) => {
+  const newText = e.target.value;
+
+  setStyledContent((prev) => {
     if (type === "heading") {
-      setHeading(newText);
-    } else if (type === "smallImageText") {
-      setSmallImageTexts((prevTexts) => {
-        const updatedTexts = [...prevTexts];
-        updatedTexts[index] = newText;
-        return updatedTexts;
-      });
-    }
-  };
-
-  // Handle local text selection for styling
-  const handleLocalTextSelection = (e, type) => {
-    if (editingField) return;
-
-    const selection = window.getSelection();
-    const text = selection.toString();
-
-    if (text.length > 0) {
-      const range = selection.getRangeAt(0);
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
-
-      const selectedText = {
-        text,
-        type,
-        startOffset,
-        endOffset,
-        componentId,
-      };
-
-      handleTextSelection(selectedText);
-    }
-  };
-
-  // Update styles for selected text
-  const updateStyles = (type, styles) => {
-    setStyledContent((prev) => {
-      const content = prev[type];
-      if (!content) return prev;
-
-      // Get current selection from context
-      const selection = {
-        startOffset: 0,
-        endOffset: content.text.length,
-        ...(window.getSelection && {
-          startOffset: window.getSelection().getRangeAt(0).startOffset,
-          endOffset: window.getSelection().getRangeAt(0).endOffset,
-        }),
-      };
-
-      const { startOffset, endOffset } = selection;
-
-      const newSegments = [];
-      let currentOffset = 0;
-
-      content.segments.forEach((segment) => {
-        const segmentLength = segment.text.length;
-
-        if (currentOffset + segmentLength <= startOffset) {
-          newSegments.push(segment);
-        } else if (currentOffset >= endOffset) {
-          newSegments.push(segment);
-        } else {
-          if (currentOffset < startOffset) {
-            newSegments.push({
-              text: segment.text.substring(0, startOffset - currentOffset),
-              styles: { ...segment.styles },
-            });
-          }
-
-          newSegments.push({
-            text: segment.text.substring(
-              Math.max(0, startOffset - currentOffset),
-              Math.min(segmentLength, endOffset - currentOffset)
-            ),
-            styles: { ...segment.styles, ...styles },
-          });
-
-          if (currentOffset + segmentLength > endOffset) {
-            newSegments.push({
-              text: segment.text.substring(endOffset - currentOffset),
-              styles: { ...segment.styles },
-            });
-          }
-        }
-
-        currentOffset += segmentLength;
-      });
-
       return {
         ...prev,
-        [type]: {
+        heading: {
+          text: newText,
+          segments: [{ text: newText, styles: prev.heading.segments[0]?.styles || {} }],
+        },
+      };
+    } else if (type === "smallImageTexts") {
+      const updatedSmallImageTexts = [...prev.smallImageTexts];
+      updatedSmallImageTexts[index] = {
+        text: newText,
+        segments: [{ text: newText, styles: updatedSmallImageTexts[index].segments[0]?.styles || {} }],
+      };
+      return {
+        ...prev,
+        smallImageTexts: updatedSmallImageTexts,
+      };
+    }
+    return prev;
+  });
+
+  // Update plain text state
+  if (type === "heading") {
+    setHeading(newText);
+  } else if (type === "smallImageTexts") {
+    setSmallImageTexts((prevTexts) => {
+      const updatedTexts = [...prevTexts];
+      updatedTexts[index] = newText;
+      return updatedTexts;
+    });
+  }
+};
+
+// Handle local text selection for styling
+const handleLocalTextSelection = (e, type, index) => {
+  if (editingField) return;
+
+  const selection = window.getSelection();
+  const text = selection.toString();
+
+  if (text.length > 0) {
+    const range = selection.getRangeAt(0);
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+
+    const selectedText = {
+      text,
+      type,
+      index,
+      startOffset,
+      endOffset,
+      componentId,
+    };
+
+    handleTextSelection(selectedText);
+  }
+};
+
+// Update styles for selected text
+const updateStyles = (type, styles, savedStartOffset, savedEndOffset, index) => {
+  setStyledContent((prev) => {
+    const content = type === "heading" ? prev.heading : prev.smallImageTexts[index];
+
+    if (!content) return prev;
+
+    const newSegments = [];
+    let currentOffset = 0;
+
+    content.segments.forEach((segment) => {
+      const segmentLength = segment.text.length;
+
+      if (currentOffset + segmentLength <= savedStartOffset) {
+        newSegments.push(segment);
+      } else if (currentOffset >= savedEndOffset) {
+        newSegments.push(segment);
+      } else {
+        if (currentOffset < savedStartOffset) {
+          newSegments.push({
+            text: segment.text.substring(0, savedStartOffset - currentOffset),
+            styles: { ...segment.styles },
+          });
+        }
+
+        newSegments.push({
+          text: segment.text.substring(
+            Math.max(0, savedStartOffset - currentOffset),
+            Math.min(segmentLength, savedEndOffset - currentOffset)
+          ),
+          styles: { ...segment.styles, ...styles },
+        });
+
+        if (currentOffset + segmentLength > savedEndOffset) {
+          newSegments.push({
+            text: segment.text.substring(savedEndOffset - currentOffset),
+            styles: { ...segment.styles },
+          });
+        }
+      }
+
+      currentOffset += segmentLength;
+    });
+
+    if (type === "heading") {
+      return {
+        ...prev,
+        heading: {
           text: content.text,
           segments: newSegments,
         },
       };
-    });
+    } else {
+      const updatedSmallImageTexts = [...prev.smallImageTexts];
+      updatedSmallImageTexts[index] = {
+        text: content.text,
+        segments: newSegments,
+      };
+      return {
+        ...prev,
+        smallImageTexts: updatedSmallImageTexts,
+      };
+    }
+  });
+};
+
+// EditableText component for rendering and editing text
+const EditableText = ({ content, type, index, className }) => {
+  const [localValue, setLocalValue] = useState(content.text);
+
+  useEffect(() => {
+    if (editingField === `${type}-${index}`) {
+      setLocalValue(content.text);
+    }
+  }, [editingField, type, index, content.text]);
+
+  const handleInputChange = (e) => {
+    setLocalValue(e.target.value);
   };
 
-  // EditableText component for rendering and editing text
-  const EditableText = ({ content, type, index, className }) => {
-    const [localValue, setLocalValue] = useState(content);
-
-    useEffect(() => {
-      if (editingField === `${type}-${index}`) {
-        setLocalValue(content);
-      }
-    }, [editingField, type, index, content]);
-
-    const handleInputChange = (e) => {
-      setLocalValue(e.target.value);
-    };
-
-    const handleInputBlur = () => {
-      handleTextChange({ target: { value: localValue } }, type, index);
-      setEditingField(null);
-    };
-
-    const handleInputKeyDown = (e) => {
-      if (e.key === "Enter") {
-        handleInputBlur();
-      }
-    };
-
-    return (
-      <div
-        className={`relative w-full ${className}`}
-        onClick={() => setEditingField(`${type}-${index}`)}
-      >
-        {editingField === `${type}-${index}` ? (
-          <input
-            type="text"
-            value={localValue}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            onKeyDown={handleInputKeyDown}
-            autoFocus
-            className="bg-transparent border-b border-white focus:outline-none w-full text-white"
-          />
-        ) : (
-          <span className="text-white">{content}</span>
-        )}
-      </div>
-    );
+  const handleInputBlur = () => {
+    handleTextChange({ target: { value: localValue } }, type, index);
+    setEditingField(null);
   };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleInputBlur();
+    }
+  };
+
+  return (
+    <div
+      className={`relative w-full ${className}`}
+      onClick={() => setEditingField(`${type}-${index}`)}
+    >
+      {editingField === `${type}-${index}` ? (
+        <input
+          type="text"
+          value={localValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
+          autoFocus
+          className="bg-transparent border-b border-white focus:outline-none w-full text-white"
+        />
+      ) : (
+        <div onMouseUp={(e) => handleLocalTextSelection(e, type, index)}>
+          {content.segments.map((segment, i) => (
+            <span key={i} style={segment.styles}>
+              {segment.text}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
   return (
     <div
@@ -392,7 +443,7 @@ export const Fashion = () => {
               }}
             >
               <EditableText
-                content={heading}
+                content={styledContent.heading}
                 type="heading"
                 index={0}
                 className="text-4xl font-bold cursor-text text-center w-full"
@@ -451,10 +502,10 @@ export const Fashion = () => {
                       className="rounded-lg w-40 h-40 object-cover"
                     />
                     <EditableText
-                      content={smallImageTexts[index]}
-                      type="smallImageText"
+                      content={styledContent.smallImageTexts[index]}
+                      type="smallImageTexts"
                       index={index}
-                      className="text-white text-center mt-4"
+                      className="text-white text-center cursor-text mt-4"
                     />
                   </div>
                 </ResizableBox>

@@ -34,11 +34,10 @@ export const FashionLayout = () => {
   const [bgColor, setBgColor] = useState("#a3846f");
   const [heading, setHeading] = useState(pageState.heading || "About Me");
   const [description, setDescription] = useState(
-    pageState.description || [
-      "My work is inspired by [Culture, Art etc.]",
-      "I believe in creating fashion that is [Sustainable, Timeless, Experimental etc.]",
-      "Each piece tells a story and is designed with [Craftsmanship, Ethical practices]",
-    ]
+    pageState?.description ||
+
+          "My work is inspired by [Culture, Art etc.I believe in creating fashion that is [Sustainable, Timeless, Experimental etc.]. Each piece tells a story and is designed with [Craftsmanship, Ethical practices]",
+
   );
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
@@ -56,16 +55,16 @@ export const FashionLayout = () => {
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
   // Store text with styling information
-  const [styledContent, setStyledContent] = useState({
-    heading: {
-      text: heading,
-      segments: [{ text: heading, styles: {} }],
-    },
-    description: {
-      text: description.join("\n"),
-      segments: [{ text: description.join("\n"), styles: {} }],
-    },
-  });
+    const [styledContent, setStyledContent] = useState(() => {
+      if (pageState?.styledContent) {
+        return pageState.styledContent;
+      }
+      return {
+        heading: { text: heading, segments: [{ text: heading, styles: {} }] },
+        description: { text: description, segments: [{ text: description, styles: {} }] },
+
+      };
+    });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
 
@@ -130,22 +129,65 @@ export const FashionLayout = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    if (type === "heading") {
-      setHeading(newText);
-    } else if (type === "description") {
-      setDescription(newText.split("\n")); // Split text into array for bullet points
-    }
+    setStyledContent((prev) => {
+      const content = prev[type];
 
-    setStyledContent((prev) => ({
-      ...prev,
-      [type]: {
-        text: newText,
-        segments: [{ text: newText, styles: {} }],
-      },
-    }));
+      if (!content) return prev;
+
+      const oldSegments = content.segments || [
+        { text: content.text, styles: {} },
+      ];
+      const newSegments = [];
+
+      let remainingText = newText;
+      let index = 0;
+
+      // Preserve styles for as many characters as possible
+      for (let segment of oldSegments) {
+        if (remainingText.length === 0) break;
+
+        const segmentText = segment.text;
+        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
+
+        newSegments.push({
+          text: remainingText.substring(0, lengthToCopy),
+          styles: { ...segment.styles },
+        });
+
+        remainingText = remainingText.substring(lengthToCopy);
+        index += lengthToCopy;
+      }
+
+      // If there's any remaining text, add it as a new unstyled segment
+      if (remainingText.length > 0) {
+        newSegments.push({ text: remainingText, styles: {} });
+      }
+
+      return {
+        ...prev,
+        [type]: {
+          text: newText,
+          segments: newSegments,
+        },
+      };
+    });
+
+    // Update the plain text state as well
+    switch (type) {
+      case "quote":
+        setQuote(newText);
+        break;
+      case "title":
+        setTitle(newText);
+        break;
+      case "label":
+        setLabel(newText);
+        break;
+      default:
+        break;
+    }
   };
 
-  // Handle local text selection for styling
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
 
@@ -170,35 +212,38 @@ export const FashionLayout = () => {
     }
   };
 
-  // Update styles for selected text
-  const updateStyles = (type, styles) => {
+  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
+  const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+    console.log("Updating styles for", type, "with", styles);
+    console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
+
     setStyledContent((prev) => {
       const content = prev[type];
+
       if (!content) return prev;
 
-      // Get current selection from context
-      const selection = {
-        startOffset: 0,
-        endOffset: content.text.length,
-        ...(window.getSelection && {
-          startOffset: window.getSelection().getRangeAt(0).startOffset,
-          endOffset: window.getSelection().getRangeAt(0).endOffset,
-        }),
-      };
+      // Use the saved offsets from the context instead of trying to get them from the current selection
+      let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
+      let endOffset =
+        savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
-      const { startOffset, endOffset } = selection;
+      console.log("Applying style from offset", startOffset, "to", endOffset);
 
+      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
       content.segments.forEach((segment) => {
         const segmentLength = segment.text.length;
+        const segmentEnd = currentOffset + segmentLength;
 
-        if (currentOffset + segmentLength <= startOffset) {
-          newSegments.push(segment);
-        } else if (currentOffset >= endOffset) {
+        if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
+          // This segment overlaps with the selection
+
+          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -206,6 +251,7 @@ export const FashionLayout = () => {
             });
           }
 
+          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -214,7 +260,8 @@ export const FashionLayout = () => {
             styles: { ...segment.styles, ...styles },
           });
 
-          if (currentOffset + segmentLength > endOffset) {
+          // Add part after selection if it exists
+          if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
               styles: { ...segment.styles },
@@ -235,12 +282,12 @@ export const FashionLayout = () => {
     });
   };
 
-  // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
     const textRef = useRef(null);
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState("");
 
+    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -248,91 +295,62 @@ export const FashionLayout = () => {
     }, [editingField, type, content.text]);
 
     const handleInputChange = (e) => {
-      setLocalValue(e.target.value);
+      const newText = e.target.value;
+      setLocalValue(newText);
+
+      // Only update the parent state when input loses focus
+      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
+      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };
 
     const handleInputKeyDown = (e) => {
-      if (e.key === "Enter" && type === "heading") {
+      if (e.key === "Enter") {
         handleInputBlur();
       }
     };
 
+    if (editingField === type) {
+      return (
+        <input
+          ref={inputRef}
+          type="text"
+          value={localValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
+          autoFocus
+          className={`bg-transparent border-b border-white focus:outline-none ${className}`}
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            display: "block",
+            whiteSpace: "pre",
+          }}
+        />
+      );
+    }
+
     return (
       <div
-        className={`relative w-full ${className}`}
-        style={{
-          minHeight: type === "heading" ? "50px" : "200px", // Ensures height doesn't collapse
-          position: "relative",
-          overflow: "hidden", // Prevent overflow
-        }}
+        ref={textRef}
+        className={className}
+        onMouseUp={(e) => handleLocalTextSelection(e, type)}
+        onClick={() => setEditingField(type)}
       >
-        {editingField === type ? (
-          type === "heading" ? (
-            <input
-              ref={inputRef}
-              type="text"
-              value={localValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              onKeyDown={handleInputKeyDown}
-              autoFocus
-              className="bg-transparent border-b border-white focus:outline-none w-full"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%", // Take up full height
-              }}
-            />
-          ) : (
-            <textarea
-              ref={inputRef}
-              value={localValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              autoFocus
-              className="bg-transparent border border-white focus:outline-none w-full"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%", // Take up full height
-              }}
-            />
-          )
-        ) : (
-          <div
-            ref={textRef}
-            className="cursor-text w-full"
-            onClick={() => setEditingField(type)}
-            style={{
-              minHeight: type === "heading" ? "50px" : "80px", // Reserves space even when not editing
-              overflow: "hidden", // Prevent overflow
-            }}
-          >
-            {type === "description" ? (
-              <ul className="list-disc pl-5">
-                {content.text.split("\n").map((line, index) => (
-                  <li key={index} style={content.segments[0]?.styles}>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span style={content.segments[0]?.styles}>{content.text}</span>
-            )}
-          </div>
-        )}
+        {content.segments.map((segment, index) => (
+          <span key={index} style={segment.styles}>
+            {segment.text}
+          </span>
+        ))}
       </div>
     );
   };
+
   // Handle background image upload
   const handleBackgroundImageUpload = (e) => {
     const file = e.target.files[0];

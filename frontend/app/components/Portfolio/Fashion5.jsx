@@ -52,7 +52,7 @@ export const SketchesIllustrations = () => {
 
   // State for styled text content
   const [styledContent, setStyledContent] = useState(() => {
-    if (pageState.styledContent) {
+    if (pageState?.styledContent) {
       return pageState.styledContent;
     }
     return {
@@ -178,23 +178,68 @@ export const SketchesIllustrations = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    if (type === "heading") {
-      setHeading(newText);
-    } else if (type === "description") {
-      setDescription(newText);
-    }
+    setStyledContent((prev) => {
+      const content = prev[type];
 
-    setStyledContent((prev) => ({
-      ...prev,
-      [type]: {
-        text: newText,
-        segments: [{ text: newText, styles: {} }],
-      },
-    }));
+      if (!content) return prev;
+
+      const oldSegments = content.segments || [
+        { text: content.text, styles: {} },
+      ];
+      const newSegments = [];
+
+      let remainingText = newText;
+      let index = 0;
+
+      // Preserve styles for as many characters as possible
+      for (let segment of oldSegments) {
+        if (remainingText.length === 0) break;
+
+        const segmentText = segment.text;
+        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
+
+        newSegments.push({
+          text: remainingText.substring(0, lengthToCopy),
+          styles: { ...segment.styles },
+        });
+
+        remainingText = remainingText.substring(lengthToCopy);
+        index += lengthToCopy;
+      }
+
+      // If there's any remaining text, add it as a new unstyled segment
+      if (remainingText.length > 0) {
+        newSegments.push({ text: remainingText, styles: {} });
+      }
+
+      return {
+        ...prev,
+        [type]: {
+          text: newText,
+          segments: newSegments,
+        },
+      };
+    });
+
+    // Update the plain text state as well
+    switch (type) {
+      case "quote":
+        setQuote(newText);
+        break;
+      case "title":
+        setTitle(newText);
+        break;
+      case "label":
+        setLabel(newText);
+        break;
+      default:
+        break;
+    }
   };
 
-  // Handle local text selection for styling
   const handleLocalTextSelection = (e, type) => {
+    if (editingField) return; // Don't handle selection while editing
+
     const selection = window.getSelection();
     const text = selection.toString();
 
@@ -208,7 +253,7 @@ export const SketchesIllustrations = () => {
         type,
         startOffset,
         endOffset,
-        componentId,
+        componentId, // Include the component ID
       };
 
       // Send selection to the global context
@@ -216,28 +261,38 @@ export const SketchesIllustrations = () => {
     }
   };
 
-  // Update styles for selected text
-  const updateStyles = (type, styles) => {
+  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
+  const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+    console.log("Updating styles for", type, "with", styles);
+    console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
+
     setStyledContent((prev) => {
       const content = prev[type];
+
       if (!content) return prev;
 
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
+      // Use the saved offsets from the context instead of trying to get them from the current selection
+      let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
+      let endOffset =
+        savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
+      console.log("Applying style from offset", startOffset, "to", endOffset);
+
+      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
       content.segments.forEach((segment) => {
         const segmentLength = segment.text.length;
+        const segmentEnd = currentOffset + segmentLength;
 
-        if (currentOffset + segmentLength <= startOffset) {
-          newSegments.push(segment);
-        } else if (currentOffset >= endOffset) {
+        if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
+          // This segment overlaps with the selection
+
+          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -245,6 +300,7 @@ export const SketchesIllustrations = () => {
             });
           }
 
+          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -253,7 +309,8 @@ export const SketchesIllustrations = () => {
             styles: { ...segment.styles, ...styles },
           });
 
-          if (currentOffset + segmentLength > endOffset) {
+          // Add part after selection if it exists
+          if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
               styles: { ...segment.styles },
@@ -274,12 +331,12 @@ export const SketchesIllustrations = () => {
     });
   };
 
-  // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
     const textRef = useRef(null);
     const inputRef = useRef(null);
-    const [localValue, setLocalValue] = useState(content.text);
+    const [localValue, setLocalValue] = useState("");
 
+    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -287,10 +344,15 @@ export const SketchesIllustrations = () => {
     }, [editingField, type, content.text]);
 
     const handleInputChange = (e) => {
-      setLocalValue(e.target.value);
+      const newText = e.target.value;
+      setLocalValue(newText);
+
+      // Only update the parent state when input loses focus
+      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
+      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };

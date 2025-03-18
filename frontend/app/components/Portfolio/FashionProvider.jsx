@@ -153,7 +153,7 @@ export const useFashionStore = create((set, get) => ({
       "smallImage-2": { x: 0, y: 0, width: 130, height: 130 },
       "smallImage-3": { x: 0, y: 0, width: 130, height: 130 },
       heading: { x: 0, y: 0, width: 400, height: 50 },
-      description: { x: -20, y: 0, width: 380, height: 200 },
+      description: { x: -30, y: 0, width: 380, height: 200 },
     },
     "fashion-project": {
       "smallImage-0": { x: 0, y: 0, width: 150, height: 120 },
