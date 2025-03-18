@@ -61,12 +61,15 @@ export const FashionLayout = () => {
       return pageState.styledContent;
     }
     return {
-      heading: { text: heading, segments: [{ text: heading, styles: {} }] },
-      description: {
-        text: description,
-        segments: [{ text: description, styles: {} }],
-      },
-    };
+    heading: {
+      text: heading,
+      segments: [{ text: heading, styles: {} }],
+    },
+    description: {
+      text: description.join("\n"), // Join array into a single string for editing
+      segments: [{ text: description.join("\n"), styles: {} }],
+    },
+  }
   });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
@@ -77,6 +80,10 @@ export const FashionLayout = () => {
       updateStyles: updateStyles,
     });
   }, []);
+
+  useEffect(() => {
+    console.log("Styled Content Updated:", styledContent);
+  }, [styledContent]);
 
   // Update page state whenever any state changes
   useEffect(() => {
@@ -188,7 +195,6 @@ export const FashionLayout = () => {
     }
   };
 
-  // Handle local text selection for styling
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
 
@@ -208,26 +214,29 @@ export const FashionLayout = () => {
         componentId, // Include the component ID
       };
 
+      console.log("Selected Text:", selectedText);
+
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
   };
-
-  // Update styles for selected text
+  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
   const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+    console.log("Updating styles for type:", type);
+    console.log("Styles to apply:", styles);
+    console.log("Start Offset:", savedStartOffset);
+    console.log("End Offset:", savedEndOffset);
+
     setStyledContent((prev) => {
       const content = prev[type];
 
       if (!content) return prev;
 
-      // Use the saved offsets from the context instead of trying to get them from the current selection
       let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
-      let endOffset =
-        savedEndOffset !== undefined ? savedEndOffset : content.text.length;
+      let endOffset = savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
       console.log("Applying style from offset", startOffset, "to", endOffset);
 
-      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
@@ -236,12 +245,8 @@ export const FashionLayout = () => {
         const segmentEnd = currentOffset + segmentLength;
 
         if (segmentEnd <= startOffset || currentOffset >= endOffset) {
-          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
-          // This segment overlaps with the selection
-
-          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -249,7 +254,6 @@ export const FashionLayout = () => {
             });
           }
 
-          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -258,7 +262,6 @@ export const FashionLayout = () => {
             styles: { ...segment.styles, ...styles },
           });
 
-          // Add part after selection if it exists
           if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
@@ -285,7 +288,6 @@ export const FashionLayout = () => {
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState("");
 
-    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -295,13 +297,9 @@ export const FashionLayout = () => {
     const handleInputChange = (e) => {
       const newText = e.target.value;
       setLocalValue(newText);
-
-      // Only update the parent state when input loses focus
-      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
-      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };
@@ -425,6 +423,7 @@ export const FashionLayout = () => {
     setShowImageOptions(null);
   };
 
+
   const handleSave = async () => {
     try {
       console.log("handleSave function called");
@@ -505,8 +504,7 @@ export const FashionLayout = () => {
       }
 
       // Update the component's state with the loaded data
-      if (savedState.backgroundImage)
-        setBackgroundImage(savedState.backgroundImage);
+      if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage) setInnerContainerImage(savedState.modelImage);
       if (savedState.smallImages) setSmallImages(savedState.smallImages);
       if (savedState.heading) setHeading(savedState.heading);
@@ -521,18 +519,10 @@ export const FashionLayout = () => {
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.heading) {
-          updateElementPosition(
-            componentId,
-            "heading",
-            savedState.elementPositions.heading
-          );
+          updateElementPosition(componentId, "heading", savedState.elementPositions.heading);
         }
         if (savedState.elementPositions.description) {
-          updateElementPosition(
-            componentId,
-            "description",
-            savedState.elementPositions.description
-          );
+          updateElementPosition(componentId, "description", savedState.elementPositions.description);
         }
         if (savedState.elementPositions.smallImages) {
           savedState.elementPositions.smallImages.forEach((position, index) => {
@@ -547,10 +537,11 @@ export const FashionLayout = () => {
     }
   };
 
-  // Load portfolio state when the component mounts
-  useEffect(() => {
+   // Load portfolio state when the component mounts
+   useEffect(() => {
     loadState();
   }, []); // Empty dependency array ensures this runs only once on mount
+
 
   return (
     <div
@@ -595,7 +586,7 @@ export const FashionLayout = () => {
           className="grid grid-cols-2 grid-rows-2 gap-8"
           style={{ flex: "0 0 40%", height: "100%" }}
         >
-          <button className="text-black" onClick={handleSave}>
+           <button className="text-black" onClick={handleSave}>
             Save
           </button>
 
