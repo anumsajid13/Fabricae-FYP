@@ -20,12 +20,15 @@ const SelectPortfolio = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:5000/api/unique-portfolio-ids", {
-          method: "GET",
-          headers: {
-            username: username,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/unique-portfolio-ids",
+          {
+            method: "GET",
+            headers: {
+              username: username,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch unique portfolio IDs");
@@ -150,6 +153,50 @@ const SelectPortfolio = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium py-1 px-3 bg-[#b4707e]/20 text-[#822538] rounded-full">
                       Artistic
+                    </span>
+                    <button className="flex items-center text-[#822538] font-medium group">
+                      View Details
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 ml-1 transition-transform duration-300 transform group-hover:translate-x-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2\
+                            "
+                onClick={() => handlePortfolioSelection("3")}
+              >
+                <div className="h-64 overflow-hidden relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                    alt="Corporate Portfolio"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#616852] to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-[#822538] transition-colors duration-300">
+                    Corporate Portfolio
+                  </h3>
+                  <p className="text-[#616852] mb-4">
+                    Elegant and sophisticated design perfect for business
+                    professionals and agencies.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium py-1 px-3 bg-[#616852]/20 text-[#616852] rounded-full">
+                      Business
                     </span>
                     <button className="flex items-center text-[#822538] font-medium group">
                       View Details
