@@ -56,20 +56,15 @@ export const FashionLayout = () => {
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
   // Store text with styling information
-  const [styledContent, setStyledContent] = useState(() => {
-    if (pageState?.styledContent) {
-      return pageState.styledContent;
-    }
-    return {
+  const [styledContent, setStyledContent] = useState({
     heading: {
       text: heading,
       segments: [{ text: heading, styles: {} }],
     },
     description: {
-      text: description.join("\n"), // Join array into a single string for editing
+      text: description.join("\n"),
       segments: [{ text: description.join("\n"), styles: {} }],
     },
-  }
   });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
@@ -80,10 +75,6 @@ export const FashionLayout = () => {
       updateStyles: updateStyles,
     });
   }, []);
-
-  useEffect(() => {
-    console.log("Styled Content Updated:", styledContent);
-  }, [styledContent]);
 
   // Update page state whenever any state changes
   useEffect(() => {
@@ -139,62 +130,22 @@ export const FashionLayout = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    setStyledContent((prev) => {
-      const content = prev[type];
-
-      if (!content) return prev;
-
-      const oldSegments = content.segments || [
-        { text: content.text, styles: {} },
-      ];
-      const newSegments = [];
-
-      let remainingText = newText;
-      let index = 0;
-
-      // Preserve styles for as many characters as possible
-      for (let segment of oldSegments) {
-        if (remainingText.length === 0) break;
-
-        const segmentText = segment.text;
-        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
-
-        newSegments.push({
-          text: remainingText.substring(0, lengthToCopy),
-          styles: { ...segment.styles },
-        });
-
-        remainingText = remainingText.substring(lengthToCopy);
-        index += lengthToCopy;
-      }
-
-      // If there's any remaining text, add it as a new unstyled segment
-      if (remainingText.length > 0) {
-        newSegments.push({ text: remainingText, styles: {} });
-      }
-
-      return {
-        ...prev,
-        [type]: {
-          text: newText,
-          segments: newSegments,
-        },
-      };
-    });
-
-    // Update the plain text state as well
-    switch (type) {
-      case "heading":
-        setHeading(newText);
-        break;
-      case "description":
-        setDescription(newText);
-        break;
-      default:
-        break;
+    if (type === "heading") {
+      setHeading(newText);
+    } else if (type === "description") {
+      setDescription(newText.split("\n")); // Split text into array for bullet points
     }
+
+    setStyledContent((prev) => ({
+      ...prev,
+      [type]: {
+        text: newText,
+        segments: [{ text: newText, styles: {} }],
+      },
+    }));
   };
 
+  // Handle local text selection for styling
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
 
@@ -214,37 +165,38 @@ export const FashionLayout = () => {
         componentId, // Include the component ID
       };
 
-      console.log("Selected Text:", selectedText);
-
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
   };
-  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
-  const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
-    console.log("Updating styles for type:", type);
-    console.log("Styles to apply:", styles);
-    console.log("Start Offset:", savedStartOffset);
-    console.log("End Offset:", savedEndOffset);
 
+  // Update styles for selected text
+  const updateStyles = (type, styles) => {
     setStyledContent((prev) => {
       const content = prev[type];
-
       if (!content) return prev;
 
-      let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
-      let endOffset = savedEndOffset !== undefined ? savedEndOffset : content.text.length;
+      // Get current selection from context
+      const selection = {
+        startOffset: 0,
+        endOffset: content.text.length,
+        ...(window.getSelection && {
+          startOffset: window.getSelection().getRangeAt(0).startOffset,
+          endOffset: window.getSelection().getRangeAt(0).endOffset,
+        }),
+      };
 
-      console.log("Applying style from offset", startOffset, "to", endOffset);
+      const { startOffset, endOffset } = selection;
 
       const newSegments = [];
       let currentOffset = 0;
 
       content.segments.forEach((segment) => {
         const segmentLength = segment.text.length;
-        const segmentEnd = currentOffset + segmentLength;
 
-        if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+        if (currentOffset + segmentLength <= startOffset) {
+          newSegments.push(segment);
+        } else if (currentOffset >= endOffset) {
           newSegments.push(segment);
         } else {
           if (currentOffset < startOffset) {
@@ -262,7 +214,7 @@ export const FashionLayout = () => {
             styles: { ...segment.styles, ...styles },
           });
 
-          if (segmentEnd > endOffset) {
+          if (currentOffset + segmentLength > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
               styles: { ...segment.styles },
@@ -283,6 +235,7 @@ export const FashionLayout = () => {
     });
   };
 
+  // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
     const textRef = useRef(null);
     const inputRef = useRef(null);
@@ -295,8 +248,7 @@ export const FashionLayout = () => {
     }, [editingField, type, content.text]);
 
     const handleInputChange = (e) => {
-      const newText = e.target.value;
-      setLocalValue(newText);
+      setLocalValue(e.target.value);
     };
 
     const handleInputBlur = () => {
@@ -305,44 +257,79 @@ export const FashionLayout = () => {
     };
 
     const handleInputKeyDown = (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && type === "heading") {
         handleInputBlur();
       }
     };
 
-    if (editingField === type) {
-      return (
-        <input
-          ref={inputRef}
-          type="text"
-          value={localValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          onKeyDown={handleInputKeyDown}
-          autoFocus
-          className={`bg-transparent border-b border-white focus:outline-none ${className}`}
-          style={{
-            width: "100%",
-            boxSizing: "border-box",
-            display: "block",
-            whiteSpace: "pre",
-          }}
-        />
-      );
-    }
-
     return (
       <div
-        ref={textRef}
-        className={className}
-        onMouseUp={(e) => handleLocalTextSelection(e, type)}
-        onClick={() => setEditingField(type)}
+        className={`relative w-full ${className}`}
+        style={{
+          minHeight: type === "heading" ? "50px" : "200px", // Ensures height doesn't collapse
+          position: "relative",
+          overflow: "hidden", // Prevent overflow
+        }}
       >
-        {content.segments.map((segment, index) => (
-          <span key={index} style={segment.styles}>
-            {segment.text}
-          </span>
-        ))}
+        {editingField === type ? (
+          type === "heading" ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={localValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              onKeyDown={handleInputKeyDown}
+              autoFocus
+              className="bg-transparent border-b border-white focus:outline-none w-full"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%", // Take up full height
+              }}
+            />
+          ) : (
+            <textarea
+              ref={inputRef}
+              value={localValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              autoFocus
+              className="bg-transparent border border-white focus:outline-none w-full"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%", // Take up full height
+              }}
+            />
+          )
+        ) : (
+          <div
+            ref={textRef}
+            className="cursor-text w-full"
+            onClick={() => setEditingField(type)}
+            style={{
+              minHeight: type === "heading" ? "50px" : "80px", // Reserves space even when not editing
+              overflow: "hidden", // Prevent overflow
+            }}
+          >
+            {type === "description" ? (
+              <ul className="list-disc pl-5">
+                {content.text.split("\n").map((line, index) => (
+                  <li key={index} style={content.segments[0]?.styles}>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <span style={content.segments[0]?.styles}>{content.text}</span>
+            )}
+          </div>
+        )}
       </div>
     );
   };
