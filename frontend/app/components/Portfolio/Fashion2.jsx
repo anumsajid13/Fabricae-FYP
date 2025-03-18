@@ -35,11 +35,10 @@ export const FashionLayout  = forwardRef((props, ref) => {
   const [bgColor, setBgColor] = useState("#a3846f");
   const [heading, setHeading] = useState(pageState.heading || "About Me");
   const [description, setDescription] = useState(
-    pageState.description || [
-      "My work is inspired by [Culture, Art etc.]",
-      "I believe in creating fashion that is [Sustainable, Timeless, Experimental etc.]",
-      "Each piece tells a story and is designed with [Craftsmanship, Ethical practices]",
-    ]
+    pageState?.description ||
+
+          "My work is inspired by [Culture, Art etc.I believe in creating fashion that is [Sustainable, Timeless, Experimental etc.]. Each piece tells a story and is designed with [Craftsmanship, Ethical practices]",
+
   );
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
@@ -59,21 +58,16 @@ export const FashionLayout  = forwardRef((props, ref) => {
   
 
   // Store text with styling information
-  const [styledContent, setStyledContent] = useState(() => {
-    if (pageState?.styledContent) {
-      return pageState.styledContent;
-    }
-    return {
-      heading: {
-        text: heading,
-        segments: [{ text: heading, styles: {} }],
-      },
-      description: {
-        text: description.join("\n"), // Join array into a single string for editing
-        segments: [{ text: description.join("\n"), styles: {} }],
-      },
-    };
-  });
+    const [styledContent, setStyledContent] = useState(() => {
+      if (pageState?.styledContent) {
+        return pageState.styledContent;
+      }
+      return {
+        heading: { text: heading, segments: [{ text: heading, styles: {} }] },
+        description: { text: description, segments: [{ text: description, styles: {} }] },
+
+      };
+    });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
 
@@ -84,10 +78,6 @@ export const FashionLayout  = forwardRef((props, ref) => {
       updateStyles: updateStyles,
     });
   }, []);
-
-  useEffect(() => {
-    console.log("Styled Content Updated:", styledContent);
-  }, [styledContent]);
 
   // Update page state whenever any state changes
   useEffect(() => {
@@ -188,11 +178,14 @@ export const FashionLayout  = forwardRef((props, ref) => {
 
     // Update the plain text state as well
     switch (type) {
-      case "heading":
-        setHeading(newText);
+      case "quote":
+        setQuote(newText);
         break;
-      case "description":
-        setDescription(newText);
+      case "title":
+        setTitle(newText);
+        break;
+      case "label":
+        setLabel(newText);
         break;
       default:
         break;
@@ -218,30 +211,30 @@ export const FashionLayout  = forwardRef((props, ref) => {
         componentId, // Include the component ID
       };
 
-      console.log("Selected Text:", selectedText);
-
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
   };
+
   // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
   const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
-    console.log("Updating styles for type:", type);
-    console.log("Styles to apply:", styles);
-    console.log("Start Offset:", savedStartOffset);
-    console.log("End Offset:", savedEndOffset);
+    console.log("Updating styles for", type, "with", styles);
+    console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
 
     setStyledContent((prev) => {
       const content = prev[type];
 
       if (!content) return prev;
 
+      // Use the saved offsets from the context instead of trying to get them from the current selection
       let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
       let endOffset =
+       
         savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
       console.log("Applying style from offset", startOffset, "to", endOffset);
 
+      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
@@ -250,8 +243,12 @@ export const FashionLayout  = forwardRef((props, ref) => {
         const segmentEnd = currentOffset + segmentLength;
 
         if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
+          // This segment overlaps with the selection
+
+          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -259,6 +256,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
             });
           }
 
+          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -267,6 +265,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
             styles: { ...segment.styles, ...styles },
           });
 
+          // Add part after selection if it exists
           if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
@@ -293,6 +292,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState("");
 
+    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -302,9 +302,13 @@ export const FashionLayout  = forwardRef((props, ref) => {
     const handleInputChange = (e) => {
       const newText = e.target.value;
       setLocalValue(newText);
+
+      // Only update the parent state when input loses focus
+      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
+      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };
@@ -351,6 +355,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
       </div>
     );
   };
+
   // Handle background image upload
   const handleBackgroundImageUpload = (e) => {
     const file = e.target.files[0];
