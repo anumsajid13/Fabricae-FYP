@@ -223,14 +223,11 @@ export const SketchesIllustrations = () => {
 
     // Update the plain text state as well
     switch (type) {
-      case "quote":
-        setQuote(newText);
+      case "heading":
+        setHeading(newText);
         break;
-      case "title":
-        setTitle(newText);
-        break;
-      case "label":
-        setLabel(newText);
+      case "descriptiom":
+        setDescription(newText);
         break;
       default:
         break;
@@ -338,10 +335,10 @@ export const SketchesIllustrations = () => {
 
     // Initialize local value when editing starts
     useEffect(() => {
-      if (editingField === type) {
+      if (editingField === type && content) {
         setLocalValue(content.text);
       }
-    }, [editingField, type, content.text]);
+    }, [editingField, type, content]);
 
     const handleInputChange = (e) => {
       const newText = e.target.value;
@@ -363,7 +360,7 @@ export const SketchesIllustrations = () => {
       }
     };
 
-    if (editingField === type) {
+    if (editingField === type && content) {
       return (
         <input
           ref={inputRef}
@@ -384,6 +381,8 @@ export const SketchesIllustrations = () => {
       );
     }
 
+    if (!content || !content.segments) return null;
+    
     return (
       <div
         ref={textRef}

@@ -58,10 +58,7 @@ export const Fashion = () => {
         text: heading,
         segments: [{ text: heading, styles: {} }],
       },
-      smallImageTexts: smallImageTexts.map((text) => ({
-        text,
-        segments: [{ text, styles: {} }],
-      })),
+      smallImageTexts: Array(smallImages.length).fill({ text: "", segments: [{ text: "", styles: {} }] }),
     };
   });
 
@@ -312,13 +309,13 @@ const updateStyles = (type, styles, savedStartOffset, savedEndOffset, index) => 
 
 // EditableText component for rendering and editing text
 const EditableText = ({ content, type, index, className }) => {
-  const [localValue, setLocalValue] = useState(content.text);
+  const [localValue, setLocalValue] = useState("");
 
   useEffect(() => {
-    if (editingField === `${type}-${index}`) {
+    if (editingField === `${type}-${index}` && content) {
       setLocalValue(content.text);
     }
-  }, [editingField, type, index, content.text]);
+  }, [editingField, type, index, content]);
 
   const handleInputChange = (e) => {
     setLocalValue(e.target.value);
@@ -334,6 +331,8 @@ const EditableText = ({ content, type, index, className }) => {
       handleInputBlur();
     }
   };
+
+  if (!content || !content.segments) return null;
 
   return (
     <div
@@ -502,7 +501,7 @@ const EditableText = ({ content, type, index, className }) => {
                       className="rounded-lg w-40 h-40 object-cover"
                     />
                     <EditableText
-                      content={styledContent.smallImageTexts[index]}
+                      ccontent={styledContent.smallImageTexts?.[index] || { text: "", segments: [{ text: "", styles: {} }] }}
                       type="smallImageTexts"
                       index={index}
                       className="text-white text-center cursor-text mt-4"
