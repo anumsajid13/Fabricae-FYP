@@ -56,16 +56,15 @@ export const FashionLayout = () => {
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
   // Store text with styling information
-  const [styledContent, setStyledContent] = useState({
-    heading: {
-      text: heading,
-      segments: [{ text: heading, styles: {} }],
-    },
-    description: {
-      text: description.join("\n"), // Join array into a single string for editing
-      segments: [{ text: description.join("\n"), styles: {} }],
-    },
-  });
+  const [styledContent, setStyledContent] = useState(() => {
+     if (pageState?.styledContent) {
+       return pageState.styledContent;
+     }
+     return {
+       heading: { text: heading, segments: [{ text: heading, styles: {} }] },
+       description: { text: description, segments: [{ text: description, styles: {} }] }
+     };
+   });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
 
@@ -130,19 +129,60 @@ export const FashionLayout = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    if (type === "heading") {
-      setHeading(newText);
-    } else if (type === "description") {
-      setDescription(newText.split("\n")); // Split text into array for bullet points
-    }
+    setStyledContent((prev) => {
+      const content = prev[type];
 
-    setStyledContent((prev) => ({
-      ...prev,
-      [type]: {
-        text: newText,
-        segments: [{ text: newText, styles: {} }],
-      },
-    }));
+      if (!content) return prev;
+
+      const oldSegments = content.segments || [
+        { text: content.text, styles: {} },
+      ];
+      const newSegments = [];
+
+      let remainingText = newText;
+      let index = 0;
+
+      // Preserve styles for as many characters as possible
+      for (let segment of oldSegments) {
+        if (remainingText.length === 0) break;
+
+        const segmentText = segment.text;
+        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
+
+        newSegments.push({
+          text: remainingText.substring(0, lengthToCopy),
+          styles: { ...segment.styles },
+        });
+
+        remainingText = remainingText.substring(lengthToCopy);
+        index += lengthToCopy;
+      }
+
+      // If there's any remaining text, add it as a new unstyled segment
+      if (remainingText.length > 0) {
+        newSegments.push({ text: remainingText, styles: {} });
+      }
+
+      return {
+        ...prev,
+        [type]: {
+          text: newText,
+          segments: newSegments,
+        },
+      };
+    });
+
+    // Update the plain text state as well
+    switch (type) {
+      case "heading":
+        setHeading(newText);
+        break;
+      case "description":
+        setDescription(newText);
+        break;
+      default:
+        break;
+    }
   };
 
   // Handle local text selection for styling
@@ -171,34 +211,35 @@ export const FashionLayout = () => {
   };
 
   // Update styles for selected text
-  const updateStyles = (type, styles) => {
+  const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
+
     setStyledContent((prev) => {
       const content = prev[type];
+
       if (!content) return prev;
 
-      // Get current selection from context
-      const selection = {
-        startOffset: 0,
-        endOffset: content.text.length,
-        ...(window.getSelection && {
-          startOffset: window.getSelection().getRangeAt(0).startOffset,
-          endOffset: window.getSelection().getRangeAt(0).endOffset,
-        }),
-      };
+      // Use the saved offsets from the context instead of trying to get them from the current selection
+      let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
+      let endOffset =
+        savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
-      const { startOffset, endOffset } = selection;
+      console.log("Applying style from offset", startOffset, "to", endOffset);
 
+      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
       content.segments.forEach((segment) => {
         const segmentLength = segment.text.length;
+        const segmentEnd = currentOffset + segmentLength;
 
-        if (currentOffset + segmentLength <= startOffset) {
-          newSegments.push(segment);
-        } else if (currentOffset >= endOffset) {
+        if (segmentEnd <= startOffset || currentOffset >= endOffset) {
+          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
+          // This segment overlaps with the selection
+
+          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -206,6 +247,7 @@ export const FashionLayout = () => {
             });
           }
 
+          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -214,7 +256,8 @@ export const FashionLayout = () => {
             styles: { ...segment.styles, ...styles },
           });
 
-          if (currentOffset + segmentLength > endOffset) {
+          // Add part after selection if it exists
+          if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
               styles: { ...segment.styles },
@@ -235,12 +278,12 @@ export const FashionLayout = () => {
     });
   };
 
-  // EditableText component for rendering and editing text
   const EditableText = ({ content, type, className }) => {
     const textRef = useRef(null);
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState("");
 
+    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -248,88 +291,58 @@ export const FashionLayout = () => {
     }, [editingField, type, content.text]);
 
     const handleInputChange = (e) => {
-      setLocalValue(e.target.value);
+      const newText = e.target.value;
+      setLocalValue(newText);
+
+      // Only update the parent state when input loses focus
+      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
+      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };
 
     const handleInputKeyDown = (e) => {
-      if (e.key === "Enter" && type === "heading") {
+      if (e.key === "Enter") {
         handleInputBlur();
       }
     };
 
+    if (editingField === type) {
+      return (
+        <input
+          ref={inputRef}
+          type="text"
+          value={localValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
+          autoFocus
+          className={`bg-transparent border-b border-white focus:outline-none ${className}`}
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            display: "block",
+            whiteSpace: "pre",
+          }}
+        />
+      );
+    }
+
     return (
       <div
-        className={`relative w-full ${className}`}
-        style={{
-          minHeight: type === "heading" ? "50px" : "200px", // Ensures height doesn't collapse
-          position: "relative",
-          overflow: "hidden", // Prevent overflow
-        }}
+        ref={textRef}
+        className={className}
+        onMouseUp={(e) => handleLocalTextSelection(e, type)}
+        onClick={() => setEditingField(type)}
       >
-        {editingField === type ? (
-          type === "heading" ? (
-            <input
-              ref={inputRef}
-              type="text"
-              value={localValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              onKeyDown={handleInputKeyDown}
-              autoFocus
-              className="bg-transparent border-b border-white focus:outline-none w-full"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%", // Take up full height
-              }}
-            />
-          ) : (
-            <textarea
-              ref={inputRef}
-              value={localValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              autoFocus
-              className="bg-transparent border border-white focus:outline-none w-full"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%", // Take up full height
-              }}
-            />
-          )
-        ) : (
-          <div
-            ref={textRef}
-            className="cursor-text w-full"
-            onClick={() => setEditingField(type)}
-            style={{
-              minHeight: type === "heading" ? "50px" : "80px", // Reserves space even when not editing
-              overflow: "hidden", // Prevent overflow
-            }}
-          >
-            {type === "description" ? (
-              <ul className="list-disc pl-5">
-                {content.text.split("\n").map((line, index) => (
-                  <li key={index} style={content.segments[0]?.styles}>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span style={content.segments[0]?.styles}>{content.text}</span>
-            )}
-          </div>
-        )}
+        {content.segments.map((segment, index) => (
+          <span key={index} style={segment.styles}>
+            {segment.text}
+          </span>
+        ))}
       </div>
     );
   };
@@ -414,14 +427,14 @@ export const FashionLayout = () => {
   const handleSave = async () => {
     try {
       console.log("handleSave function called");
-  
+
       const username = localStorage.getItem("userEmail"); // Get username from local storage
-  
+
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       // Prepare the state to save
       const stateToSave = {
         username, // Include username in the request body
@@ -440,9 +453,9 @@ export const FashionLayout = () => {
         description,
         bgColor,
       };
-  
+
       console.log("State to save:", stateToSave);
-  
+
       // Send the state to the backend
       const response = await fetch("http://localhost:5000/api/save-portfolio", {
         method: "POST",
@@ -452,7 +465,7 @@ export const FashionLayout = () => {
         },
         body: JSON.stringify(stateToSave),
       });
-  
+
       if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
@@ -464,13 +477,13 @@ export const FashionLayout = () => {
   const loadState = async () => {
     try {
       console.log("Attempting to load portfolio state");
-  
+
       const username = localStorage.getItem("userEmail"); // Get username from local storage
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       // Fetch the saved state from the backend
       const response = await fetch("http://localhost:5000/api/load-portfolio", {
         method: "GET",
@@ -478,18 +491,18 @@ export const FashionLayout = () => {
           username: username, // Send username in headers
         },
       });
-  
+
       console.log("Response status:", response.status);
       if (!response.ok) throw new Error("Failed to load portfolio");
-  
+
       const savedState = await response.json();
       console.log("Loaded state from API:", savedState);
-  
+
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
-  
+
       // Update the component's state with the loaded data
       if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage) setInnerContainerImage(savedState.modelImage);
@@ -497,12 +510,12 @@ export const FashionLayout = () => {
       if (savedState.heading) setHeading(savedState.heading);
       if (savedState.description) setDescription(savedState.description);
       if (savedState.bgColor) setBgColor(savedState.bgColor);
-  
+
       // Update styledContent if it exists
       if (savedState.styledContent) {
         setStyledContent(savedState.styledContent);
       }
-  
+
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.heading) {
@@ -517,7 +530,7 @@ export const FashionLayout = () => {
           });
         }
       }
-  
+
       console.log("Portfolio loaded successfully");
     } catch (error) {
       console.error("Error loading portfolio:", error);
@@ -528,7 +541,7 @@ export const FashionLayout = () => {
    useEffect(() => {
     loadState();
   }, []); // Empty dependency array ensures this runs only once on mount
-  
+
 
   return (
     <div
