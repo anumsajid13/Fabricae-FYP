@@ -63,8 +63,6 @@ export const Fashion =  forwardRef((props, ref) => {
     };
   });
 
-
-
   // Register this component with context
   useEffect(() => {
     registerComponent(componentId, {
@@ -123,7 +121,6 @@ export const Fashion =  forwardRef((props, ref) => {
         styledContent,
         elementPositions: {
           heading: getElementPosition(componentId, "heading"),
-          description: getElementPosition(componentId, "description"),
           smallImages: smallImages.map((_, index) =>
             getElementPosition(componentId, `smallImage-${index}`)
           ),
@@ -131,7 +128,6 @@ export const Fashion =  forwardRef((props, ref) => {
         smallImages,
         smallImageTexts, 
         heading,
-        description,
         bgColor,
       };
 
@@ -200,7 +196,6 @@ export const Fashion =  forwardRef((props, ref) => {
       if (savedState.smallImages) setSmallImages(savedState.smallImages);
       if (savedState.smallImageTexts) setSmallImageTexts(savedState.smallImageTexts); // Load smallImageTexts
       if (savedState.heading) setHeading(savedState.heading);
-      if (savedState.description) setDescription(savedState.description);
       if (savedState.bgColor) setBgColor(savedState.bgColor);
   
       // Update styledContent if it exists
@@ -217,13 +212,7 @@ export const Fashion =  forwardRef((props, ref) => {
             savedState.elementPositions.heading
           );
         }
-        if (savedState.elementPositions.description) {
-          updateElementPosition(
-            componentId,
-            "description",
-            savedState.elementPositions.description
-          );
-        }
+      
         if (savedState.elementPositions.smallImages) {
           savedState.elementPositions.smallImages.forEach((position, index) => {
             updateElementPosition(componentId, `smallImage-${index}`, position);
