@@ -57,14 +57,17 @@ export const FashionLayout = () => {
 
   // Store text with styling information
   const [styledContent, setStyledContent] = useState(() => {
-     if (pageState?.styledContent) {
-       return pageState.styledContent;
-     }
-     return {
-       heading: { text: heading, segments: [{ text: heading, styles: {} }] },
-       description: { text: description, segments: [{ text: description, styles: {} }] }
-     };
-   });
+    if (pageState?.styledContent) {
+      return pageState.styledContent;
+    }
+    return {
+      heading: { text: heading, segments: [{ text: heading, styles: {} }] },
+      description: {
+        text: description,
+        segments: [{ text: description, styles: {} }],
+      },
+    };
+  });
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
 
@@ -212,7 +215,6 @@ export const FashionLayout = () => {
 
   // Update styles for selected text
   const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
-
     setStyledContent((prev) => {
       const content = prev[type];
 
@@ -423,7 +425,6 @@ export const FashionLayout = () => {
     setShowImageOptions(null);
   };
 
-
   const handleSave = async () => {
     try {
       console.log("handleSave function called");
@@ -504,7 +505,8 @@ export const FashionLayout = () => {
       }
 
       // Update the component's state with the loaded data
-      if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
+      if (savedState.backgroundImage)
+        setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage) setInnerContainerImage(savedState.modelImage);
       if (savedState.smallImages) setSmallImages(savedState.smallImages);
       if (savedState.heading) setHeading(savedState.heading);
@@ -519,10 +521,18 @@ export const FashionLayout = () => {
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.heading) {
-          updateElementPosition(componentId, "heading", savedState.elementPositions.heading);
+          updateElementPosition(
+            componentId,
+            "heading",
+            savedState.elementPositions.heading
+          );
         }
         if (savedState.elementPositions.description) {
-          updateElementPosition(componentId, "description", savedState.elementPositions.description);
+          updateElementPosition(
+            componentId,
+            "description",
+            savedState.elementPositions.description
+          );
         }
         if (savedState.elementPositions.smallImages) {
           savedState.elementPositions.smallImages.forEach((position, index) => {
@@ -537,11 +547,10 @@ export const FashionLayout = () => {
     }
   };
 
-   // Load portfolio state when the component mounts
-   useEffect(() => {
+  // Load portfolio state when the component mounts
+  useEffect(() => {
     loadState();
   }, []); // Empty dependency array ensures this runs only once on mount
-
 
   return (
     <div
@@ -586,7 +595,7 @@ export const FashionLayout = () => {
           className="grid grid-cols-2 grid-rows-2 gap-8"
           style={{ flex: "0 0 40%", height: "100%" }}
         >
-           <button className="text-black" onClick={handleSave}>
+          <button className="text-black" onClick={handleSave}>
             Save
           </button>
 
