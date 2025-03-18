@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,  forwardRef,
+  useImperativeHandle, } from "react";
 import { useFashionStore } from "./FashionProvider";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -6,7 +7,7 @@ import "react-resizable/css/styles.css";
 import { GalleryModal } from "./GalleryModal";
 import { ImageOptionsModal } from "./ImageOptionsModal";
 
-export const Fashion = () => {
+export const Fashion =  forwardRef((props, ref) => {
   const {
     handleTextSelection,
     registerComponent,
@@ -62,6 +63,8 @@ export const Fashion = () => {
     };
   });
 
+
+
   // Register this component with context
   useEffect(() => {
     registerComponent(componentId, {
@@ -89,6 +92,155 @@ export const Fashion = () => {
     pageId,
     updatePageState,
   ]);
+
+    // Expose the save function to the parent
+    useImperativeHandle(ref, () => ({
+      saveState ,
+    }));
+  
+
+  // Save the current state to the backend
+  const saveState = async () => {
+    try {
+      console.log("handleSave function called");
+
+      const username = localStorage.getItem("userEmail"); // Get username from local storage
+
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 3; // Hardcoded pageId
+  
+      const stateToSave = {
+        username,
+        portfolioId,
+        pageId,
+        backgroundImage,
+        modelImage: innerContainerImage,
+        styledContent,
+        elementPositions: {
+          heading: getElementPosition(componentId, "heading"),
+          description: getElementPosition(componentId, "description"),
+          smallImages: smallImages.map((_, index) =>
+            getElementPosition(componentId, `smallImage-${index}`)
+          ),
+        },
+        smallImages,
+        smallImageTexts, 
+        heading,
+        description,
+        bgColor,
+      };
+
+      console.log("State to save:", stateToSave);
+
+      // Send the state to the backend
+      const response = await fetch("http://localhost:5000/api/save-portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          username: username, // Send username in headers
+        },
+        body: JSON.stringify(stateToSave),
+      });
+
+      if (!response.ok) throw new Error("Failed to save portfolio");
+      const result = await response.json();
+      console.log("Portfolio saved successfully:", result);
+    } catch (error) {
+      console.error("Error in handleSave function:", error);
+    }
+  };
+
+  const loadState = async () => {
+    try {
+      console.log("Attempting to load portfolio state");
+  
+      const username = localStorage.getItem("userEmail");
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+  
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 3; // Hardcoded pageId
+  
+      const response = await fetch(
+        `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
+        {
+          method: "GET",
+          headers: {
+            username: username, // Send username in headers
+          },
+        }
+      );
+  
+      console.log("Response status:", response.status);
+      if (!response.ok) throw new Error("Failed to load portfolio");
+  
+      const savedStateArray = await response.json();
+      console.log('aaas', savedStateArray);
+      const savedState = savedStateArray[0];
+      console.log("Loaded state from API:", savedState);
+  
+      console.log("Quote in savedState:", savedState.quote);
+  
+      if (!savedState || typeof savedState !== "object") {
+        console.error("Invalid state loaded:", savedState);
+        return;
+      }
+  
+      // Update the component's state with the loaded data
+      if (savedState.backgroundImage)
+        setBackgroundImage(savedState.backgroundImage);
+      if (savedState.modelImage) setInnerContainerImage(savedState.modelImage);
+      if (savedState.smallImages) setSmallImages(savedState.smallImages);
+      if (savedState.smallImageTexts) setSmallImageTexts(savedState.smallImageTexts); // Load smallImageTexts
+      if (savedState.heading) setHeading(savedState.heading);
+      if (savedState.description) setDescription(savedState.description);
+      if (savedState.bgColor) setBgColor(savedState.bgColor);
+  
+      // Update styledContent if it exists
+      if (savedState.styledContent) {
+        setStyledContent(savedState.styledContent);
+      }
+  
+      // Update element positions if they exist
+      if (savedState.elementPositions) {
+        if (savedState.elementPositions.heading) {
+          updateElementPosition(
+            componentId,
+            "heading",
+            savedState.elementPositions.heading
+          );
+        }
+        if (savedState.elementPositions.description) {
+          updateElementPosition(
+            componentId,
+            "description",
+            savedState.elementPositions.description
+          );
+        }
+        if (savedState.elementPositions.smallImages) {
+          savedState.elementPositions.smallImages.forEach((position, index) => {
+            updateElementPosition(componentId, `smallImage-${index}`, position);
+          });
+        }
+      }
+  
+      console.log("Portfolio loaded successfully");
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+    }
+  };
+
+  // Load state when the component mounts
+  useEffect(() => {
+    loadState();
+  }, []);
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);
@@ -544,4 +696,4 @@ const EditableText = ({ content, type, index, className }) => {
       )}
     </div>
   );
-};
+});

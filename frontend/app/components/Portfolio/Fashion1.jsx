@@ -12,7 +12,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import { GalleryModal } from "./GalleryModal";
 
-export const FashionPortfolio = () => {
+export const FashionPortfolio = forwardRef((props, ref) => {
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
@@ -96,24 +96,10 @@ export const FashionPortfolio = () => {
     updatePageState,
     getElementPosition,
   ]);
-
-  // // Store saveState function in Zustand on mount with a more specific dependency array
-  // useEffect(() => {
-  //   console.log('Registering save function');
-  //   setSavePortfolioState(() => saveState);
-
-  //   // For debugging, add a timeout to verify registration
-  //   setTimeout(() => {
-  //     const { savePortfolioState } = useFashionStore.getState();
-  //     console.log('Save function registered and accessible:', !!savePortfolioState);
-  //   }, 500);
-
-  //   return () => {
-  //     // Optional: Clear the function when component unmounts
-  //     console.log('Clearing save function');
-  //     setSavePortfolioState(() => () => console.warn("Component unmounted, save function cleared"));
-  //   };
-  // }, []); // Empty depe
+   // Expose the save function to the parent
+   useImperativeHandle(ref, () => ({
+    saveState ,
+  }));
 
   const saveState = async () => {
     try {
@@ -157,7 +143,7 @@ export const FashionPortfolio = () => {
         body: JSON.stringify(stateToSave),
       });
 
-      if (!response.ok) throw new Error("Failed to save portfolio");
+      //if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
     } catch (error) {
@@ -654,9 +640,7 @@ export const FashionPortfolio = () => {
         style={{ zIndex: 2 }}
       >
         <div className="relative w-full z-20">
-          <button className="text-black" onClick={handleSave}>
-            Save
-          </button>
+
 
           <Draggable
             disabled={activeDraggable !== "quote"}
@@ -867,4 +851,4 @@ export const FashionPortfolio = () => {
       )}
     </div>
   );
-};
+});
