@@ -33,7 +33,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
     pageState.innerContainerImage || null
   );
   const [bgColor, setBgColor] = useState("#a3846f");
-  const [heading, setHeading] = useState(pageState.heading || "About Me");
+  const [heading, setHeading] = useState(pageState?.heading || "About Me");
   const [description, setDescription] = useState(
     pageState?.description ||
 
@@ -294,10 +294,10 @@ export const FashionLayout  = forwardRef((props, ref) => {
 
     // Initialize local value when editing starts
     useEffect(() => {
-      if (editingField === type) {
+      if (editingField === type  && content) {
         setLocalValue(content.text);
       }
-    }, [editingField, type, content.text]);
+    }, [editingField, type, content]);
 
     const handleInputChange = (e) => {
       const newText = e.target.value;
@@ -319,7 +319,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
       }
     };
 
-    if (editingField === type) {
+    if (editingField === type && content) {
       return (
         <input
           ref={inputRef}
@@ -339,6 +339,8 @@ export const FashionLayout  = forwardRef((props, ref) => {
         />
       );
     }
+
+    if (!content || !content.segments) return null;
 
     return (
       <div
