@@ -41,7 +41,7 @@ export const FashionPortfolio = () => {
   );
   const [title, setTitle] = useState(pageState?.title || "Fashion Portfolio");
   const [backgroundImage, setBackgroundImage] = useState(
-    pageState?.backgroundImage || "/Picture7.jpg"
+    pageState.backgroundImage || "/Picture7.jpg"
   );
   const [modelImage, setModelImage] = useState(
     pageState?.modelImage || "/Picture1.jpg"
@@ -73,9 +73,9 @@ export const FashionPortfolio = () => {
   // Update page state whenever any state changes
   useEffect(() => {
     updatePageState(pageId, {
+      backgroundImage,
       quote,
       title,
-      backgroundImage,
       modelImage,
       label,
       styledContent,
@@ -86,9 +86,9 @@ export const FashionPortfolio = () => {
       },
     });
   }, [
+    backgroundImage,
     quote,
     title,
-    backgroundImage,
     modelImage,
     label,
     styledContent,
@@ -96,7 +96,6 @@ export const FashionPortfolio = () => {
     updatePageState,
     getElementPosition,
   ]);
-
 
   // // Store saveState function in Zustand on mount with a more specific dependency array
   // useEffect(() => {
@@ -115,7 +114,6 @@ export const FashionPortfolio = () => {
   //     setSavePortfolioState(() => () => console.warn("Component unmounted, save function cleared"));
   //   };
   // }, []); // Empty depe
-
 
   const saveState = async () => {
     try {
@@ -193,7 +191,6 @@ export const FashionPortfolio = () => {
       console.log("Response status:", response.status);
       if (!response.ok) throw new Error("Failed to load portfolio");
 
-
       const savedStateArray = await response.json();
       const savedState = savedStateArray[0];
       console.log("Loaded state from API:", savedState);
@@ -208,7 +205,8 @@ export const FashionPortfolio = () => {
       // Update states with loaded data
       if (savedState.quote) setQuote(savedState.quote);
       if (savedState.title) setTitle(savedState.title);
-      if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
+      if (savedState.backgroundImage)
+        setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage) setModelImage(savedState.modelImage);
       if (savedState.label) setLabel(savedState.label);
 
@@ -235,13 +233,25 @@ export const FashionPortfolio = () => {
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.quote) {
-          updateElementPosition(componentId, "quote", savedState.elementPositions.quote);
+          updateElementPosition(
+            componentId,
+            "quote",
+            savedState.elementPositions.quote
+          );
         }
         if (savedState.elementPositions.title) {
-          updateElementPosition(componentId, "title", savedState.elementPositions.title);
+          updateElementPosition(
+            componentId,
+            "title",
+            savedState.elementPositions.title
+          );
         }
         if (savedState.elementPositions.image) {
-          updateElementPosition(componentId, "image", savedState.elementPositions.image);
+          updateElementPosition(
+            componentId,
+            "image",
+            savedState.elementPositions.image
+          );
         }
       }
 
@@ -257,16 +267,18 @@ export const FashionPortfolio = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setBackgroundImage(imageUrl);
+      updatePageState(pageId, { backgroundImage: imageUrl });
     }
   };
 
-   // Handle double-click to trigger file input for background
-   const handleDoubleClickBackground = (e) => {
+  // Handle double-click to trigger file input for background
+  const handleDoubleClickBackground = (e) => {
     e.stopPropagation(); // Prevent event bubbling
     setShowImageOptions("background");
   };
 
   const handleImageClick = (type) => {
+    console.log("Image click type:", type);
     setShowImageOptions(type);
   };
 
@@ -284,13 +296,20 @@ export const FashionPortfolio = () => {
     setShowImageOptions(null); // Close the modal
   };
 
-  const handleImageUpload = (e, setImage) => {
+  const handleImageUpload = (e, type) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl); // Replace the existing image
+      if (type === "background") {
+        setBackgroundImage(imageUrl); // Update background image
+        updatePageState(pageId, { backgroundImage: imageUrl }); // Update global state
+      } else if (type === "model") {
+        setModelImage(imageUrl); // Update model image
+        updatePageState(pageId, { modelImage: imageUrl }); // Update global state
+      }
     }
   };
+
   const handleChooseFromGallery = (type) => {
     setShowGalleryModal(true); // Show the gallery modal
     setShowImageOptions(type);
@@ -299,8 +318,10 @@ export const FashionPortfolio = () => {
   const handleSelectImageFromGallery = (imageUrl) => {
     if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
+      updatePageState(pageId, { backgroundImage: imageUrl });
     } else if (showImageOptions === "model") {
       setModelImage(imageUrl); // Update model image
+      updatePageState(pageId, { modelImage: imageUrl });
     }
     setShowGalleryModal(false); // Close the gallery modal
     setShowImageOptions(null);
@@ -385,7 +406,9 @@ export const FashionPortfolio = () => {
 
       if (!content) return prev;
 
-      const oldSegments = content.segments || [{ text: content.text, styles: {} }];
+      const oldSegments = content.segments || [
+        { text: content.text, styles: {} },
+      ];
       const newSegments = [];
 
       let remainingText = newText;
@@ -436,7 +459,6 @@ export const FashionPortfolio = () => {
         break;
     }
   };
-
 
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
@@ -601,8 +623,6 @@ export const FashionPortfolio = () => {
     );
   };
 
-
-
   // Load portfolio state when the component mounts
   useEffect(() => {
     loadState();
@@ -613,7 +633,7 @@ export const FashionPortfolio = () => {
       style={{
         backgroundImage: `url('${backgroundImage}')`,
       }}
-      className="max-w-[830px] relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] cursor-pointer portfolio-page"
+      className="max-w-[830px] bg-cover bg-center relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] cursor-pointer portfolio-page"
       onClick={() => setActiveDraggable(null)}
       onDoubleClick={handleDoubleClickBackground}
     >
@@ -626,11 +646,8 @@ export const FashionPortfolio = () => {
       />
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
-        style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
-        onClick={() => handleImageClick("background")}
+        style={{ zIndex: 1 }}
       ></div>
-
-
 
       <div
         className="relative flex flex-col items-center justify-center h-full"
@@ -801,16 +818,17 @@ export const FashionPortfolio = () => {
                   alt="New Fashion"
                   className="relative object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
                   onDoubleClick={(e) => {
-                    //e.stopPropagation();
+                    e.stopPropagation();
                     handleImageClick("model");
                   }}
                 />
+
                 <input
                   type="file"
                   accept="image/*"
                   ref={modelInputRef}
                   className="hidden"
-                  onChange={(e) => handleImageUpload(e, setModelImage)}
+                  onChange={(e) => handleImageUpload(e, "model")} // Pass the type
                 />
 
                 <EditableText
