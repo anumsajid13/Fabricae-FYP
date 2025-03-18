@@ -124,8 +124,7 @@ export const SketchesIllustrations =  forwardRef((props, ref) => {
           description: getElementPosition(componentId, "description"),
           illustration: getElementPosition(componentId, "illustration"),
         },
-        smallImages,
-        smallImageTexts,
+
         heading,
         description,
         illustrationImage,
