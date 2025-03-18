@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,forwardRef,
+  useImperativeHandle, } from "react";
 import { useFashionStore } from "./FashionProvider";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -6,7 +7,7 @@ import "react-resizable/css/styles.css";
 import { GalleryModal } from "./GalleryModal";
 import { ImageOptionsModal } from "./ImageOptionsModal";
 
-export const SketchesIllustrations = () => {
+export const SketchesIllustrations =  forwardRef((props, ref) => {
   const {
     handleTextSelection,
     registerComponent,
@@ -42,9 +43,7 @@ export const SketchesIllustrations = () => {
   const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'illustration'
 
   // State for text content
-  const [heading, setHeading] = useState(
-    pageState.heading || "Work Process"
-  );
+  const [heading, setHeading] = useState(pageState.heading || "Work Process");
   const [description, setDescription] = useState(
     pageState.description ||
       "Brands I’ve Worked With: [List any brands, designers, or influencers]\nMedia Features: [Mention magazines, blogs, or press coverage]"
@@ -92,6 +91,131 @@ export const SketchesIllustrations = () => {
     pageId,
     updatePageState,
   ]);
+
+    // Expose the save function to the parent
+       useImperativeHandle(ref, () => ({
+        saveState ,
+      }));
+
+  // Save the current state to the backend
+  const saveState = async () => {
+    try {
+      console.log("handleSave function called");
+
+      const username = localStorage.getItem("userEmail"); // Get username from local storage
+
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 5; // Hardcoded pageId
+  
+      const stateToSave = {
+        username,
+        portfolioId,
+        pageId,
+        backgroundImage,
+        modelImage: innerContainerImage,
+        styledContent,
+        elementPositions: {
+          heading: getElementPosition(componentId, "heading"),
+          description: getElementPosition(componentId, "description"),
+          illustration: getElementPosition(componentId, "illustration"),
+        },
+        smallImages,
+        smallImageTexts,
+        heading,
+        description,
+        illustrationImage,
+        bgColor,
+      };
+
+      console.log("State to save:", stateToSave);
+
+      // Send the state to the backend
+      const response = await fetch("http://localhost:5000/api/save-portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          username: username, // Send username in headers
+        },
+        body: JSON.stringify(stateToSave),
+      });
+
+      if (!response.ok) throw new Error("Failed to save portfolio");
+      const result = await response.json();
+      console.log("Portfolio saved successfully:", result);
+    } catch (error) {
+      console.error("Error in handleSave function:", error);
+    }
+  };
+
+  const loadState = async () => {
+    try {
+      const username = localStorage.getItem("userEmail");
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 5; // Hardcoded pageId
+
+      const response = await fetch(
+        `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
+        {
+          method: "GET",
+          headers: {
+            username: username,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to load portfolio");
+
+      const savedStateArray = await response.json();
+      const savedState = savedStateArray[0];
+
+      if (!savedState || typeof savedState !== "object") {
+        console.error("Invalid state loaded:", savedState);
+        return;
+      }
+
+      // Update the component's state with the loaded data
+      if (savedState.backgroundImage)
+        setBackgroundImage(savedState.backgroundImage);
+      if (savedState.innerContainerImage)
+        setInnerContainerImage(savedState.innerContainerImage);
+      if (savedState.illustrationImage)
+        setIllustrationImage(savedState.illustrationImage);
+      if (savedState.bgColor) setBgColor(savedState.bgColor);
+      if (savedState.heading) setHeading(savedState.heading);
+      if (savedState.description) setDescription(savedState.description);
+      if (savedState.styledContent) setStyledContent(savedState.styledContent);
+
+      // Update element positions if they exist
+      if (savedState.elementPositions) {
+        Object.keys(savedState.elementPositions).forEach((key) => {
+          updateElementPosition(
+            componentId,
+            key,
+            savedState.elementPositions[key]
+          );
+        });
+      }
+
+      console.log("Portfolio loaded successfully");
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+    }
+  };
+
+  // Load state when the component mounts
+  useEffect(() => {
+    loadState();
+  }, []);
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);
@@ -384,8 +508,8 @@ export const SketchesIllustrations = () => {
           marginLeft: "110px",
           marginRight: "110px",
           backgroundImage: innerContainerImage
-          ? `url('${innerContainerImage}')`
-          : "none",
+            ? `url('${innerContainerImage}')`
+            : "none",
         }}
         onDoubleClick={handleDoubleClickInnerContainer}
       >
@@ -393,7 +517,6 @@ export const SketchesIllustrations = () => {
         <div className="text-white flex-1">
           <Draggable
             disabled={activeDraggable !== "heading"}
-
             defaultPosition={{
               x: getElementPosition(componentId, "heading").x,
               y: getElementPosition(componentId, "heading").y,
@@ -443,7 +566,6 @@ export const SketchesIllustrations = () => {
 
           <Draggable
             disabled={activeDraggable !== "description"}
-
             defaultPosition={{
               x: getElementPosition(componentId, "description").x,
               y: getElementPosition(componentId, "description").y,
@@ -464,7 +586,9 @@ export const SketchesIllustrations = () => {
               maxConstraints={[600, 300]}
               axis="both"
               resizeHandles={
-                activeDraggable === "description" ? ["se", "sw", "ne", "nw"] : []
+                activeDraggable === "description"
+                  ? ["se", "sw", "ne", "nw"]
+                  : []
               }
               onResizeStop={(e, { size }) => {
                 updateElementPosition(componentId, "description", {
@@ -496,7 +620,6 @@ export const SketchesIllustrations = () => {
         <div className="flex justify-center">
           <Draggable
             disabled={activeDraggable !== "illustration"}
-
             defaultPosition={{
               x: illustrationPosition.x,
               y: illustrationPosition.y,
@@ -517,7 +640,9 @@ export const SketchesIllustrations = () => {
               maxConstraints={[600, 500]}
               axis="both"
               resizeHandles={
-                activeDraggable === "illustration" ? ["se", "sw", "ne", "nw"] : []
+                activeDraggable === "illustration"
+                  ? ["se", "sw", "ne", "nw"]
+                  : []
               }
               onResizeStop={(e, { size }) => {
                 updateElementPosition(componentId, "illustration", {
@@ -551,7 +676,9 @@ export const SketchesIllustrations = () => {
       {showImageOptions && (
         <ImageOptionsModal
           onClose={handleCloseModal}
-          onChooseFromComputer={() => handleChooseFromComputer(showImageOptions)}
+          onChooseFromComputer={() =>
+            handleChooseFromComputer(showImageOptions)
+          }
           onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
         />
       )}
@@ -565,4 +692,4 @@ export const SketchesIllustrations = () => {
       )}
     </div>
   );
-};
+});

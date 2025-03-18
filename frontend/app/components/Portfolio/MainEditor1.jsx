@@ -22,6 +22,17 @@ export const MainEditor1 = () => {
 
   const [animatePage, setAnimatePage] = useState(false);
 
+  const childRefs = useRef([]); // Array to store refs for child components
+
+  // Handle save button click
+  const handleSave = () => {
+    console.log("Save button clicked");
+
+    // Call the save function of each child component
+    childRefs.current.forEach((ref) => {
+      if (ref && ref.current) ref.current.saveState();
+    });
+  };
 
   // Get Zustand store state and actions
   const {
@@ -32,7 +43,7 @@ export const MainEditor1 = () => {
     setSelectedPage,
     getComponents,
     duplicatePage,
-    savePortfolioState
+    savePortfolioState,
   } = useFashionStore();
 
   // Get the component names for the current portfolio
@@ -291,18 +302,7 @@ export const MainEditor1 = () => {
     setTimeout(() => setAnimatePage(false), 1000); // Reset after 1 second
   };
 
-  const handleSave = () => {
-    console.log('Save button clicked');
-    console.log('savePortfolioState exists:', !!savePortfolioState);
-    
-    if (savePortfolioState) {
-      console.log('Calling savePortfolioState function');
-      savePortfolioState();
-    } else {
-      console.error("saveState function is not registered yet!");
-    }
-  };
-  
+
 
   return (
     <div id="webcrumbs">
@@ -600,29 +600,35 @@ export const MainEditor1 = () => {
             </div>
           </div>
 
-          {/* Document Viewer Content */}
-          <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
-            <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
-              <div
-                className={`h-full p-8 overflow-auto ${
-                  animatePage ? "animate-bounce duration-1000" : ""
-                }`}
-              >
-                <div
-                  style={{
-                    transform: `scale(${scale})`,
-                    transformOrigin: "center",
-                  }}
-                  className="w-full h-full flex items-center justify-center"
-                  ref={componentRef}
-                >
-                  {React.createElement(
-                    currentPortfolioComponents[selectedPage - 1]
-                  )}
-                </div>
-              </div>
+         {/* Document Viewer Content */}
+      <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
+        <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
+          <div
+            className={`h-full p-8 overflow-auto ${
+              animatePage ? "animate-bounce duration-1000" : ""
+            }`}
+          >
+            <div
+              style={{
+                transform: `scale(${scale})`,
+                transformOrigin: "center",
+              }}
+              className="w-full h-full flex items-center justify-center"
+              ref={componentRef}
+            >
+              {React.createElement(
+                currentPortfolioComponents[selectedPage - 1],
+                {
+                  ref: (el) => {
+                    // Store the ref for the current child component
+                    childRefs.current[selectedPage - 1] = { current: el };
+                  },
+                }
+              )}
             </div>
           </div>
+        </div>
+      </div>
 
           {/* Navigation Bar */}
           <div className="bg-[#E7E4D8] p-4 border-t border-gray-200 flex justify-center items-center">

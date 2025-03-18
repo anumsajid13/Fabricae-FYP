@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,forwardRef,
+  useImperativeHandle, } from "react";
 import { useFashionStore } from "./FashionProvider";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -6,7 +7,7 @@ import "react-resizable/css/styles.css";
 import { GalleryModal } from "./GalleryModal";
 import { ImageOptionsModal } from "./ImageOptionsModal";
 
-export const PortfolioSection = () => {
+export const PortfolioSection =  forwardRef((props, ref) => {
   const {
     handleTextSelection,
     registerComponent,
@@ -101,6 +102,123 @@ export const PortfolioSection = () => {
     pageId,
     updatePageState,
   ]);
+
+    // Expose the save function to the parent
+       useImperativeHandle(ref, () => ({
+        saveState ,
+      }));
+
+  const saveState = async () => {
+    try {
+      const username = localStorage.getItem("userEmail");
+  
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 6; // Hardcoded pageId
+  
+      const stateToSave = {
+        username,
+        portfolioId,
+        pageId,
+        backgroundImage,
+        innerContainerImage,
+        smallImages,
+        bgColor,
+        heading,
+        description,
+        styledContent,
+        elementPositions: {
+          heading: getElementPosition(componentId, "heading"),
+          description: getElementPosition(componentId, "description"),
+          ...smallImages.reduce((acc, _, index) => {
+            acc[`smallImage1-${index}`] = getElementPosition(
+              componentId,
+              `smallImage1-${index}`
+            );
+            return acc;
+          }, {}),
+        },
+      };
+  
+      const response = await fetch("http://localhost:5000/api/save-portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          username: username,
+        },
+        body: JSON.stringify(stateToSave),
+      });
+  
+      if (!response.ok) throw new Error("Failed to save portfolio");
+      const result = await response.json();
+      console.log("Portfolio saved successfully:", result);
+    } catch (error) {
+      console.error("Error in handleSave function:", error);
+    }
+  };
+
+  const loadState = async () => {
+    try {
+      const username = localStorage.getItem("userEmail");
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+  
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 6; // Hardcoded pageId
+  
+      const response = await fetch(
+        `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
+        {
+          method: "GET",
+          headers: {
+            username: username,
+          },
+        }
+      );
+  
+      if (!response.ok) throw new Error("Failed to load portfolio");
+  
+      const savedStateArray = await response.json();
+      const savedState = savedStateArray[0];
+  
+      if (!savedState || typeof savedState !== "object") {
+        console.error("Invalid state loaded:", savedState);
+        return;
+      }
+  
+      // Update the component's state with the loaded data
+      if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
+      if (savedState.innerContainerImage) setInnerContainerImage(savedState.innerContainerImage);
+      if (savedState.smallImages) setSmallImages(savedState.smallImages);
+      if (savedState.bgColor) setBgColor(savedState.bgColor);
+      if (savedState.heading) setHeading(savedState.heading);
+      if (savedState.description) setDescription(savedState.description);
+      if (savedState.styledContent) setStyledContent(savedState.styledContent);
+  
+      // Update element positions if they exist
+      if (savedState.elementPositions) {
+        Object.keys(savedState.elementPositions).forEach((key) => {
+          updateElementPosition(componentId, key, savedState.elementPositions[key]);
+        });
+      }
+  
+      console.log("Portfolio loaded successfully");
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+    }
+  };
+
+  
+    // Load state when the component mounts
+    useEffect(() => {
+      loadState();
+    }, []);
+  
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);
@@ -601,4 +719,4 @@ export const PortfolioSection = () => {
       )}
     </div>
   );
-};
+});
