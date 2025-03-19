@@ -44,7 +44,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
   );
 
   const [activeSmallImageIndex, setActiveSmallImageIndex] = useState(null);
-  // Initialize styled content from pageState if it exists
   const [styledContent, setStyledContent] = useState(() => {
     if (pageState?.styledContent) {
       return pageState.styledContent;
@@ -61,17 +60,14 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     };
   });
 
-  // Component ID for this component
   const componentId = "apparel-portfolio";
 
-  // Register this component with context when it mounts
   useEffect(() => {
     registerComponent(componentId, {
       updateStyles: updateStyles,
     });
   }, [registerComponent]);
 
-  // Update page state whenever any state changes
   useEffect(() => {
     updatePageState(pageId, {
       name,
@@ -105,29 +101,25 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     getElementPosition,
   ]);
 
-  // Expose the save function to the parent
   useImperativeHandle(ref, () => ({
     saveState,
   }));
 
   const saveState = async () => {
     try {
-      console.log("saveState function called");
-
       const username = localStorage.getItem("userEmail");
-
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
 
-      const portfolioId = 2; // Hardcoded portfolioId for the second portfolio
-      const pageId = 1; // Hardcoded pageId
+      const portfolioId = 2;
+      const pageId = 1;
 
       const stateToSave = {
-        portfolioId, // Include portfolioId in the request body
-        pageId, // Include pageId in the request body
-        username, // Include username in the request body
+        portfolioId,
+        pageId,
+        username,
         name,
         title,
         quote,
@@ -147,13 +139,11 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
         },
       };
 
-      console.log("State to save:", stateToSave);
-
       const response = await fetch("http://localhost:5000/api/save-portfolio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          username: username, // Send username in headers
+          username: username,
         },
         body: JSON.stringify(stateToSave),
       });
@@ -167,40 +157,35 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
 
   const loadState = async () => {
     try {
-      console.log("Attempting to load portfolio state");
-
       const username = localStorage.getItem("userEmail");
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
 
-      const portfolioId = 2; // Hardcoded portfolioId for the second portfolio
-      const pageId = 1; // Hardcoded pageId
+      const portfolioId = 2;
+      const pageId = 1;
 
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
         {
           method: "GET",
           headers: {
-            username: username, // Send username in headers
+            username: username,
           },
         }
       );
 
-      console.log("Response status:", response.status);
       if (!response.ok) throw new Error("Failed to load portfolio");
 
       const savedStateArray = await response.json();
       const savedState = savedStateArray[0];
-      console.log("Loaded state from API:", savedState);
 
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
 
-      // Update states with loaded data
       if (savedState.name) setName(savedState.name);
       if (savedState.title) setTitle(savedState.title);
       if (savedState.quote) setQuote(savedState.quote);
@@ -208,7 +193,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
       if (savedState.year) setYear(savedState.year);
       if (savedState.images) setImages(savedState.images);
 
-      // Ensure styledContent is properly structured before setting it
       if (savedState.styledContent) {
         const loadedStyledContent = {
           name: savedState.styledContent.name || {
@@ -234,11 +218,9 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             segments: [{ text: savedState.year || year, styles: {} }],
           },
         };
-        console.log("Setting styled content to:", loadedStyledContent);
         setStyledContent(loadedStyledContent);
       }
 
-      // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.name) {
           updateElementPosition(
@@ -304,10 +286,9 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     }
   };
 
-  // Handle double-click to trigger file input for small images
   const handleDoubleClickSmallImage = (e, index) => {
-    e.stopPropagation(); // Prevent event bubbling
-    setActiveSmallImageIndex(index); // Set the active small image index
+    e.stopPropagation();
+    setActiveSmallImageIndex(index);
     setShowImageOptions("smallImage");
   };
 
@@ -316,15 +297,14 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
   };
 
   const handleChooseFromComputer = (type) => {
-    // Use existing refs to trigger file input
     if (type === "smallImage") {
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = "image/*";
-      fileInput.onchange = handleSmallImageUpload; // Handle small image upload
+      fileInput.onchange = handleSmallImageUpload;
       fileInput.click();
     }
-    setShowImageOptions(null); // Close the modal
+    setShowImageOptions(null);
   };
 
   const handleSmallImageUpload = (e) => {
@@ -333,34 +313,33 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
       const imageUrl = URL.createObjectURL(file);
       setImages((prevImages) => {
         const updatedImages = [...prevImages];
-        updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
+        updatedImages[activeSmallImageIndex] = imageUrl;
         return updatedImages;
       });
     }
-    e.target.value = ""; // Reset the file input
+    e.target.value = "";
   };
 
-  // Handle small image selection from gallery
   const handleSelectSmallImageFromGallery = (imageUrl) => {
     setImages((prevImages) => {
       const updatedImages = [...prevImages];
-      updatedImages[activeSmallImageIndex] = imageUrl; // Update the specific small image
+      updatedImages[activeSmallImageIndex] = imageUrl;
       return updatedImages;
     });
-    setShowGalleryModal(false); // Close the gallery modal
-    setShowImageOptions(null); // Close the options modal
+    setShowGalleryModal(false);
+    setShowImageOptions(null);
   };
 
   const handleChooseFromGallery = (type) => {
-    setShowGalleryModal(true); // Show the gallery modal
+    setShowGalleryModal(true);
     setShowImageOptions(type);
   };
 
   const handleSelectImageFromGallery = (imageUrl) => {
     if (showImageOptions === "smallImage") {
-      handleSelectSmallImageFromGallery(imageUrl); // Update small image
+      handleSelectSmallImageFromGallery(imageUrl);
     }
-    setShowGalleryModal(false); // Close the gallery modal
+    setShowGalleryModal(false);
     setShowImageOptions(null);
   };
 
@@ -377,16 +356,12 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
   const image2Position = getElementPosition(componentId, "image2");
   const image3Position = getElementPosition(componentId, "image3");
 
-  // Register this component with context when it mounts
   useEffect(() => {
     registerComponent(componentId, {
       updateStyles: updateStyles,
     });
-
-    // No need for a cleanup function as the component registry persists
   }, []);
 
-  // Update page state whenever any state changes
   useEffect(() => {
     updatePageState(pageId, {
       name,
@@ -429,7 +404,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
       let remainingText = newText;
       let index = 0;
 
-      // Preserve styles for as many characters as possible
       for (let segment of oldSegments) {
         if (remainingText.length === 0) break;
 
@@ -445,7 +419,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
         index += lengthToCopy;
       }
 
-      // If there's any remaining text, add it as a new unstyled segment
       if (remainingText.length > 0) {
         newSegments.push({ text: remainingText, styles: {} });
       }
@@ -459,7 +432,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
       };
     });
 
-    // Update the plain text state as well
     switch (type) {
       case "name":
         setName(newText);
@@ -482,7 +454,7 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
   };
 
   const handleLocalTextSelection = (e, type) => {
-    if (editingField) return; // Don't handle selection while editing
+    if (editingField) return;
 
     const selection = window.getSelection();
     const text = selection.toString();
@@ -497,32 +469,23 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
         type,
         startOffset,
         endOffset,
-        componentId, // Include the component ID
+        componentId,
       };
 
-      // Send selection to the global context
       handleTextSelection(selectedText);
     }
   };
 
-  // This updated function should replace the existing updateStyles function in FashionPortfolio.jsx
   const updateStyles = (type, styles, savedStartOffset, savedEndOffset) => {
-    console.log("Updating styles for", type, "with", styles);
-    console.log("Using saved offsets:", savedStartOffset, savedEndOffset);
-
     setStyledContent((prev) => {
       const content = prev[type];
 
       if (!content) return prev;
 
-      // Use the saved offsets from the context instead of trying to get them from the current selection
       let startOffset = savedStartOffset !== undefined ? savedStartOffset : 0;
       let endOffset =
         savedEndOffset !== undefined ? savedEndOffset : content.text.length;
 
-      console.log("Applying style from offset", startOffset, "to", endOffset);
-
-      // Create new segments based on the selection
       const newSegments = [];
       let currentOffset = 0;
 
@@ -531,12 +494,8 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
         const segmentEnd = currentOffset + segmentLength;
 
         if (segmentEnd <= startOffset || currentOffset >= endOffset) {
-          // This segment is completely outside the selection
           newSegments.push(segment);
         } else {
-          // This segment overlaps with the selection
-
-          // Add part before selection if it exists
           if (currentOffset < startOffset) {
             newSegments.push({
               text: segment.text.substring(0, startOffset - currentOffset),
@@ -544,7 +503,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             });
           }
 
-          // Add the selected part with new styles
           newSegments.push({
             text: segment.text.substring(
               Math.max(0, startOffset - currentOffset),
@@ -553,7 +511,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             styles: { ...segment.styles, ...styles },
           });
 
-          // Add part after selection if it exists
           if (segmentEnd > endOffset) {
             newSegments.push({
               text: segment.text.substring(endOffset - currentOffset),
@@ -580,7 +537,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState("");
 
-    // Initialize local value when editing starts
     useEffect(() => {
       if (editingField === type) {
         setLocalValue(content.text);
@@ -590,13 +546,9 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     const handleInputChange = (e) => {
       const newText = e.target.value;
       setLocalValue(newText);
-
-      // Only update the parent state when input loses focus
-      // This prevents re-rendering during typing
     };
 
     const handleInputBlur = () => {
-      // Update the parent state with final value
       handleTextChange({ target: { value: localValue } }, type);
       setEditingField(null);
     };
@@ -644,10 +596,9 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     );
   };
 
-  // Load portfolio state when the component mounts
   useEffect(() => {
     loadState();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   return (
     <div
@@ -663,7 +614,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
             defaultPosition={{ x: namePosition.x, y: namePosition.y }}
             onStop={(e, data) => {
-              console.log("Updating name position:", { x: data.x, y: data.y });
               updateElementPosition(componentId, "name", {
                 x: data.x,
                 y: data.y,
@@ -718,7 +668,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
             onStop={(e, data) => {
-              console.log("Updating title position:", { x: data.x, y: data.y });
               updateElementPosition(componentId, "title", {
                 x: data.x,
                 y: data.y,
@@ -773,14 +722,10 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
             onStop={(e, data) => {
-              console.log("Updating quote position:", {
-                x: data.x,
-                y: data.y,
-              });
               updateElementPosition(componentId, "quote", {
                 x: data.x,
                 y: data.y,
-                width: squotePosition.width,
+                width: quotePosition.width,
                 height: quotePosition.height,
               });
             }}
@@ -834,10 +779,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
               y: descriptionPosition.y,
             }}
             onStop={(e, data) => {
-              console.log("Updating description position:", {
-                x: data.x,
-                y: data.y,
-              });
               updateElementPosition(componentId, "description", {
                 x: data.x,
                 y: data.y,
@@ -894,7 +835,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
             bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: yearPosition.x, y: yearPosition.y }}
             onStop={(e, data) => {
-              console.log("Updating year position:", { x: data.x, y: data.y });
               updateElementPosition(componentId, "year", {
                 x: data.x,
                 y: data.y,
@@ -948,22 +888,59 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
         <div className="border border-black p-2">
           <div className="grid grid-rows-3 gap-2">
             {images.map((src, index) => (
-              <Draggable key={index}>
+              <Draggable
+                key={index}
+                disabled={activeDraggable !== `image${index + 1}`}
+                defaultPosition={{
+                  x: getElementPosition(componentId, `image${index + 1}`).x,
+                  y: getElementPosition(componentId, `image${index + 1}`).y,
+                }}
+                onStop={(e, data) => {
+                  updateElementPosition(componentId, `image${index + 1}`, {
+                    x: data.x,
+                    y: data.y,
+                    width: getElementPosition(componentId, `image${index + 1}`)
+                      .width,
+                    height: getElementPosition(componentId, `image${index + 1}`)
+                      .height,
+                  });
+                }}
+              >
                 <ResizableBox
-                  width={350}
-                  height={150}
+                  width={
+                    getElementPosition(componentId, `image${index + 1}`).width
+                  }
+                  height={
+                    getElementPosition(componentId, `image${index + 1}`).height
+                  }
                   minConstraints={[100, 100]}
                   maxConstraints={[400, 400]}
+                  axis="both"
+                  resizeHandles={
+                    activeDraggable === `image${index + 1}`
+                      ? ["se", "sw", "ne", "nw"]
+                      : []
+                  }
+                  onResizeStop={(e, { size }) => {
+                    updateElementPosition(componentId, `image${index + 1}`, {
+                      x: getElementPosition(componentId, `image${index + 1}`).x,
+                      y: getElementPosition(componentId, `image${index + 1}`).y,
+                      width: size.width,
+                      height: size.height,
+                    });
+                  }}
                 >
-                  <div className="relative">
+                  <div className="relative w-full h-full">
                     <img
                       src={src}
                       alt={`Image ${index + 1}`}
-                      className="w-full h-full object-cover border cursor-pointer"
-                      onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)}
+                      className="w-full h-full object-cover cursor-pointer"
+                      onDoubleClick={(e) =>
+                        handleDoubleClickSmallImage(e, index)
+                      }
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDragStart(`image-${index}`);
+                        handleDragStart(`image${index + 1}`);
                       }}
                     />
                   </div>

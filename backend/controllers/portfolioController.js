@@ -26,6 +26,11 @@ exports.savePortfolio = async (req, res) => {
       modelImage4,
       modelImage5,
       illustrationImage,
+      name,
+      year,
+      image1,
+      image2,
+      image3,
     } = req.body;
 
     if (!username) {
@@ -64,6 +69,11 @@ exports.savePortfolio = async (req, res) => {
       existingPortfolio.modelImage4 = modelImage4 || existingPortfolio.modelImage4;
       existingPortfolio.modelImage5 = modelImage5 || existingPortfolio.modelImage5;
       existingPortfolio.illustrationImage = illustrationImage || existingPortfolio.illustrationImage;
+      existingPortfolio.name = name || existingPortfolio.name;
+      existingPortfolio.year = year || existingPortfolio.year;
+      existingPortfolio.image1 = image1 || existingPortfolio.image1;
+      existingPortfolio.image2 = image2 || existingPortfolio.image2;
+      existingPortfolio.image3 = image3 || existingPortfolio.image3;
       existingPortfolio.lastUpdated = Date.now(); // Update lastUpdated field
 
 
@@ -96,6 +106,11 @@ exports.savePortfolio = async (req, res) => {
         modelImage4,
         modelImage5,
         illustrationImage,
+        name,
+        year,
+        image1,
+        image2,
+        image3,
         lastUpdated: Date.now(), // Set lastUpdated for new portfolio
 
       });
@@ -104,7 +119,7 @@ exports.savePortfolio = async (req, res) => {
       return res.status(201).json({ message: "Portfolio saved successfully", portfolio: newPortfolio });
     }
   } catch (error) {
-   
+
     res.status(500).json({ message: "Error saving portfolio", error });
   }
 };

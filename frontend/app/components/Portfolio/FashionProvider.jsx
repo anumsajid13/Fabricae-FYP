@@ -187,9 +187,9 @@ export const useFashionStore = create((set, get) => ({
       quote: { x: 10, y: 110, width: 300, height: 50 },
       description: { x: 10, y: 110, width: 400, height: 150 },
       year: { x: 100, y: -20, width: 150, height: 50 },
-      image1: { x: 450, y: 20, width: 300, height: 225 },
-      image2: { x: 450, y: 265, width: 300, height: 225 }, 
-      image3: { x: 450, y: 510, width: 300, height: 225 },
+      image1: { x: 0, y: 0, width: 340, height: 140 },
+      image2: { x: 0, y: 0, width: 340, height: 140 },
+      image3: { x: 0, y: 0, width: 340, height: 140 },
     },
   },
 
