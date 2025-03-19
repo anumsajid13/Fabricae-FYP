@@ -74,6 +74,8 @@ exports.savePortfolio = async (req, res) => {
       existingPortfolio.image1 = image1 || existingPortfolio.image1;
       existingPortfolio.image2 = image2 || existingPortfolio.image2;
       existingPortfolio.image3 = image3 || existingPortfolio.image3;
+      existingPortfolio.lastUpdated = Date.now(); // Update lastUpdated field
+
 
       await existingPortfolio.save();
       return res.status(200).json({ message: "Portfolio updated successfully", portfolio: existingPortfolio });
@@ -109,6 +111,8 @@ exports.savePortfolio = async (req, res) => {
         image1,
         image2,
         image3,
+        lastUpdated: Date.now(), // Set lastUpdated for new portfolio
+
       });
 
       await newPortfolio.save();
