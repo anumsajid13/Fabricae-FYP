@@ -205,7 +205,16 @@ export const useFashionStore = create((set, get) => ({
     image1: { x: 5, y: 0, width: 200, height: 200 },
     image2: { x: 5, y: 0, width: 200, height: 200 },
     image3: { x: 5, y: 0, width: 200, height: 200 },
-  },
+    },
+    "my-services": {
+      heading: { x: 0, y: 100, width: 600, height: 100 },
+      label1 : { x: 0, y: 60, width: 200, height: 50 },
+      label2 : { x: 0, y: 60, width: 200, height: 50 },
+      label3 : { x: 0, y: 60, width: 200, height: 50 },
+      label4 : { x: 0, y: 200, width: 200, height: 50 },
+      label5 : { x: 0, y: 200, width: 200, height: 50 },
+      label6 : { x: 0, y: 200, width: 200, height: 50 },
+    },
 
   },
 
