@@ -12,12 +12,7 @@ export const WhatIDo = () => {
               extremely poisonous. It’s the second-brightest natural object in the
               night sky after the Moon.
             </p>
-            <p className="text-base mt-3"> {/* Reduced font size and margin */}
-              It’s the closest planet to the Sun and the smallest one in the Solar
-              System—it’s only a bit larger than our Moon. The planet’s name has
-              nothing to do with the liquid metal, since Mercury was named after
-              the Roman messenger god.
-            </p>
+           
           </div>
           <div className="border border-black p-1">
             <img
