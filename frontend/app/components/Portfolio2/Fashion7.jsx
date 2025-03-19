@@ -2,7 +2,7 @@ import React from "react";
 
 export const Resume = () => {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
+      <div className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-6">
         <div className="max-w-4xl w-full border border-black p-6 text-center">
           <h2 className="text-6xl font-serif font-bold">MY RESUME</h2>
           <div className="grid grid-cols-3 gap-6 mt-8">

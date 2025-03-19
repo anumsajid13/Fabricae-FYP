@@ -219,7 +219,15 @@ export const useFashionStore = create((set, get) => ({
       heading: { x: 0, y: -50, width: 300, height: 50 },
       description: { x: 0, y: -20, width: 350, height: 100 },
       modelImage: { x: 0, y: 0, width: 335, height: 300 },
-    }
+    },
+    "research": {
+      heading: { x: 200, y: 0, width: 300, height: 50 },
+      description: { x: 0, y: 0, width: 700, height: 50 },
+      label1: { x: 0, y: 0, width: 700, height: 50 },
+      label2: { x: 0, y: 0, width: 700, height: 50 },
+      image1: { x: 10, y: 0, width: 335, height: 150 },
+      image2: { x: 10, y: 0, width: 335, height: 150 },
+    },
 
   },
 
