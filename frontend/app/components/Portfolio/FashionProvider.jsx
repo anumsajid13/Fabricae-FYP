@@ -191,6 +191,15 @@ export const useFashionStore = create((set, get) => ({
       image2: { x: 0, y: 0, width: 340, height: 140 },
       image3: { x: 0, y: 0, width: 340, height: 140 },
     },
+    "about-me": {
+      name: { x: 0, y: 0, width: 200, height: 50 },
+      description: { x: 0, y: 0, width: 400, height: 100 },
+      year: { x: 0, y: 0, width: 150, height: 50 },
+      title: { x: 0, y: 0, width: 500, height: 100 },
+      label: { x: 0, y: 0, width: 100, height: 100 },
+      modelImage: { x: -20, y: 0, width: 400, height: 350 },
+    },
+
   },
 
   // Function to update the position and size of an element
