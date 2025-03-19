@@ -611,7 +611,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
           {/* Editable Name */}
           <Draggable
             disabled={activeDraggable !== "name"}
-            bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
             defaultPosition={{ x: namePosition.x, y: namePosition.y }}
             onStop={(e, data) => {
               updateElementPosition(componentId, "name", {
@@ -665,7 +664,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
           {/* Editable Title */}
           <Draggable
             disabled={activeDraggable !== "title"}
-            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: titlePosition.x, y: titlePosition.y }}
             onStop={(e, data) => {
               updateElementPosition(componentId, "title", {
@@ -719,7 +717,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
           {/* Editable quote */}
           <Draggable
             disabled={activeDraggable !== "quote"}
-            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: quotePosition.x, y: quotePosition.y }}
             onStop={(e, data) => {
               updateElementPosition(componentId, "quote", {
@@ -773,7 +770,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
           {/* Editable Description */}
           <Draggable
             disabled={activeDraggable !== "description"}
-            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{
               x: descriptionPosition.x,
               y: descriptionPosition.y,
@@ -832,7 +828,6 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
           {/* Editable Year */}
           <Draggable
             disabled={activeDraggable !== "year"}
-            bounds={{ left: 0, top: -150, right: 500, bottom: 180 }}
             defaultPosition={{ x: yearPosition.x, y: yearPosition.y }}
             onStop={(e, data) => {
               updateElementPosition(componentId, "year", {
