@@ -172,16 +172,28 @@ exports.getUniquePortfolioIds = async (req, res) => {
     const portfolios = await Portfolio.find({ username });
 
     if (!portfolios.length) {
-      return res.status(404).json({ message: "No portfolios found for this user" });
+      return res.status(200).json({ portfolios: [] }); // Return empty array instead of 404
     }
 
-    // Extract portfolioIds and remove duplicates
-    const portfolioIds = portfolios.map(portfolio => portfolio.portfolioId);
-    const uniquePortfolioIds = [...new Set(portfolioIds)];
+    // Extract unique portfolios with their last updated time
+    const uniquePortfolioMap = new Map();
+    
+    // For each portfolio, keep track of the most recent update
+    portfolios.forEach(portfolio => {
+      const id = portfolio.portfolioId;
+      const lastUpdated = portfolio.lastUpdated;
+      
+      if (!uniquePortfolioMap.has(id) || new Date(lastUpdated) > new Date(uniquePortfolioMap.get(id).lastUpdated)) {
+        uniquePortfolioMap.set(id, { id, lastUpdated });
+      }
+    });
+    
+    // Convert Map to array
+    const uniquePortfolios = Array.from(uniquePortfolioMap.values());
 
-    // Return the unique portfolioIds
-    res.status(200).json({ uniquePortfolioIds });
+    // Return the unique portfolios with their last updated time
+    res.status(200).json({ portfolios: uniquePortfolios });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving unique portfolio IDs", error });
+    res.status(500).json({ message: "Error retrieving unique portfolios", error });
   }
 };
