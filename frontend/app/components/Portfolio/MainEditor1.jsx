@@ -22,18 +22,6 @@ export const MainEditor1 = () => {
 
   const [animatePage, setAnimatePage] = useState(false);
 
-  const childRefs = useRef([]); // Array to store refs for child components
-
-  // Handle save button click
-  const handleSave = () => {
-    console.log("Save button clicked");
-
-    // Call the save function of each child component
-    childRefs.current.forEach((ref) => {
-      if (ref && ref.current) ref.current.saveState();
-    });
-  };
-
   // Get Zustand store state and actions
   const {
     selection,
@@ -54,6 +42,34 @@ export const MainEditor1 = () => {
     (name) => componentsMapping[name]
   );
 
+  // Add this near the top of your component with other useState declarations
+const childRefs = useRef([]);
+
+  // Create refs for all components
+  useEffect(() => {
+    // Initialize refs array with the right length
+    childRefs.current = Array(currentPortfolioComponents.length)
+      .fill(null)
+      .map((_, i) => childRefs.current[i] || React.createRef());
+  }, [currentPortfolioComponents.length]);
+
+  // Update the handleSave function to save all components
+  const handleSave = () => {
+    console.log("Save button clicked");
+
+    // Call the save function of each child component
+    childRefs.current.forEach((ref, index) => {
+      if (ref && ref.current) {
+        console.log(`Saving component ${index + 1}`);
+        ref.current.saveState();
+      } else {
+        console.log(`Ref for component ${index + 1} is not available`);
+      }
+    });
+
+    // Save the portfolio state
+    //savePortfolioState();
+  };
   // Get total slides for the current portfolio
   const totalSlides = currentPortfolioComponents.length;
 
@@ -267,8 +283,6 @@ export const MainEditor1 = () => {
     setAnimatePage(true); // Trigger animation
     setTimeout(() => setAnimatePage(false), 1000); // Reset after 1 second
   };
-
-
 
   return (
     <div id="webcrumbs">
@@ -566,35 +580,42 @@ export const MainEditor1 = () => {
             </div>
           </div>
 
-         {/* Document Viewer Content */}
-      <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
-        <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
-          <div
-            className={`h-full p-8 overflow-auto ${
-              animatePage ? "animate-bounce duration-1000" : ""
-            }`}
-          >
-            <div
-              style={{
-                transform: `scale(${scale})`,
-                transformOrigin: "center",
-              }}
-              className="w-full h-full flex items-center justify-center"
-              ref={componentRef}
-            >
-              {React.createElement(
-                currentPortfolioComponents[selectedPage - 1],
-                {
-                  ref: (el) => {
-                    // Store the ref for the current child component
-                    childRefs.current[selectedPage - 1] = { current: el };
-                  },
-                }
-              )}
+          {/* Document Viewer Content */}
+          <div className="flex-1 bg-[#e7e4d8]/30 p-8 flex items-center justify-center overflow-hidden">
+            <div className="bg-white mt-11 shadow-lg rounded-sm w-[960px] h-[540px] transform transition-transform duration-300 hover:shadow-xl scale-90 border border-[#434242]/10">
+              <div
+                className={`h-full p-8 overflow-auto ${
+                  animatePage ? "animate-bounce duration-1000" : ""
+                }`}
+              >
+                <div className="hidden">
+                  {/* Hidden container to hold all components so refs are connected */}
+                  {currentPortfolioComponents.map((Component, index) => (
+                    <Component
+                      key={index}
+                      ref={childRefs.current[index]}
+                      style={{ display: "none" }} // Hide from view
+                    />
+                  ))}
+                </div>
+                <div
+                  style={{
+                    transform: `scale(${scale})`,
+                    transformOrigin: "center",
+                  }}
+                  className="w-full h-full flex items-center justify-center"
+                  ref={componentRef}
+                >
+                  {React.createElement(
+                    currentPortfolioComponents[selectedPage - 1],
+                    {
+                      ref: childRefs.current[selectedPage - 1],
+                    }
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
           {/* Navigation Bar */}
           <div className="bg-[#E7E4D8] p-4 border-t border-gray-200 flex justify-center items-center">
