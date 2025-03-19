@@ -1006,7 +1006,7 @@ export const MyServices = forwardRef((props, ref) => {
       </Draggable>
 
       {/* Services Grid */}
- <div className="grid grid-cols-3 gap-8 max-w-5xl w-full text-center">
+ <div className="grid grid-cols-3 gap-5 max-w-5xl w-full text-center">
     {services.map((service, index) => (
       <Draggable
         key={service.id}
@@ -1061,7 +1061,7 @@ export const MyServices = forwardRef((props, ref) => {
                 }
               }
               type={service.id}
-              className="text-2xl font-serif italic mt-4 cursor-text"
+              className="text-2xl font-serif italic mt-2 cursor-text"
             />
             <EditableText
               content={

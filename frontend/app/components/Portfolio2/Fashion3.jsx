@@ -687,7 +687,7 @@ export const AboutMe2 = forwardRef((props, ref) => {
         </Draggable>
 
         {/* Image Grid */}
-        <div className="grid grid-cols-3 gap-4 border border-black p-4 max-w-3xl mx-auto -mt-8">
+        <div className="grid grid-cols-3 gap-4 border border-black p-4 max-w-3xl mx-auto -mt-12">
           {/* Image 1 */}
           <Draggable
             disabled={activeDraggable !== "image1"}
