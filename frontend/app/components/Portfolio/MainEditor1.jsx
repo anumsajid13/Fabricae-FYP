@@ -209,107 +209,73 @@ const childRefs = useRef([]);
       },
     });
 
-    // Define smaller dimensions
-    const COMPONENT_WIDTH = 1000;
-    const COMPONENT_HEIGHT = 750;
-
     try {
+      // Save the current page so we can return to it later
       const originalSelectedPage = selectedPage;
+
+      // Create a new PDF document
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "pt",
-        format: [COMPONENT_WIDTH, COMPONENT_HEIGHT],
+        format: [960, 540], // Match the exact dimensions of your portfolio viewer
       });
 
-      const pdfContainer = document.createElement("div");
-      Object.assign(pdfContainer.style, {
-        position: "fixed",
-        left: "0",
-        top: "0",
-        width: `${COMPONENT_WIDTH}px`,
-        height: `${COMPONENT_HEIGHT}px`,
-        backgroundColor: "#ffffff",
-        zIndex: "-1000",
-        overflow: "hidden",
-      });
-      document.body.appendChild(pdfContainer);
+      // Get a reference to the portfolio content container
+      const portfolioContainer = document.querySelector(".bg-white.mt-11.shadow-lg.rounded-sm");
 
-      const componentWrapper = document.createElement("div");
-      Object.assign(componentWrapper.style, {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      });
-      pdfContainer.appendChild(componentWrapper);
+      if (!portfolioContainer) {
+        throw new Error("Could not find portfolio container element");
+      }
 
-      const root = ReactDOM.createRoot(componentWrapper);
+      // Generate screenshots of each page
+      for (let i = 0; i < Math.min(totalSlides, currentPortfolioComponents.length); i++) {
+        console.log(`Processing page ${i + 1} of ${currentPortfolioComponents.length}`);
 
-      for (
-        let i = 0;
-        i < Math.min(10, currentPortfolioComponents.length);
-        i++
-      ) {
-        console.log(
-          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
-        );
+        // Change to the current page
+        setSelectedPage(i + 1);
 
-        const Component = currentPortfolioComponents[i];
-        if (!Component) {
-          console.error(`Component at index ${i} is undefined`);
-          continue;
-        }
+        // Wait for the component to render
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        root.render(React.createElement(Component));
-
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
-        pdfContainer.getBoundingClientRect();
-
-        const canvas = await html2canvas(pdfContainer, {
-          width: COMPONENT_WIDTH,
-          height: COMPONENT_HEIGHT,
-          scale: 1,
+        // Take a screenshot of the current page
+        const canvas = await html2canvas(portfolioContainer, {
+          scale: 2, // Higher scale for better quality
           useCORS: true,
           allowTaint: true,
           backgroundColor: "#ffffff",
-          logging: true,
-          onclone: (clonedDoc) => {
-            const clonedElement = clonedDoc.querySelector("body > div");
-            if (clonedElement) {
-              clonedElement.style.display = "block";
-              clonedElement.style.visibility = "visible";
-            }
-          },
+          logging: false,
         });
 
-        console.log(
-          `Canvas generated for page ${i + 1}: ${canvas.width}x${canvas.height}`
-        );
-
+        // Add a new page to the PDF (except for the first page)
         if (i > 0) {
-          pdf.addPage([COMPONENT_WIDTH, COMPONENT_HEIGHT], "landscape");
+          pdf.addPage([960, 540], "landscape");
         }
 
+        // Add the screenshot to the PDF
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
-        pdf.addImage(imgData, "JPEG", 0, 0, COMPONENT_WIDTH, COMPONENT_HEIGHT);
+        pdf.addImage(imgData, "JPEG", 0, 0, 960, 540);
 
         console.log(`Added page ${i + 1} to PDF`);
       }
 
+      // Save the PDF
       pdf.save("portfolio.pdf");
-      console.log("PDF saved successfully with smaller dimensions");
+      console.log("PDF saved successfully");
 
+      // Return to the original page
       setSelectedPage(originalSelectedPage);
 
-      if (pdfContainer && pdfContainer.parentNode) {
-        pdfContainer.parentNode.removeChild(pdfContainer);
-      }
-
+      // Dismiss the loading toast
       toast.dismiss();
+      toast.success("PDF generated successfully!", {
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error("Error generating PDF:", error);
+      toast.dismiss();
+      toast.error("Error generating PDF. Please try again.", {
+        autoClose: 3000,
+      });
     }
   };
   const handleDuplicatePage = () => {

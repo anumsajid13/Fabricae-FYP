@@ -11,7 +11,7 @@ export const useFashionStore = create((set, get) => ({
   },
 
   // State for portfolio ID
-  portfolioId: 1, // Default portfolio ID
+  portfolioId: 2, // Default portfolio ID
 
   // Function to set portfolio ID
   setPortfolioId: (id) => {
@@ -180,7 +180,17 @@ export const useFashionStore = create((set, get) => ({
       "smallImage1-3": { x: 130, y: -56, width: 120, height: 50 },
       heading: { x: 30, y: 0, width: 250, height: 50 },
       description: { x: 30, y: 0, width: 150, height: 150 },
-    }
+    },
+    "apparel-portfolio": {
+      name: { x: 100, y: 70, width: 200, height: 50 },
+      title: { x: 10, y: 60, width: 400, height: 100 },
+      quote: { x: 10, y: 110, width: 300, height: 50 },
+      description: { x: 10, y: 110, width: 400, height: 150 },
+      year: { x: 100, y: -20, width: 150, height: 50 },
+      image1: { x: 450, y: 20, width: 300, height: 225 },
+      image2: { x: 450, y: 265, width: 300, height: 225 }, 
+      image3: { x: 450, y: 510, width: 300, height: 225 },
+    },
   },
 
   // Function to update the position and size of an element
