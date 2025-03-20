@@ -24,7 +24,6 @@ export const PortfolioHeader = () => {
  
   };
 
-
   export const ResumePage = () => {
     return (
       <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
@@ -119,7 +118,7 @@ export const FashionMoodBoard = () => {
         {/* Left Column */}
         <div className="space-y-4">
           <img
-            src="/fashion1.jpg"
+            src="/moodboard1.jpg"
             alt="Fashion"
             className="rounded-lg shadow-md border-4 border-[#FFFFFF]"
           />
@@ -131,7 +130,7 @@ export const FashionMoodBoard = () => {
         {/* Center Column */}
         <div className="flex flex-col items-center space-y-4">
           <img
-            src="/fashion2.jpg"
+            src="/moodboard2.jpg"
             alt="Textiles"
             className="rounded-lg shadow-md border-4 border-[#FFFFFF] w-3/4"
           />
@@ -149,7 +148,7 @@ export const FashionMoodBoard = () => {
             "Style is a way to say who you are without having to speak."
           </p>
           <img
-            src="/fashion3.jpg"
+            src="/moodboard3.jpg"
             alt="Runway"
             className="rounded-lg shadow-md border-4 border-[#FFFFFF]"
           />
@@ -232,7 +231,7 @@ export const FashionCollection = () => {
     <div className="relative w-full max-w-5xl mx-auto p-6 bg-[#5C0E0A] shadow-lg rounded-lg">
       
       {/* Header */}
-      <h1 className="text-4xl font-bold text-white uppercase tracking-widest text-center">
+      <h1 className="text-4xl font-bold text-white uppercase tracking-widest text-center mt-8">
         Collection 1 - Timeless Elegance
       </h1>
 
@@ -248,7 +247,7 @@ export const FashionCollection = () => {
         {/* Image 1 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-1.jpg"
+            src="/col1.jpg"
             alt="Collection 1 Look 1"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -257,7 +256,7 @@ export const FashionCollection = () => {
         {/* Image 2 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-2.jpg"
+            src="/col2.jpg"
             alt="Collection 1 Look 2"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -266,7 +265,7 @@ export const FashionCollection = () => {
         {/* Image 3 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-3.jpg"
+            src="/col3.jpg"
             alt="Collection 1 Look 3"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -275,7 +274,7 @@ export const FashionCollection = () => {
         {/* Image 4 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-4.jpg"
+            src="/col4.jpg"
             alt="Collection 1 Look 4"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -284,7 +283,7 @@ export const FashionCollection = () => {
         {/* Image 5 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-5.jpg"
+            src="/col5.jpg"
             alt="Collection 1 Look 5"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -293,7 +292,7 @@ export const FashionCollection = () => {
         {/* Image 6 */}
         <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
           <img
-            src="/collection1-6.jpg"
+            src="/col6.jpg"
             alt="Collection 1 Look 6"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
@@ -344,10 +343,10 @@ export const CollectionPage = () => {
 
         {/* Right: Image Collage */}
         <div className="grid grid-cols-2 gap-3">
-          <img src="/collection1-1.jpg" alt="Design 1" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/collection1-2.jpg" alt="Design 2" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/collection1-3.jpg" alt="Design 3" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/collection1-4.jpg" alt="Design 4" className="w-full h-auto rounded-lg shadow-md"/>
+          <img src="/design1.jpg" alt="Design 1" className="w-full h-auto rounded-lg shadow-md"/>
+          <img src="/design2.jpg" alt="Design 2" className="w-full h-auto rounded-lg shadow-md"/>
+          <img src="/design3.jpg" alt="Design 3" className="w-full h-auto rounded-lg shadow-md"/>
+          <img src="/design4.jpg" alt="Design 4" className="w-full h-auto rounded-lg shadow-md"/>
         </div>
       </div>
 
@@ -387,13 +386,13 @@ export const ContactMe1 = () => {
       {/* Social Media Links */}
       <div className="mt-6 flex justify-center space-x-6">
         <a href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">
-          <img src="/instagram-icon.svg" alt="Instagram" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
+          <img src="/insta.svg" alt="Instagram" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
         </a>
         <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
-          <img src="/linkedin-icon.svg" alt="LinkedIn" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
+          <img src="/link.svg" alt="LinkedIn" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
         </a>
         <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer">
-          <img src="/facebook-icon.svg" alt="Facebook" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
+          <img src="/face.svg" alt="Facebook" className="w-8 h-8 hover:scale-110 transition-transform duration-300"/>
         </a>
       </div>
 
