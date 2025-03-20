@@ -6,17 +6,14 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { useFashionStore } from "../Portfolio/FashionProvider";
-import { ImageOptionsModal } from "../Portfolio/ImageOptionsModal";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import { GalleryModal } from "../Portfolio/GalleryModal";
+
 
 export const ContactMe = forwardRef((props, ref) => {
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
-  const [showImageOptions, setShowImageOptions] = useState(null);
   const {
     handleTextSelection,
     registerComponent,
@@ -50,7 +47,6 @@ export const ContactMe = forwardRef((props, ref) => {
   const [label4, setLabel4] = useState(pageState?.label4 || "Email");
   const [label5, setLabel5] = useState(pageState?.label5 || "Linkedin");
 
-  const [activeSmallImageIndex, setActiveSmallImageIndex] = useState(null);
   const [styledContent, setStyledContent] = useState(() => {
     if (pageState?.styledContent) {
       return pageState.styledContent;
@@ -567,8 +563,8 @@ export const ContactMe = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4">
-      <div className="max-w-4xl w-full border border-black p-4 h-96 ">
+    <div className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4" onClick={() => setActiveDraggable(null)}>
+      <div className="max-w-3xl w-full border border-black p-4 h-96 ">
         {" "}
         {/* Heading */}
         <Draggable

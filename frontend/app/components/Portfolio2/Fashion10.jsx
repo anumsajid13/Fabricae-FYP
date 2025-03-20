@@ -38,7 +38,7 @@ export const Project1 = forwardRef((props, ref) => {
     pageState?.description ||
       `Jupiter is a gas giant and the biggest planet in the Solar System.
        It's the fourth-brightest object in the night sky. It was named after
-       the Roman god of the skies and lightning.`
+       the Roman god of the skies.`
   );
   const [image1, setImage1] = useState(pageState?.image1 || "/pro1.jpg");
   const [image2, setImage2] = useState(pageState?.image2 || "/pro2.jpg");
@@ -513,10 +513,10 @@ export const Project1 = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4">
+    <div className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4" onClick={() => setActiveDraggable(null)}>
       {" "}
       {/* Reduced padding */}
-      <div className="max-w-4xl w-full border border-black p-4 h-96 ">
+      <div className="max-w-3xl w-full border border-black p-4 h-96 ">
         {" "}
         {/* Reduced padding and added overflow-y-auto */}
         <Draggable
@@ -658,7 +658,7 @@ export const Project1 = forwardRef((props, ref) => {
                 <img
                   src={image1}
                   alt="Research process 1"
-                  className="w-full h-48 object-cover border cursor-pointer"
+                  className="w-full h-full object-cover border cursor-pointer"
                   onDoubleClick={(e) => handleDoubleClickImage(e, 0)}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -704,7 +704,7 @@ export const Project1 = forwardRef((props, ref) => {
                 <img
                   src={image2}
                   alt="Research process 2"
-                  className="w-full h-48 object-cover border cursor-pointer"
+                  className="w-full h-full object-cover border cursor-pointer"
                   onDoubleClick={(e) => handleDoubleClickImage(e, 1)}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -727,7 +727,7 @@ export const Project1 = forwardRef((props, ref) => {
                 onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
               />
             )}
-      
+
             {/* Gallery Modal */}
             {showGalleryModal && (
               <GalleryModal

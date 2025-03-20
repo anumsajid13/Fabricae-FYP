@@ -255,6 +255,21 @@ export const useFashionStore = create(
       image3: { x: 0, y: 0, width: 340, height: 125 },
       image4: { x: 0, y: 0, width: 340, height: 125 },
     },
+    "Project1": {
+      heading: { x: 150, y: 0, width: 400, height: 50 },
+      description: { x: 0, y: 0, width: 700, height: 50 },
+      image1: { x: 0, y: 0, width: 340, height: 140 },
+      image2: { x: 0, y: 0, width: 340, height: 140 },
+    },
+    "ContactMe": {
+      heading: { x: 150, y: 0, width: 400, height: 50 },
+      description1: { x: 0, y: 0, width: 400, height: 150 },
+      label1: { x: 250, y: -20, width: 200, height: 50 },
+      label2: { x: 230, y: -60, width: 200, height: 50 },
+      label3: { x: 0, y: -80, width: 700, height: 50 },
+      label4: { x: 250, y: 0, width: 200, height: 50 },
+      label5: { x: 250, y: -40, width: 200, height: 50 },
+    },
 
   },
 
