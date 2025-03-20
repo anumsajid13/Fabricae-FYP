@@ -199,6 +199,35 @@ export const useFashionStore = create((set, get) => ({
       label: { x: 0, y: 0, width: 100, height: 100 },
       modelImage: { x: -20, y: 0, width: 400, height: 350 },
     },
+    "about-me-2": {
+    heading: { x: 150, y: -20, width: 500, height: 100 },
+    description: { x: 0, y: -20, width: 800, height: 150 },
+    image1: { x: 5, y: 0, width: 200, height: 200 },
+    image2: { x: 5, y: 0, width: 200, height: 200 },
+    image3: { x: 5, y: 0, width: 200, height: 200 },
+    },
+    "my-services": {
+      heading: { x: 0, y: 90, width: 600, height: 100 },
+      label1 : { x: 0, y: 50, width: 200, height: 50 },
+      label2 : { x: 0, y: 50, width: 200, height: 50 },
+      label3 : { x: 0, y: 50, width: 200, height: 50 },
+      label4 : { x: 0, y: 190, width: 200, height: 50 },
+      label5 : { x: 0, y: 190, width: 200, height: 50 },
+      label6 : { x: 0, y: 190, width: 200, height: 50 },
+    },
+    "what-i-do": {
+      heading: { x: 0, y: -50, width: 300, height: 50 },
+      description: { x: 0, y: -20, width: 350, height: 100 },
+      modelImage: { x: 0, y: 0, width: 335, height: 300 },
+    },
+    "research": {
+      heading: { x: 200, y: 0, width: 300, height: 50 },
+      description: { x: 0, y: 0, width: 700, height: 50 },
+      label1: { x: 0, y: 0, width: 700, height: 50 },
+      label2: { x: 0, y: 0, width: 700, height: 50 },
+      image1: { x: 10, y: 0, width: 335, height: 150 },
+      image2: { x: 10, y: 0, width: 335, height: 150 },
+    },
 
   },
 

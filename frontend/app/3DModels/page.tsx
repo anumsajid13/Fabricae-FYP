@@ -203,7 +203,7 @@ const ModelsPage = () => {
       {/* Left Side: 3D Model Display (70%) */}
       
      <div className="w-full md:w-7/12 p-6 flex items-center justify-center relative">
-  <div className="bg-[#F7F7F8] rounded-2xl shadow-xl p-4 w-full h-full flex items-center justify-center border-1" ref={canvasRef}>
+  <div className="bg-[#434242] rounded-2xl shadow-xl p-4 w-full h-full flex items-center justify-center border-1" ref={canvasRef}>
     {selectedModel && (
       <Canvas gl={{ preserveDrawingBuffer: true }} style={{ width: "100%", height: "100%", borderRadius: "16px" }}>
         {/* Flat Background Color */}
@@ -250,16 +250,16 @@ const ModelsPage = () => {
       {/* Right Side: Mannequin Selection and Patterns (30%) */}
       <div className="w-full md:w-5/12 space-y-6 p-4 bg-[#E7E4D8] overflow-auto">
         {/* Select Mannequin */}
-        <div className="bg-gradient-to-br from-white to-[#F8F7F2] rounded-2xl p-4 shadow-md">
-          <h2 className="text-lg font-semibold mb-3 bg-gradient-to-r from-[#822538] to-[#B4707E] bg-clip-text text-transparent">
+        <div className="bg-gradient-to-br  bg-[#434242] rounded-2xl p-4 shadow-md">
+          <h2 className=" text-white text-lg font-semibold mb-3 bg-gradient-to-r from-[#822538] to-[#B4707E] bg-clip-text text-transparent">
             Select Mannequin
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {models.map((model) => (
               <div
                 key={model._id}
-                className={`w-26 h-26 aspect-square bg-gradient-to-br from-[#EAE7DB] to-[#E7E4D8] rounded-2xl cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300 p-2 ${
-                  selectedModel?._id === model._id ? "ring-4 ring-[#822538]" : ""
+                className={`w-26 h-26 aspect-square bg-gradient-to-br bg-[#434242] rounded-2xl cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300 p-2 ${
+                  selectedModel?._id === model._id ? "ring-4 ring-white" : ""
                 }`}
                 onClick={() => setSelectedModel(model)}
               >
@@ -300,23 +300,23 @@ const ModelsPage = () => {
         )}
   
         {/* Design Patterns */}
-        <div className="bg-gradient-to-br from-white to-[#F8F7F2] rounded-2xl p-4 shadow-md">
+        <div className="bg-gradient-to-br bg-[#434242] rounded-2xl p-4 shadow-md">
         <div className="bg-gradient-to-br from-white to-[#F8F7F2] rounded-2xl p-4 shadow-md flex justify-between items-center">
-          <h2 className="text-lg font-semibold mb-3 bg-gradient-to-r from-[#822538] to-[#B4707E] bg-clip-text text-transparent">
+          <h2 className="text-lg text-black font-semibold mb-3 bg-black bg-clip-text text-transparent">
             Design Patterns
           </h2>
           <FiUploadCloud
             size={28} 
-            className="text-[#822538] cursor-pointer hover:scale-110 transition-transform hover:text-[#B4707E]" // ✅ Stylish hover effect
+            className="text-black cursor-pointer hover:scale-110 transition-transform hover:text-[#B4707E]" // ✅ Stylish hover effect
             onClick={handleOpenGallery}
           />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3 mt-4">
             {selectedCards.map((pattern) => (
               <div
                 key={pattern.src}
                 className={`group bg-[#E7E4D8] flex flex-col items-center p-4 rounded-2xl cursor-pointer shadow-md transition-all transform hover:scale-105 ${
-                  selectedPattern === pattern.src ? "ring-4 ring-[#822538]" : ""
+                  selectedPattern === pattern.src ? "ring-4 ring-white" : ""
                 }`}
                 onClick={() => setSelectedPattern(pattern.src)}
               >
@@ -344,7 +344,7 @@ const ModelsPage = () => {
   
         {/* Action Buttons */}
         <div className="flex gap-4">
-          <button  onClick={captureScreenshot} disabled={isCapturing} className="flex-1 bg-gradient-to-r from-[#822538] to-[#B4707E] text-white py-3 rounded-2xl font-semibold hover:from-[#B4707E] hover:to-[#822538] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+          <button  onClick={captureScreenshot} disabled={isCapturing} className="flex-1 bg-gradient-to-r from-[#434242] to-[#a8a8a8] text-white py-3 rounded-2xl font-semibold  transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
             <span className="flex items-center justify-center gap-2">
             <img className= "w-8 h-8" src= "/save.png"/>
             {isCapturing ? 'Capturing...' : 'Save Design'}
@@ -353,13 +353,13 @@ const ModelsPage = () => {
           </button>
           <button
             onClick={() => setGallery3DOpen(true)}
-            className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#822538] border-2 border-[#822538] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl"
+            className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#434242] border-spacing-3 border-[#434242] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl"
           >
             <span className="flex items-center justify-center gap-2">
               View 3D Gallery
             </span>
           </button>
-          <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#822538] border-2 border-[#822538] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
+          <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#434242]  border-[#434242] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
            
             <span className="flex items-center justify-center gap-2">
             Next

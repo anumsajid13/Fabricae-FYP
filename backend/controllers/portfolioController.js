@@ -12,12 +12,24 @@ exports.savePortfolio = async (req, res) => {
       backgroundImage,
       modelImage,
       label,
+      label1,
+      label2,
+      label3,
+      label4,
+      label5,
+      label6,
       styledContent,
       elementPositions,
       smallImages,
       smallImageTexts,
       heading,
       description,
+      description1,
+      description2,
+      description3,
+      description4,
+      description5,
+      description6,
       innerContainerImage,
       bgColor,
       modelImage1,
@@ -31,6 +43,9 @@ exports.savePortfolio = async (req, res) => {
       image1,
       image2,
       image3,
+      image4,
+      image5,
+      image6,
     } = req.body;
 
     if (!username) {
@@ -55,12 +70,24 @@ exports.savePortfolio = async (req, res) => {
       existingPortfolio.backgroundImage = backgroundImage || existingPortfolio.backgroundImage;
       existingPortfolio.modelImage = modelImage || existingPortfolio.modelImage;
       existingPortfolio.label = label || existingPortfolio.label;
+      existingPortfolio.label1 = label1 || existingPortfolio.label1;
+      existingPortfolio.label2 = label2 || existingPortfolio.label2;
+      existingPortfolio.label3 = label3 || existingPortfolio.label3;
+      existingPortfolio.label4 = label4 || existingPortfolio.label4;
+      existingPortfolio.label5 = label5 || existingPortfolio.label5;
+      existingPortfolio.label6 = label6 || existingPortfolio.label6;
       existingPortfolio.styledContent = styledContent || existingPortfolio.styledContent;
       existingPortfolio.elementPositions = elementPositions || existingPortfolio.elementPositions;
       existingPortfolio.smallImages = smallImages || existingPortfolio.smallImages;
       existingPortfolio.smallImageTexts = smallImageTexts || existingPortfolio.smallImageTexts;
       existingPortfolio.heading = heading || existingPortfolio.heading;
       existingPortfolio.description = description || existingPortfolio.description;
+      existingPortfolio.description1 = description1 || existingPortfolio.description1;
+      existingPortfolio.description2 = description2 || existingPortfolio.description2;
+      existingPortfolio.description3 = description3 || existingPortfolio.description3;
+      existingPortfolio.description4 = description4 || existingPortfolio.description4;
+      existingPortfolio.description5 = description5 || existingPortfolio.description5;
+      existingPortfolio.description6 = description6 || existingPortfolio.description6;
       existingPortfolio.innerContainerImage = innerContainerImage || existingPortfolio.innerContainerImage;
       existingPortfolio.bgColor = bgColor || existingPortfolio.bgColor;
       existingPortfolio.modelImage1 = modelImage1 || existingPortfolio.modelImage1;
@@ -74,6 +101,9 @@ exports.savePortfolio = async (req, res) => {
       existingPortfolio.image1 = image1 || existingPortfolio.image1;
       existingPortfolio.image2 = image2 || existingPortfolio.image2;
       existingPortfolio.image3 = image3 || existingPortfolio.image3;
+      existingPortfolio.image4 = image4 || existingPortfolio.image4;
+      existingPortfolio.image5 = image5 || existingPortfolio.image5;
+      existingPortfolio.image6 = image6 || existingPortfolio.image6;
       existingPortfolio.lastUpdated = Date.now(); // Update lastUpdated field
 
 
@@ -92,12 +122,24 @@ exports.savePortfolio = async (req, res) => {
         backgroundImage,
         modelImage,
         label,
+        label1,
+        label2,
+        label3,
+        label4,
+        label5,
+        label6,
         styledContent,
         elementPositions,
         smallImages,
         smallImageTexts,
         heading,
         description,
+        description1,
+        description2,
+        description3,
+        description4,
+        description5,
+        description6,
         innerContainerImage,
         bgColor,
         modelImage1,
@@ -111,6 +153,9 @@ exports.savePortfolio = async (req, res) => {
         image1,
         image2,
         image3,
+        image4,
+        image5,
+        image6,
         lastUpdated: Date.now(), // Set lastUpdated for new portfolio
 
       });
@@ -177,17 +222,17 @@ exports.getUniquePortfolioIds = async (req, res) => {
 
     // Extract unique portfolios with their last updated time
     const uniquePortfolioMap = new Map();
-    
+
     // For each portfolio, keep track of the most recent update
     portfolios.forEach(portfolio => {
       const id = portfolio.portfolioId;
       const lastUpdated = portfolio.lastUpdated;
-      
+
       if (!uniquePortfolioMap.has(id) || new Date(lastUpdated) > new Date(uniquePortfolioMap.get(id).lastUpdated)) {
         uniquePortfolioMap.set(id, { id, lastUpdated });
       }
     });
-    
+
     // Convert Map to array
     const uniquePortfolios = Array.from(uniquePortfolioMap.values());
 

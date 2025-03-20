@@ -51,6 +51,7 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
   
     function handleCanvasClick() {
       setContextMenu({ visible: false, x: 0, y: 0 });
+      
     }
   
     document.addEventListener("keydown", handleKeyDown, false);
@@ -61,7 +62,7 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
       "mouse:down": handleCanvasClick,
     });
   
-    // ✅ Ensure `canvas.wrapperEl` exists before adding event listener
+    //  Ensure `canvas.wrapperEl` exists before adding event listener
     if (canvas.wrapperEl) {
       canvas.wrapperEl.addEventListener("contextmenu", handleRightClick);
     }
@@ -96,12 +97,17 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
       canvas.add(clonedImg);
       canvas.setActiveObject(clonedImg);
       canvas.renderAll();
+
+      // Deselect the object after duplication
+      canvas.discardActiveObject();
+      canvas.renderAll(); // Re-render to clear the selection
     } else {
       console.warn("Active object is not an image or does not exist.");
     }
 
     setContextMenu({ visible: false, x: 0, y: 0 });
-  };
+};
+
 
   return (
     <div className="left-[20%] mt-[4rem] relative">

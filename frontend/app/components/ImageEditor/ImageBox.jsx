@@ -43,14 +43,14 @@ const ImageBox = ({ canvas, currentFilter, setCurrentFilter }) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-start space-y-4 p-4 bg-[#9e4557] shadow-md rounded-xl fixed top-[7rem] right-2 h-[calc(89vh-4rem)] overflow-y-scroll scrollbar-hide w-80">
+    <div className="flex flex-col items-start space-y-4 p-4 bg-[#434242] shadow-md rounded-xl fixed top-[7rem] right-2 h-[calc(89vh-4rem)] overflow-y-scroll scrollbar-hide w-84">
       {/* 🔹 YOUR DESIGNS Header */}
-      <h2 className="text-black text-lg font-bold uppercase tracking-wider border-b border-transparent pb-0 w-full text-center">
+      <h2 className="text-white text-lg font-bold uppercase tracking-wider border-b border-transparent pb-0 w-full text-center">
         YOUR DESIGNS
       </h2>
 
       {/* 🔹 Image Grid */}
-      <div className="grid grid-cols-3 gap-2 w-full">
+      <div className="grid grid-cols-3 gap-3 w-full">
         {patterns.map((pattern, index) => (
           <div
             key={index}
