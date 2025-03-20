@@ -33,11 +33,11 @@ export function BackgroundBeamsDemo() {
         muted
       ></video>
       <div className="max-w-1xl mx-auto p-4">
-        <h1 className="mt-20 relative z-10 text-lg md:text-7xl bg-clip-text text-black text-center font-custom">
+        <h1 className=" font-semibold mt-20 relative z-10 text-lg md:text-7xl bg-clip-text text-white text-center font-custom">
           Let's Design Patterns!
         </h1>
         <br />
-        <p className="text-black max-w-lg mx-auto my-2 text-sm text-center relative z-10 font-bold font-2xl">
+        <p className="text-white max-w-lg mx-auto my-2 text-sm text-center relative z-10 font-bold font-2xl">
           {typedPrompt || (
             <>
               Welcome to Fabricae, your go-to platform for innovative design
@@ -53,14 +53,13 @@ export function BackgroundBeamsDemo() {
         <PlaceholdersAndVanishInputDemo onPromptChange={handlePromptChange} />
         <Link href="/SketchToImage">
           <p
-            className="text-black max-w-lg mx-auto my-2 text-sm text-center relative z-10 underline cursor-pointer"
+            className="text-white max-w-lg mx-auto my-2 text-sm text-center relative z-10 underline cursor-pointer"
             onClick={openModal}
           >
             Want to convert your own pencil sketch?
           </p>
         </Link>
       </div>
-      {/* <BackgroundBeams /> */}
     </div>
   );
 }

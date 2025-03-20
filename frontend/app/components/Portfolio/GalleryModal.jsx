@@ -16,18 +16,33 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
   ];
 
   // Fetch images from the backend based on the selected filter
-  const fetchImages = async (patternType) => {
+  const fetchImages = async (filterType) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const username = localStorage.getItem("userEmail");
 
-      console.log(username, patternType);
+      let endpoint;
+      switch (filterType) {
+        case "prompt":
+          endpoint = `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/prompt`;
+          break;
+        case "sketch":
+          endpoint = `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/sketch`;
+          break;
+        case "3d":
+          endpoint = `http://localhost:5000/api/prompt-designs/get3D/${username}`;
+          break;
+          case "edited":
+          endpoint = `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/edited-pattern`;
+          break;
 
-      const response = await fetch(
-        `http://localhost:5000/api/prompt-designs/retrieve-by-username-and-patternType/${username}/${patternType}`
-      );
+        default:
+          throw new Error("Invalid filter type");
+      }
+
+      const response = await fetch(endpoint);
 
       if (!response.ok) {
         throw new Error("Failed to fetch images");
@@ -35,7 +50,6 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
 
       const data = await response.json();
 
-      console.log(data, username);
       // Filter out duplicate images based on both imageUrl and title
       const uniqueImages = data.reduce((acc, current) => {
         const isDuplicate = acc.some(
@@ -49,7 +63,7 @@ export const GalleryModal = ({ onClose, onSelectImage }) => {
       }, []);
 
       if (uniqueImages.length === 0) {
-        setError(`No designs found for ${patternType}.`);
+        setError(`No designs found for ${filterType}.`);
       } else {
         setImages(uniqueImages); // Set the fetched images
       }

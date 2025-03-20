@@ -45,7 +45,7 @@ export default function Navbar() {
             {[
               { label: "Prompt", path: "/ImageGenerator" },
               { label: "Sketch", path: "/SketchToImage" },
-              { label: "Image Editor", path: "/ImageEditor" },
+              { label: "Editor", path: "/ImageEditor" },
               { label: "3D Models", path: "/3DModels" },
               { label: "Portfolio", path: "/SelectPortfolio" },
             ].map((item) => (
