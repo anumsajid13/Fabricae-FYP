@@ -12,6 +12,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import { GalleryModal } from "./GalleryModal";
 
+
 export const FashionPortfolio = forwardRef((props, ref) => {
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
@@ -29,6 +30,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `fashion-portfolio-${selectedPage}`;
@@ -273,6 +275,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
   };
 
   const handleChooseFromComputer = (type) => {
+
     // Use existing refs to trigger file input
     if (type === "background") {
       backgroundInputRef.current.click();
@@ -297,11 +300,16 @@ export const FashionPortfolio = forwardRef((props, ref) => {
   };
 
   const handleChooseFromGallery = (type) => {
+    
     setShowGalleryModal(true); // Show the gallery modal
     setShowImageOptions(type);
   };
 
   const handleSelectImageFromGallery = (imageUrl) => {
+
+    console.log("Selected image from gallery for:", showImageOptions);
+    console.log("Image URL:", imageUrl);
+    
     if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
       updatePageState(pageId, { backgroundImage: imageUrl });
@@ -651,11 +659,17 @@ export const FashionPortfolio = forwardRef((props, ref) => {
       </div>
     );
   };
-
-  // Load portfolio state when the component mounts
   useEffect(() => {
-    loadState();
-  }, []); // Empty dependency array ensures this runs only once on mount
+    if (loadstate) {
+      const loadPortfolioState = async () => {
+        await loadState(); // Call your existing loadState function
+        setLoadState(false); // Reset loadState to false after loading
+
+      };
+      loadPortfolioState();
+
+    }
+  }, [loadState, setLoadState]); // Trigger only when loadState changes
 
   return (
     <div
@@ -664,14 +678,17 @@ export const FashionPortfolio = forwardRef((props, ref) => {
       }}
       className="max-w-[830px] bg-cover bg-center relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] cursor-pointer portfolio-page"
       onClick={() => setActiveDraggable(null)}
-      onDoubleClick={handleDoubleClickBackground}
-    >
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        handleImageClick("background");
+      }}    >
       <input
         type="file"
         accept="image/*"
         ref={backgroundInputRef}
         className="hidden"
-        onChange={handleBackgroundImageUpload}
+        onChange={(e) => handleImageUpload(e, "background")}
+
       />
       <div
         className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
@@ -853,8 +870,8 @@ export const FashionPortfolio = forwardRef((props, ref) => {
                   accept="image/*"
                   ref={modelInputRef}
                   className="hidden"
-                  onChange={(e) => handleImageUpload(e, "model")} // Pass the type
-                />
+                  onChange={(e) => handleImageUpload(e, "model")}
+                  />
 
                 <EditableText
                   content={

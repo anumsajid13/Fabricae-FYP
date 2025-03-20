@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFashionStore } from "../Portfolio/FashionProvider";
 import { formatDistanceToNow } from "date-fns";
+import useStore from '../Portfolio/FashionProvider';
 
 const SelectPortfolio = () => {
-  const { portfolioId, setPortfolioId } = useFashionStore();
+  const { portfolioId, setPortfolioId,loadState, setLoadState } = useFashionStore();
   const router = useRouter();
   const [uniquePortfolios, setUniquePortfolios] = useState([]);
-
   const portfolioTemplates = [
     {
       id: 2,
@@ -57,6 +57,13 @@ const SelectPortfolio = () => {
   const handlePortfolioSelection = (portfolioId) => {
     console.log("Selected Portfolio ID:", portfolioId);
     setPortfolioId(portfolioId);
+    router.push("/Portfolio");
+  };
+
+  const handlePortfolioSelection2 = (portfolioId) => {
+    console.log("Selected Portfolio ID:", portfolioId);
+    setPortfolioId(portfolioId);
+    setLoadState(true);
     router.push("/Portfolio");
   };
 
@@ -164,7 +171,7 @@ const SelectPortfolio = () => {
                 return (
                   <div
                     key={id}
-                    onClick={() => handlePortfolioSelection(id)}
+                    onClick={() => handlePortfolioSelection2(id)}
                     className="group bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1"
                   >
                     <div className="h-64 overflow-hidden relative">
