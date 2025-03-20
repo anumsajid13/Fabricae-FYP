@@ -11,6 +11,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
 export const Resume = forwardRef((props, ref) => {
+
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const {
