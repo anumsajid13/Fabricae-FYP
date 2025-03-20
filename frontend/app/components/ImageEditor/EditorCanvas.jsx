@@ -7,8 +7,8 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
   const [activeObject, setActiveObject] = useState(null);
 
   // Define the desired canvas size
-  const CANVAS_WIDTH = 700;
-  const CANVAS_HEIGHT = 400;
+  const CANVAS_WIDTH = 800;
+  const CANVAS_HEIGHT = 500;
 
   useEffect(() => {
     if (!canvas) return;
@@ -110,7 +110,7 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
 
 
   return (
-    <div className="left-[20%] mt-[4rem] relative">
+    <div className="left-[15%] mt-[4rem] relative ">
       {/* Canvas Wrapper with Fixed Size */}
       <div className="border border-gray-300 shadow-md" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
         <canvas ref={ref}></canvas>

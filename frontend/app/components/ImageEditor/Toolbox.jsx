@@ -514,7 +514,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   return (
     
     // bg-[#9e4557] 
-      <div className="flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
+      <div className="ml-9 flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
         
         <label
             className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
