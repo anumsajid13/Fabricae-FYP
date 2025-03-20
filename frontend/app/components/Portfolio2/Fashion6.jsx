@@ -571,7 +571,7 @@ export const Research = forwardRef((props, ref) => {
 
   return (
     <div
-      className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"
+      className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4" 
       onClick={() => setActiveDraggable(null)}
     >
       <div className="max-w-3xl w-full border border-black p-3 text-center h-96">
