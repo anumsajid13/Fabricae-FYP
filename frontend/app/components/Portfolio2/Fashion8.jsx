@@ -33,7 +33,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
   const componentId = "MyWorkArea1";
 
   // Initialize state from pageState if it exists, otherwise use defaults
-  const [title, setTitle] = useState(pageState?.title || "APPAREL DESIGNER");
+  const [title, setTitle] = useState(pageState?.title || "- APPAREL DESIGNER -");
   const [quote, setQuote] = useState(pageState?.quote || "MY WORK-Area 1");
 
   const [year, setYear] = useState(pageState?.year || "- 2022 -");
@@ -514,8 +514,8 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4">
-      <div className="max-w-4xl w-full grid grid-cols-2 gap-6 items-center border border-black p-4 h-96 overflow-y-auto">
+    <div className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4" onClick={() => setActiveDraggable(null)}>
+      <div className="max-w-3xl w-full grid grid-cols-2 gap-6 items-center border border-black p-4 h-96">
         {/* Left Section - Image */}
         <div>
           {images.map((src, index) => (
@@ -565,7 +565,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
                   <img
                     src={src}
                     alt={`Image ${index + 1}`}
-                    className="w-full h-48 object-cover border cursor-pointer"
+                    className="w-full h-full object-cover border cursor-pointer"
                     onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -610,7 +610,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
               }}
             >
               <div
-                className="relative text-justify cursor-move"
+                className="relative text-center cursor-move"
                 style={{ position: "relative", zIndex: 3 }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -662,7 +662,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
               }}
             >
               <div
-                className="relative text-justify cursor-move"
+                className="relative text-center cursor-move"
                 style={{ position: "relative", zIndex: 3 }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -748,7 +748,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
                 onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
               />
             )}
-      
+
             {/* Gallery Modal */}
             {showGalleryModal && (
               <GalleryModal

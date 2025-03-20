@@ -270,6 +270,12 @@ export const useFashionStore = create(
       label4: { x: 250, y: 0, width: 200, height: 50 },
       label5: { x: 250, y: -40, width: 200, height: 50 },
     },
+    "MyWorkArea1": {
+      title: { x: -20, y: 0, width: 400, height: 50 },
+      quote: { x: -20, y: 0, width: 400, height: 50 },
+      year: { x: 60, y: 0, width: 200, height: 50 },
+      image1: { x: 0, y: 0, width: 340, height: 340 },
+    },
 
   },
 
