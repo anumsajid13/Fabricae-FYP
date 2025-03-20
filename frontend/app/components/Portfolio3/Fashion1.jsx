@@ -29,7 +29,7 @@ export const PortfolioHeader = () => {
       <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
         
         {/* Title */}
-        <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-6">
+        <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-3">
           My Resume
         </h1>
   
@@ -228,138 +228,85 @@ export const ResearchWork = () => {
 
 export const FashionCollection = () => {
   return (
-    <div className="relative w-full max-w-5xl mx-auto p-6 bg-[#5C0E0A] shadow-lg rounded-lg">
+    <div className="relative w-full max-w-3xl mx-auto p-4 bg-[#5C0E0A] shadow-lg rounded-lg">
       
       {/* Header */}
-      <h1 className="text-4xl font-bold text-white uppercase tracking-widest text-center mt-8">
-        Collection 1 - Timeless Elegance
+      <h1 className="text-2xl font-bold text-white uppercase tracking-wide text-center">
+        Timeless Elegance
       </h1>
 
       {/* Description */}
-      <p className="text-lg text-white text-center mt-4">
-        A curated selection of modern yet timeless pieces, blending classic silhouettes 
-        with contemporary artistry. This collection embodies elegance, sophistication, and the art of craftsmanship.
+      <p className="text-sm text-white text-center mt-2">
+        A refined blend of classic and modern aesthetics, crafted with elegance and precision.
       </p>
 
       {/* Collage Grid */}
-      <div className="mt-8 grid grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-3 gap-2">
         
-        {/* Image 1 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col1.jpg"
-            alt="Collection 1 Look 1"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Image 2 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col2.jpg"
-            alt="Collection 1 Look 2"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Image 3 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col3.jpg"
-            alt="Collection 1 Look 3"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Image 4 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col4.jpg"
-            alt="Collection 1 Look 4"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Image 5 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col5.jpg"
-            alt="Collection 1 Look 5"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Image 6 */}
-        <div className="overflow-hidden rounded-lg shadow-md border-4 border-[#FFFFFF]">
-          <img
-            src="/col6.jpg"
-            alt="Collection 1 Look 6"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
+        {/* Images */}
+        {["col1.jpg", "col2.jpg", "col3.jpg", "col4.jpg", "col5.jpg", "col6.jpg"].map((src, index) => (
+          <div key={index} className="overflow-hidden rounded-md shadow border-2 border-white">
+            <img
+              src={`/${src}`}
+              alt={`Look ${index + 1}`}
+              className="w-full h-32 object-cover hover:scale-105 transition-transform duration-300" // Adjusted image height
+            />
+          </div>
+        ))}
 
       </div>
 
       {/* Footer Quote */}
-      <div className="mt-8 text-center text-white text-lg font-light tracking-wide">
-        "A collection inspired by the grace of tradition and the boldness of the future."
-      </div>
+      <p className="mt-4 text-center text-white text-xs italic">
+        "A timeless blend of heritage and modernity."
+      </p>
 
     </div>
   );
 };
-
-
-
 export const CollectionPage = () => {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[#5C0E0A] text-white shadow-md rounded-lg">
+    <div className="max-w-3xl mx-auto p-4 bg-[#5C0E0A] text-white shadow-md rounded-lg">
       
       {/* Title */}
-      <h1 className="text-4xl font-bold uppercase tracking-wide text-center mb-6">
-        Collection 1: Textures & Elegance
+      <h1 className="text-3xl font-bold uppercase tracking-wide text-center mb-4">
+        Textures & Elegance
       </h1>
 
       {/* Two-Column Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         
-        {/* Left: Textual Content */}
+        {/* Left: Text Content */}
         <div className="flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold mb-3">The Vision</h2>
-          <p className="text-base leading-6">
-            A blend of **classic sophistication** and **modern storytelling**. Inspired by **timeless textiles**, each piece embodies grace, power, and heritage.
+          <h2 className="text-xl font-semibold mb-2">The Vision</h2>
+          <p className="text-sm leading-5">
+            A fusion of timeless textiles and modern artistry, embracing elegance and tradition.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-5 mb-3">The Inspiration</h2>
-          <p className="text-base leading-6">
-            Rooted in **ancient craftsmanship**, **architectural elegance**, and **nature’s beauty**. Soft drapes, intricate embroidery, and a refined color palette merge **tradition with modernity**.
-          </p>
-
-          <h2 className="text-2xl font-semibold mt-5 mb-3">The Goal</h2>
-          <p className="text-base leading-6">
-            Redefining **luxury fashion** through **sustainability** and **ethical craftsmanship**. Designed for those who appreciate **artistry, quality, and timeless beauty**.
+          <h2 className="text-xl font-semibold mt-3 mb-2">The Inspiration</h2>
+          <p className="text-sm leading-5">
+            Influenced by craftsmanship, architecture, and nature’s beauty.
           </p>
         </div>
 
         {/* Right: Image Collage */}
-        <div className="grid grid-cols-2 gap-3">
-          <img src="/design1.jpg" alt="Design 1" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/design2.jpg" alt="Design 2" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/design3.jpg" alt="Design 3" className="w-full h-auto rounded-lg shadow-md"/>
-          <img src="/design4.jpg" alt="Design 4" className="w-full h-auto rounded-lg shadow-md"/>
+        <div className="grid grid-cols-2 gap-2">
+          {["design1.jpg", "design2.jpg", "design3.jpg", "design4.jpg"].map((src, index) => (
+            <img key={index} src={`/${src}`} alt={`Design ${index + 1}`} className="w-full h-auto rounded-md shadow"/>
+          ))}
         </div>
       </div>
 
-      {/* Final Call-to-Action */}
-      <div className="text-center mt-8">
-        <p className="text-base">Want to explore more?</p>
-        <button className="mt-3 px-5 py-2 bg-white text-[#5C0E0A] font-semibold text-base rounded-lg shadow-md hover:bg-gray-200 transition duration-300">
-          Contact the Designer
+      {/* Call-to-Action */}
+      <div className="text-center mt-4">
+        <button className="px-4 py-2 bg-white text-[#5C0E0A] font-semibold text-sm rounded-lg shadow hover:bg-gray-200 transition">
+          Contact Designer
         </button>
       </div>
     </div>
   );
 };
+
 
 
 export const ContactMe1 = () => {
