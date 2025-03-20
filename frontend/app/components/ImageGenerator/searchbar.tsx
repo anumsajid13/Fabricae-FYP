@@ -56,10 +56,14 @@ import { relative } from "path";
 
   // Function to call the Hugging Face API and get a single image
   const queryImageGeneration = async (prompt: string) => {
-    const API_URL = "https://api-inference.huggingface.co/models/fyp1/pattern_generation";
+    const API_URL = "http://localhost:5001/api/huggingface/hf-inference/models/fyp1/pattern_generation";
     const headers = {
-      Authorization: "Bearer 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",
+      Authorization: `Bearer ${process.env.HF_TOKEN}`,   
+      "Content-Type": "application/json",
     };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000000);
 
     try {
       const response = await fetch(API_URL, {
@@ -68,21 +72,24 @@ import { relative } from "path";
         body: JSON.stringify({
           inputs: `a textile design pattern of ${prompt}`,
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId); // Clear the timeout if request succeeds
+
       if (!response.ok) {
-        throw new Error("Failed to fetch images");
+        throw new Error(`Failed to fetch images: ${response.status} ${response.statusText}`);
       }
 
       const imageBlob = await response.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      return imageUrl;
+      return URL.createObjectURL(imageBlob);
     } catch (error) {
       console.error("Error generating image:", error);
-      toast.error("Unable to process the request.");
+      toast.error("Request timed out or failed.");
       return null;
     }
-  };
+};
+
 
   const extractMiddleFiveWords = (prompt: string): string => {
     const words = prompt.trim().split(/\s+/); // Split by spaces, ensuring multiple spaces are handled
@@ -158,13 +165,13 @@ import { relative } from "path";
         updateCards((prevCards) => {
           // Ensure prevCards is an array before spreading it
           if (!Array.isArray(prevCards)) return prevCards;
-      
+
           // Ensure savedImage is valid (you can add more checks based on your requirements)
           if (!savedImage || !savedImage.title) {
             console.error("Invalid card:", savedImage);
             return prevCards;
           }
-      
+
           // Append the new card
           return [...prevCards, savedImage];
         });
@@ -181,7 +188,7 @@ import { relative } from "path";
     const [loading, setLoading] = useState([false, false, false]);
     const [generatedImages, setGeneratedImages] = useState<(string | null)[]>([null, null, null]);
     const [searchInitiated, setSearchInitiated] = useState(false);
-    const { cards, setCards, updateCards } = useCardsStore(); 
+    const { cards, setCards, updateCards } = useCardsStore();
 
     const placeholders = [
       "create a bold geometric pattern",
@@ -200,21 +207,21 @@ import { relative } from "path";
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setSearchInitiated(true);
-    
+
       const promptsList: string[] = [prompt];
-    
+
       // Call the rephrasePrompt function and get the two rephrased prompts
       const { rephrasedPrompt1, rephrasedPrompt2 } = await rephrasePrompt(prompt);
-    
+
       console.log("rephrasedPrompt1:", rephrasedPrompt1);
       console.log("rephrasedPrompt2:", rephrasedPrompt2);
-    
+
       if (rephrasedPrompt1) promptsList.push(rephrasedPrompt1);
       if (rephrasedPrompt2) promptsList.push(rephrasedPrompt2);
-    
+
       const newLoadingState = [true, true, true]; // Assuming you want all loading states to be true initially
       setLoading(newLoadingState);
-    
+
       const newGeneratedImages = await Promise.all(
         promptsList.map(async (p) => {
           const imageUrl = await queryImageGeneration(p);
@@ -225,7 +232,7 @@ import { relative } from "path";
           return null; // If no image was generated
         })
       );
-    
+
       setGeneratedImages(newGeneratedImages); // Set all generated images
       setLoading(newLoadingState.map(() => false)); // Set loading to false after all operations
     };
@@ -239,11 +246,11 @@ import { relative } from "path";
             onSubmit={onSubmit}
           />
         </div>
-    
+
         {searchInitiated && (
           <div className="min-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 justify-items-center"   style={{
-            position: "relative", 
-            zIndex: 1, 
+            position: "relative",
+            zIndex: 1,
           }}> {/* Added justify-items-center */}
             {loading.map((isLoading, index) => (
               <div key={index} className="flex justify-between items-center bg-[#F4F2EF] rounded-lg">
@@ -256,8 +263,8 @@ import { relative } from "path";
                       alt={`Generated pattern ${index + 1}`}
                       width={500}
                       height={500}
-                      className="rounded-lg object-cover "  
-              
+                      className="rounded-lg object-cover "
+
                     />
                   ) : (
                     <div className="w-[300px] h-[300px] bg-[#E7E4D8] rounded-md shadow-lg">
@@ -282,5 +289,5 @@ import { relative } from "path";
         /> */}
       </div>
     );
-    
+
   }
