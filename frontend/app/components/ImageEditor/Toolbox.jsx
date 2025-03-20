@@ -267,82 +267,160 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   canvas.renderAll();
   };
 
+  // const applyCrop = async () => {
+  //   console.log("selectedImage", selectedImage);
+  //   console.log("cropRect", cropRect);
+  
+  //   if (selectedImage && cropRect) {
+  //     console.log("heyyy11");
+  //     const { left, top, width, height } = cropRect.getBoundingRect();
+  //     const imageLeft = selectedImage.left;
+  //     const imageTop = selectedImage.top;
+  //     const scaleX = selectedImage.scaleX || 1;
+  //     const scaleY = selectedImage.scaleY || 1;
+  
+  //     // Calculate cropping offsets relative to the image
+  //     const cropX = (left - imageLeft) / scaleX;
+  //     const cropY = (top - imageTop) / scaleY;
+  //     const cropWidth = width / scaleX;
+  //     const cropHeight = height / scaleY;
+  
+  //     // Get the original image element
+  //     const originalImage = selectedImage._element;
+  
+  //     // Create a canvas for cropping
+  //     const tempCanvas = document.createElement('canvas');
+  //     const ctx = tempCanvas.getContext('2d');
+  //     tempCanvas.width = cropWidth;
+  //     tempCanvas.height = cropHeight;
+  
+  //     // Draw the cropped part of the image onto the temp canvas
+  //     ctx.drawImage(
+  //       originalImage,
+  //       cropX,
+  //       cropY,
+  //       cropWidth,
+  //       cropHeight,
+  //       0,
+  //       0,
+  //       cropWidth,
+  //       cropHeight
+  //     );
+  
+  //     // Convert the temp canvas to a data URL
+  //     const croppedDataURL = tempCanvas.toDataURL();
+  //     console.log("croppedDataURL", croppedDataURL);
+  
+  //     try {
+  //       // Wait for the image to load
+  //       const croppedImg = await Image.fromURL(croppedDataURL);
+  //       croppedImg.set({
+  //         left: left,
+  //         top: top,
+  //         scaleX: selectedImage.scaleX,
+  //         scaleY: selectedImage.scaleY,
+  //       });
+  
+  //       // Remove the original image from the canvas
+  //       canvas.remove(selectedImage);
+  
+  //       // Add the cropped image
+  //       canvas.add(croppedImg);
+  //       canvas.centerObject(croppedImg);
+  //       canvas.setActiveObject(croppedImg);
+  
+  //       // Remove the crop rectangle
+  //       canvas.remove(cropRect);
+  //       setCropRect(null);
+  //       setIsCropping(false);
+  
+  //       // Update the canvas to reflect the changes
+  //       canvas.renderAll();
+  //     } catch (error) {
+  //       console.error("Error loading cropped image:", error);
+  //     }
+  //   } else {
+  //     alert('Please select an image and define a crop area.');
+  //   }
+  // };
+
   const applyCrop = async () => {
-    console.log("selectedImage", selectedImage);
-    console.log("cropRect", cropRect);
-  
-    if (selectedImage && cropRect) {
-      console.log("heyyy11");
-      const { left, top, width, height } = cropRect.getBoundingRect();
-      const imageLeft = selectedImage.left;
-      const imageTop = selectedImage.top;
-      const scaleX = selectedImage.scaleX || 1;
-      const scaleY = selectedImage.scaleY || 1;
-  
-      // Calculate cropping offsets relative to the image
-      const cropX = (left - imageLeft) / scaleX;
-      const cropY = (top - imageTop) / scaleY;
-      const cropWidth = width / scaleX;
-      const cropHeight = height / scaleY;
-  
-      // Get the original image element
-      const originalImage = selectedImage._element;
-  
-      // Create a canvas for cropping
-      const tempCanvas = document.createElement('canvas');
-      const ctx = tempCanvas.getContext('2d');
-      tempCanvas.width = cropWidth;
-      tempCanvas.height = cropHeight;
-  
-      // Draw the cropped part of the image onto the temp canvas
-      ctx.drawImage(
-        originalImage,
-        cropX,
-        cropY,
-        cropWidth,
-        cropHeight,
-        0,
-        0,
-        cropWidth,
-        cropHeight
-      );
-  
-      // Convert the temp canvas to a data URL
-      const croppedDataURL = tempCanvas.toDataURL();
-      console.log("croppedDataURL", croppedDataURL);
-  
-      try {
-        // Wait for the image to load
-        const croppedImg = await Image.fromURL(croppedDataURL);
-        croppedImg.set({
-          left: left,
-          top: top,
-          scaleX: selectedImage.scaleX,
-          scaleY: selectedImage.scaleY,
-        });
-  
-        // Remove the original image from the canvas
-        canvas.remove(selectedImage);
-  
-        // Add the cropped image
-        canvas.add(croppedImg);
-        canvas.centerObject(croppedImg);
-        canvas.setActiveObject(croppedImg);
-  
-        // Remove the crop rectangle
-        canvas.remove(cropRect);
-        setCropRect(null);
-        setIsCropping(false);
-  
-        // Update the canvas to reflect the changes
-        canvas.renderAll();
-      } catch (error) {
-        console.error("Error loading cropped image:", error);
-      }
-    } else {
+
+    console.log("Inside crop functon ")
+    if (!selectedImage || !cropRect) {
       alert('Please select an image and define a crop area.');
+      return;
+    }
+  
+    // Get the dimensions and position of the crop rectangle and the selected image
+    const { left, top, width, height } = cropRect.getBoundingRect();
+    const imageLeft = selectedImage.left;
+    const imageTop = selectedImage.top;
+  
+    // Calculate the cropping offsets relative to the image
+    const cropX = (left - imageLeft) / selectedImage.scaleX;
+    const cropY = (top - imageTop) / selectedImage.scaleY;
+    const cropWidth = width / selectedImage.scaleX;
+    const cropHeight = height / selectedImage.scaleY;
+
+    console.log("cropX:", cropX, "cropY:", cropY, "cropWidth:", cropWidth, "cropHeight:", cropHeight);
+
+  
+    // Get the original image element
+    const originalImage = selectedImage._element;
+  
+    // Create a temporary canvas for cropping
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    tempCanvas.width = cropWidth;
+    tempCanvas.height = cropHeight;
+  
+    // Draw the cropped part of the image onto the temp canvas
+    ctx.drawImage(
+      originalImage,   // Image source
+      cropX, cropY, cropWidth, cropHeight,   // Source cropping coordinates
+      0, 0, cropWidth, cropHeight   // Destination (drawing) coordinates
+    );
+  
+    // Convert the temp canvas to a data URL
+    const croppedDataURL = tempCanvas.toDataURL();
+  
+    try {
+      // Create a new image from the cropped data URL
+      const croppedImg = await Image.fromURL(croppedDataURL);
+  
+      // Set the position and scale of the cropped image
+      croppedImg.set({
+        left: selectedImage.left,  // Keep the same position as the original
+        top: selectedImage.top,
+        scaleX: selectedImage.scaleX,
+        scaleY: selectedImage.scaleY,
+      });
+
+      
+  
+      // Remove the original image and the crop rectangle from the canvas
+      canvas.remove(selectedImage);
+      canvas.remove(cropRect);
+      
+      // Add the new cropped image to the canvas
+      canvas.add(croppedImg);
+      canvas.centerObject(croppedImg);  // Center the cropped image
+      canvas.setActiveObject(croppedImg); // Set the cropped image as active
+  
+      // Reset the cropping state
+      setIsCropping(false);
+      setCropRect(null);
+  
+      // Re-render the canvas
+      canvas.renderAll();
+    } catch (error) {
+      console.error("Error during crop operation: ", error);
+      alert('An error occurred while cropping the image.');
     }
   };
+  
+  
 
 
    // Static images for filter previews
@@ -412,19 +490,37 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
       setIsSaving(false); // ✅ Hide loader
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check if the "Enter" key is pressed (key code 13)
+      if (e.key === "Enter" && isCropping) {
+        console.log("Enter key pressed - applying crop");
+        applyCrop();  // Trigger crop operation
+      }
+    };
+  
+    // Add keydown event listener
+    document.addEventListener("keydown", handleKeyDown);
+  
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isCropping, applyCrop]);
   
 
 
 
   return (
-
-      <div className="flex flex-col items-start space-y-4 p-4 bg-[#9e4557] shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
+    
+    // bg-[#9e4557] 
+      <div className="flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
         
         <label
             className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
             onClick={openGallery} 
           >
-            <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "black" }} />
+            <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "white" }} />
         </label>
   
         <button
@@ -436,7 +532,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
               : "bg-transparent text-gray-700 hover:bg-gray-400"
           } rounded`}
         >
-          <FontAwesomeIcon icon={faPencilAlt} size="xl" style={{color: "black"}}/>
+          <FontAwesomeIcon icon={faPencilAlt} size="xl" style={{color: "white"}}/>
         </button>
   
         {/* Filters Icon */}
@@ -445,7 +541,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           onClick={toggleFiltersMenu}
           className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
         >
-           <FontAwesomeIcon icon={faWandMagicSparkles} size="xl" style={{color: "black"}} />
+           <FontAwesomeIcon icon={faWandMagicSparkles} size="xl" style={{color: "white"}} />
           {/* <img src='/Filter.PNG' className='w-10'></img> */}
         </button>
   
@@ -484,7 +580,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
         >
           {/* <FontAwesomeIcon icon={faExchangeAlt} /> */}
-          <img src='/Frame.png' className='w-8'></img>
+          <img src='/Frame2.png' className='w-8'></img>
         </button>
   
       
@@ -550,7 +646,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         onClick={toggleRotationMenu}
         className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400 "
       >
-      <FontAwesomeIcon icon={faRotate} size="xl" style={{color: "black"}}/>
+      <FontAwesomeIcon icon={faRotate} size="xl" style={{color: "white"}}/>
       </button>
 
       {/* Rotation Menu Popup (For Quick 90° Rotations & Flips) */}
@@ -593,7 +689,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
 
 
       {/* Fixed Rotation Slider (Always Visible at Bottom of Canvas) */}
-      <div className=" fixed bottom-6 left-[45%] transform -translate-x-1/2 w-[600px] bg-transparent p-3 rounded-xl shadow-lg flex flex-col items-center">
+      {/* <div className="fixed  bottom-6 left-[45%] transform -translate-x-1/2 w-[600px] bg-transparent p-3 rounded-xl shadow-lg flex flex-col items-center">
         <label className="text-[#822538] text-lg font-semibold mb-2">
           Rotate: {rotationAngle}°
         </label>
@@ -609,7 +705,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           }}
           className="w-full cursor-pointer custom-slider"
         />
-      </div>
+      </div> */}
 
         {/* Custom CSS for Slider Styling */}
         <style jsx>{`
@@ -650,19 +746,19 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           onClick={clearAll}
           className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
         >
-          <FontAwesomeIcon icon={faTrash} size="xl" style={{color: "black"}} />
+          <FontAwesomeIcon icon={faTrash} size="xl" style={{color: "white"}} />
         </button>
         
         <button
         title="Save Image to Database"
         onClick={handleSaveImage}
         className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
-        disabled={isSaving} // ✅ Disable button while saving
+        disabled={isSaving} //  Disable button while saving
       >
         {isSaving ? (
           <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
         ) : (
-          <FontAwesomeIcon icon={faDownload} size="xl" style={{ color: "black" }} />
+          <FontAwesomeIcon icon={faDownload} size="xl" style={{ color: "white" }} />
         )}
       </button>
 
@@ -683,22 +779,30 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
             : 'bg-transparent text-gray-700 hover:bg-gray-400'
         } rounded`}
       >
-        <FontAwesomeIcon icon={faCrop} size="xl" style={{color: "black"}}/>
+        <FontAwesomeIcon icon={faCrop} size="xl" style={{color: "white"}}/>
       </button>
 
-      {isCropping && (
-        <button
+      {/* {isCropping && (
+          <button
           title="Apply Crop"
-          onClick={applyCrop}
+          onClick={() => applyCrop()}
           className="fixed bottom-14 right-15 p-3 ml-72 bg-gray-500 text-white rounded-xl hover:bg-gray-600 shadow-lg transition-transform transform hover:scale-105"
         >
           Apply Crop
         </button>
-      )}
+      )} */}
 
       {/* {isGalleryOpen && (
         <ImageGalleryPopup isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} username={localStorage.getItem("userEmail")} />
       )} */}
+
+      {/* <button
+        onClick={() => console.log("Button Clicked!")}
+        className="fixed bottom-14 right-15 p-3 ml-72 bg-gray-500 text-white rounded-xl hover:bg-gray-600 shadow-lg transition-transform transform hover:scale-105"
+        style={{"zIndex":9999}}
+      >
+        Test Button
+      </button> */}
 
       </div>
 
