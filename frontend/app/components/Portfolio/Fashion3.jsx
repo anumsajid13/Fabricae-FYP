@@ -95,7 +95,7 @@ export const Fashion =  forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
       saveState ,
     }));
-  
+
 
   // Save the current state to the backend
   const saveState = async () => {
@@ -111,7 +111,7 @@ export const Fashion =  forwardRef((props, ref) => {
 
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 3; // Hardcoded pageId
-  
+
       const stateToSave = {
         username,
         portfolioId,
@@ -126,7 +126,7 @@ export const Fashion =  forwardRef((props, ref) => {
           ),
         },
         smallImages,
-        smallImageTexts, 
+        smallImageTexts,
         heading,
         bgColor,
       };
@@ -154,16 +154,16 @@ export const Fashion =  forwardRef((props, ref) => {
   const loadState = async () => {
     try {
       console.log("Attempting to load portfolio state");
-  
+
       const username = localStorage.getItem("userEmail");
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 3; // Hardcoded pageId
-  
+
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
         {
@@ -173,22 +173,22 @@ export const Fashion =  forwardRef((props, ref) => {
           },
         }
       );
-  
+
       console.log("Response status:", response.status);
       if (!response.ok) throw new Error("Failed to load portfolio");
-  
+
       const savedStateArray = await response.json();
       console.log('aaas', savedStateArray);
       const savedState = savedStateArray[0];
       console.log("Loaded state from API:", savedState);
-  
+
       console.log("Quote in savedState:", savedState.quote);
-  
+
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
-  
+
       // Update the component's state with the loaded data
       if (savedState.backgroundImage)
         setBackgroundImage(savedState.backgroundImage);
@@ -197,12 +197,12 @@ export const Fashion =  forwardRef((props, ref) => {
       if (savedState.smallImageTexts) setSmallImageTexts(savedState.smallImageTexts); // Load smallImageTexts
       if (savedState.heading) setHeading(savedState.heading);
       if (savedState.bgColor) setBgColor(savedState.bgColor);
-  
+
       // Update styledContent if it exists
       if (savedState.styledContent) {
         setStyledContent(savedState.styledContent);
       }
-  
+
       // Update element positions if they exist
       if (savedState.elementPositions) {
         if (savedState.elementPositions.heading) {
@@ -212,14 +212,14 @@ export const Fashion =  forwardRef((props, ref) => {
             savedState.elementPositions.heading
           );
         }
-      
+
         if (savedState.elementPositions.smallImages) {
           savedState.elementPositions.smallImages.forEach((position, index) => {
             updateElementPosition(componentId, `smallImage-${index}`, position);
           });
         }
       }
-  
+
       console.log("Portfolio loaded successfully");
     } catch (error) {
       console.error("Error loading portfolio:", error);
@@ -358,26 +358,69 @@ export const Fashion =  forwardRef((props, ref) => {
 };
 
 // Handle local text selection for styling
-const handleLocalTextSelection = (e, type, index) => {
-  if (editingField) return;
+const handleLocalTextSelection = (e, type) => {
+  if (editingField) return; // Don't handle selection while editing
 
   const selection = window.getSelection();
   const text = selection.toString();
 
   if (text.length > 0) {
     const range = selection.getRangeAt(0);
-    const startOffset = range.startOffset;
-    const endOffset = range.endOffset;
+
+    // Find the container element for this text type
+    const textContainer = e.currentTarget;
+
+    // Calculate the absolute offsets by traversing the text nodes
+    let absoluteStartOffset = 0;
+    let absoluteEndOffset = 0;
+    let foundStart = false;
+    let foundEnd = false;
+
+    // Recursive function to traverse text nodes and calculate offsets
+    const traverseNodes = (node, offset = 0) => {
+      if (foundStart && foundEnd) return offset;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nodeLength = node.textContent.length;
+
+        // Check if this node contains the start of the selection
+        if (!foundStart && node === range.startContainer) {
+          absoluteStartOffset = offset + range.startOffset;
+          foundStart = true;
+        }
+
+        // Check if this node contains the end of the selection
+        if (!foundEnd && node === range.endContainer) {
+          absoluteEndOffset = offset + range.endOffset;
+          foundEnd = true;
+        }
+
+        return offset + nodeLength;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        let currentOffset = offset;
+        for (let i = 0; i < node.childNodes.length; i++) {
+          currentOffset = traverseNodes(node.childNodes[i], currentOffset);
+        }
+        return currentOffset;
+      }
+
+      return offset;
+    };
+
+    traverseNodes(textContainer);
+
+    console.log('Selection offsets:', absoluteStartOffset, absoluteEndOffset);
 
     const selectedText = {
       text,
       type,
-      index,
-      startOffset,
-      endOffset,
-      componentId,
+      startOffset: absoluteStartOffset,
+      endOffset: absoluteEndOffset,
+      componentId, // Include the component ID
     };
 
+    console.log('Selected text is', selectedText);
+    // Send selection to the global context
     handleTextSelection(selectedText);
   }
 };

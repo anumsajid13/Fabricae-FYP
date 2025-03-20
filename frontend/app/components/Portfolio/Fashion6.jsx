@@ -111,14 +111,14 @@ export const PortfolioSection =  forwardRef((props, ref) => {
   const saveState = async () => {
     try {
       const username = localStorage.getItem("userEmail");
-  
+
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 6; // Hardcoded pageId
-  
+
       const stateToSave = {
         username,
         portfolioId,
@@ -142,7 +142,7 @@ export const PortfolioSection =  forwardRef((props, ref) => {
           }, {}),
         },
       };
-  
+
       const response = await fetch("http://localhost:5000/api/save-portfolio", {
         method: "POST",
         headers: {
@@ -151,7 +151,7 @@ export const PortfolioSection =  forwardRef((props, ref) => {
         },
         body: JSON.stringify(stateToSave),
       });
-  
+
       if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
@@ -167,10 +167,10 @@ export const PortfolioSection =  forwardRef((props, ref) => {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 6; // Hardcoded pageId
-  
+
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
         {
@@ -180,17 +180,17 @@ export const PortfolioSection =  forwardRef((props, ref) => {
           },
         }
       );
-  
+
       if (!response.ok) throw new Error("Failed to load portfolio");
-  
+
       const savedStateArray = await response.json();
       const savedState = savedStateArray[0];
-  
+
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
-  
+
       // Update the component's state with the loaded data
       if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
       if (savedState.innerContainerImage) setInnerContainerImage(savedState.innerContainerImage);
@@ -199,26 +199,26 @@ export const PortfolioSection =  forwardRef((props, ref) => {
       if (savedState.heading) setHeading(savedState.heading);
       if (savedState.description) setDescription(savedState.description);
       if (savedState.styledContent) setStyledContent(savedState.styledContent);
-  
+
       // Update element positions if they exist
       if (savedState.elementPositions) {
         Object.keys(savedState.elementPositions).forEach((key) => {
           updateElementPosition(componentId, key, savedState.elementPositions[key]);
         });
       }
-  
+
       console.log("Portfolio loaded successfully");
     } catch (error) {
       console.error("Error loading portfolio:", error);
     }
   };
 
-  
+
     // Load state when the component mounts
     useEffect(() => {
       loadState();
     }, []);
-  
+
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);
@@ -398,17 +398,60 @@ export const PortfolioSection =  forwardRef((props, ref) => {
 
     if (text.length > 0) {
       const range = selection.getRangeAt(0);
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
+
+      // Find the container element for this text type
+      const textContainer = e.currentTarget;
+
+      // Calculate the absolute offsets by traversing the text nodes
+      let absoluteStartOffset = 0;
+      let absoluteEndOffset = 0;
+      let foundStart = false;
+      let foundEnd = false;
+
+      // Recursive function to traverse text nodes and calculate offsets
+      const traverseNodes = (node, offset = 0) => {
+        if (foundStart && foundEnd) return offset;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+          const nodeLength = node.textContent.length;
+
+          // Check if this node contains the start of the selection
+          if (!foundStart && node === range.startContainer) {
+            absoluteStartOffset = offset + range.startOffset;
+            foundStart = true;
+          }
+
+          // Check if this node contains the end of the selection
+          if (!foundEnd && node === range.endContainer) {
+            absoluteEndOffset = offset + range.endOffset;
+            foundEnd = true;
+          }
+
+          return offset + nodeLength;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          let currentOffset = offset;
+          for (let i = 0; i < node.childNodes.length; i++) {
+            currentOffset = traverseNodes(node.childNodes[i], currentOffset);
+          }
+          return currentOffset;
+        }
+
+        return offset;
+      };
+
+      traverseNodes(textContainer);
+
+      console.log('Selection offsets:', absoluteStartOffset, absoluteEndOffset);
 
       const selectedText = {
         text,
         type,
-        startOffset,
-        endOffset,
+        startOffset: absoluteStartOffset,
+        endOffset: absoluteEndOffset,
         componentId, // Include the component ID
       };
 
+      console.log('Selected text is', selectedText);
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
