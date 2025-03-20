@@ -20,6 +20,9 @@ export const MainEditor1 = () => {
   // Add state to track which dropdown is currently open
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  // Add a new state to track the input value separately from the actual font size
+  const [fontSizeInput, setFontSizeInput] = useState("16");
+
   const [animatePage, setAnimatePage] = useState(false);
 
   // Get Zustand store state and actions
@@ -43,7 +46,7 @@ export const MainEditor1 = () => {
   );
 
   // Add this near the top of your component with other useState declarations
-const childRefs = useRef([]);
+  const childRefs = useRef([]);
 
   // Create refs for all components
   useEffect(() => {
@@ -107,6 +110,48 @@ const childRefs = useRef([]);
       setSelectedPage(previousPage); // Pass the new value directly
     } else {
       console.log("Already on the first page");
+    }
+  };
+
+  // Update the handleFontSizeChange function to handle input without immediate validation
+  const handleFontSizeChange = (e) => {
+    // Get the input value
+    const inputValue = e.target.value;
+
+    // Allow empty string or numbers only
+    if (inputValue === "" || /^\d+$/.test(inputValue)) {
+      setFontSizeInput(inputValue);
+    }
+  };
+
+  // Function to handle font size input blur (when user leaves the input)
+  const handleFontSizeBlur = (e) => {
+    // If the input is empty or invalid, reset to the current fontSize
+    if (e.target.value === "" || isNaN(parseInt(e.target.value, 10))) {
+      setFontSizeInput(fontSize.toString());
+      return;
+    }
+
+    // Parse the input as a number
+    const newSize = parseInt(e.target.value, 10);
+
+    // Clamp the value between 8 and 120
+    const clampedSize = Math.min(120, Math.max(8, newSize));
+
+    // Update both the display input and the actual font size
+    setFontSizeInput(clampedSize.toString());
+    setFontSize(clampedSize);
+
+    // Apply the new font size to the selected text
+    if (selection?.type) {
+      handleApplyStyle("size", `${clampedSize}px`);
+    }
+  };
+
+  // Add a function to handle when user presses Enter key
+  const handleFontSizeKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.target.blur(); // Trigger the blur event to apply the changes
     }
   };
 
@@ -221,21 +266,29 @@ const childRefs = useRef([]);
       });
 
       // Get a reference to the portfolio content container
-      const portfolioContainer = document.querySelector(".bg-white.mt-11.shadow-lg.rounded-sm");
+      const portfolioContainer = document.querySelector(
+        ".bg-white.mt-11.shadow-lg.rounded-sm"
+      );
 
       if (!portfolioContainer) {
         throw new Error("Could not find portfolio container element");
       }
 
       // Generate screenshots of each page
-      for (let i = 0; i < Math.min(totalSlides, currentPortfolioComponents.length); i++) {
-        console.log(`Processing page ${i + 1} of ${currentPortfolioComponents.length}`);
+      for (
+        let i = 0;
+        i < Math.min(totalSlides, currentPortfolioComponents.length);
+        i++
+      ) {
+        console.log(
+          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
+        );
 
         // Change to the current page
         setSelectedPage(i + 1);
 
         // Wait for the component to render
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         // Take a screenshot of the current page
         const canvas = await html2canvas(portfolioContainer, {
@@ -369,13 +422,14 @@ const childRefs = useRef([]);
               </div>
 
               {/* Font Size */}
+              {/* Font Size - MODIFIED TO ALLOW DIRECT INPUT */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-white">
                   Font Size
                 </label>
                 <div className="flex items-center">
                   <button
-                    className="p-2 bg-[#b4707e]  rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#b4707e] rounded-l-full hover:bg-[#c9c6bc] transition-colors duration-300"
                     onClick={(e) => {
                       e.stopPropagation();
                       const newSize = Math.max(8, fontSize - 1); // Decrease font size (min 8px)
@@ -390,20 +444,27 @@ const childRefs = useRef([]);
                       remove
                     </span>
                   </button>
-                  <span className=" px-4 py-2 text-black bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
-                    {fontSize}px
-                  </span>
+                  <input
+                    type="text"
+                    value={fontSizeInput}
+                    onChange={handleFontSizeChange}
+                    onBlur={handleFontSizeBlur}
+                    onKeyDown={handleFontSizeKeyDown}
+                    className="w-16 text-center py-2 text-black bg-[#e7e4d8] border-t border-b border-[#e7e4d8] outline-none"
+                    aria-label="Font size input"
+                  />
+                  <span className="bg-[#e7e4d8] py-2 pr-2">px</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newSize = Math.min(120, fontSize + 1); // Increase font size (max 72px)
+                      const newSize = Math.min(120, fontSize + 1); // Increase font size (max 120px)
                       setFontSize(newSize);
                       // Apply the new font size to the selected text
                       if (selection?.type) {
                         handleApplyStyle("size", `${newSize}px`);
                       }
                     }}
-                    className="p-2  bg-[#b4707e]  rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
+                    className="p-2 bg-[#b4707e] rounded-r-full hover:bg-[#c9c6bc] transition-colors duration-300"
                   >
                     <span className="material-symbols-outlined text-sm text-white">
                       add
