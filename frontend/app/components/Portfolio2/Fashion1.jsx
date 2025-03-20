@@ -602,7 +602,7 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
 
   return (
     <div
-      className="max-w-[942px] min-h-[780px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-6 w-full"
+      className="max-w-[942px] min-h-[780px] flex justify-center items-center  bg-[#efe8e4] p-6 w-full"
       onClick={() => setActiveDraggable(null)}
     >
       <div className="max-w-4xl grid grid-cols-2 gap-8 items-center">

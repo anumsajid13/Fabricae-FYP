@@ -244,6 +244,18 @@ export const useFashionStore = create(
       label3: { x: -40, y: -30, width: 300, height: 50 },
       label6: { x: 0, y: -50, width: 200, height: 200 },
     },
+   "ProjectInDepth": {
+  name: { x: 100, y: 20, width: 200, height: 30 },
+  title: { x: 10, y: 60, width: 400, height: 40 }, 
+  quote: { x: 10, y: 110, width: 300, height: 30 }, 
+  description: { x: 10, y: 150, width: 400, height: 100 }, 
+  year: { x: 100, y: 260, width: 150, height: 30 }, 
+  image1: { x: 0, y: 300, width: 340, height: 140 }, 
+  image2: { x: 0, y: 450, width: 340, height: 140 }, 
+  image3: { x: 0, y: 600, width: 340, height: 140 }, 
+}
+
+
 
   },
 
