@@ -34,8 +34,6 @@ const FileUploadModal: React.FC = () => {
       </div>
     </div>
 
-    {/* Background Beams */}
-    {/* <BackgroundBeams /> */}
   </div>
   
   );

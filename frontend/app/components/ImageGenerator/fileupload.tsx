@@ -207,10 +207,10 @@ const FileUploadDemo: React.FC = () => {
 
       {/* Theme Selection */}
       <div className="mb-6 max-w-md mx-auto z-20">
-        <div className="text-black  mb-2 text-center font-semibold"></div>
+        <div className="text-white mb-2 text-center font-semibold"></div>
         <div className="flex justify-around w-[550px] ml-[-7%] ">
           {themes.map((theme) => (
-            <label key={theme} className="flex items-center space-x-2">
+            <label key={theme} className="flex text-white items-center space-x-2">
               <input
                 type="radio"
                 name="theme"
@@ -219,7 +219,7 @@ const FileUploadDemo: React.FC = () => {
                 onChange={handleThemeChange}
                 className="focus:ring-2 focus:ring-customPurple"
               />
-              <span className="text-black font-bold font-para">{theme}</span>
+              <span className="text-white font-para">{theme}</span>
             </label>
           ))}
         </div>

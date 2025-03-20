@@ -259,12 +259,6 @@ export const FashionPortfolio = forwardRef((props, ref) => {
     }
   };
 
-  // Handle double-click to trigger file input for background
-  const handleDoubleClickBackground = (e) => {
-    e.stopPropagation(); // Prevent event bubbling
-    setShowImageOptions("background");
-  };
-
   const handleImageClick = (type) => {
     console.log("Image click type:", type);
     setShowImageOptions(type);
@@ -309,7 +303,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
 
     console.log("Selected image from gallery for:", showImageOptions);
     console.log("Image URL:", imageUrl);
-    
+
     if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
       updatePageState(pageId, { backgroundImage: imageUrl });
@@ -319,10 +313,6 @@ export const FashionPortfolio = forwardRef((props, ref) => {
     }
     setShowGalleryModal(false); // Close the gallery modal
     setShowImageOptions(null);
-  };
-
-  const handleSave = () => {
-    saveState();
   };
 
   // Update page state whenever any state changes
