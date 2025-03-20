@@ -45,7 +45,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
   );
 
   const [images, setImages] = useState(
-    pageState?.images || ["/design1.jpg", "/design2.jpg", "/design3.jpg"]
+    pageState?.images || ["/design1.jpg", "/design2.jpg", "/design3.jpg", "/design3.jpg"]
   );
 
   const [activeSmallImageIndex, setActiveSmallImageIndex] = useState(null);
@@ -90,6 +90,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
         image1: getElementPosition(componentId, "image1"),
         image2: getElementPosition(componentId, "image2"),
         image3: getElementPosition(componentId, "image3"),
+        image4: getElementPosition(componentId, "image4"),
       },
     });
   }, [
@@ -140,6 +141,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
           image1: getElementPosition(componentId, "image1"),
           image2: getElementPosition(componentId, "image2"),
           image3: getElementPosition(componentId, "image3"),
+          image4: getElementPosition(componentId, "image4"),
         },
       };
 
@@ -282,6 +284,13 @@ export const ProjectInDepth = forwardRef((props, ref) => {
             savedState.elementPositions.image3
           );
         }
+        if (savedState.elementPositions.image4) {
+          updateElementPosition(
+            componentId,
+            "image4",
+            savedState.elementPositions.image4
+          );
+        }
       }
 
       console.log("Portfolio loaded successfully");
@@ -359,6 +368,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
   const image1Position = getElementPosition(componentId, "image1");
   const image2Position = getElementPosition(componentId, "image2");
   const image3Position = getElementPosition(componentId, "image3");
+  const image4Position = getElementPosition(componentId, "image4");
 
   useEffect(() => {
     registerComponent(componentId, {
@@ -605,8 +615,9 @@ export const ProjectInDepth = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4">
-      <div className="max-w-4xl w-full border border-black p-4">
+    <div className="w-[830px] flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"
+    onClick={() => setActiveDraggable(null)}>
+      <div className="max-w-3xl w-full border border-black p-4 h-96">
         {/*title*/}
         <Draggable
           disabled={activeDraggable !== "title"}
@@ -660,79 +671,61 @@ export const ProjectInDepth = forwardRef((props, ref) => {
           </ResizableBox>
         </Draggable>
 
-        <div className="grid grid-cols-2 gap-8 mt-6">
+        <div className="grid grid-cols-2 gap-0 -mt-20">
           {/* Image Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border border-black w-32 h-32 flex items-center justify-center">
-              {images.map((src, index) => (
-                <Draggable
-                  key={index}
-                  disabled={activeDraggable !== `image${index + 1}`}
-                  defaultPosition={{
-                    x: getElementPosition(componentId, `image${index + 1}`).x,
-                    y: getElementPosition(componentId, `image${index + 1}`).y,
-                  }}
-                  onStop={(e, data) => {
-                    updateElementPosition(componentId, `image${index + 1}`, {
-                      x: data.x,
-                      y: data.y,
-                      width: getElementPosition(
-                        componentId,
-                        `image${index + 1}`
-                      ).width,
-                      height: getElementPosition(
-                        componentId,
-                        `image${index + 1}`
-                      ).height,
-                    });
-                  }}
-                >
-                  <ResizableBox
-                    width={
-                      getElementPosition(componentId, `image${index + 1}`).width
-                    }
-                    height={
-                      getElementPosition(componentId, `image${index + 1}`)
-                        .height
-                    }
-                    minConstraints={[100, 100]}
-                    maxConstraints={[400, 400]}
-                    axis="both"
-                    resizeHandles={
-                      activeDraggable === `image${index + 1}`
-                        ? ["se", "sw", "ne", "nw"]
-                        : []
-                    }
-                    onResizeStop={(e, { size }) => {
-                      updateElementPosition(componentId, `image${index + 1}`, {
-                        x: getElementPosition(componentId, `image${index + 1}`)
-                          .x,
-                        y: getElementPosition(componentId, `image${index + 1}`)
-                          .y,
-                        width: size.width,
-                        height: size.height,
-                      });
-                    }}
-                  >
-                    <div className="relative w-full h-full">
-                      <img
-                        src={src}
-                        alt={`Image ${index + 1}`}
-                        className="w-full h-full object-cover cursor-pointer"
-                        onDoubleClick={(e) =>
-                          handleDoubleClickSmallImage(e, index)
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDragStart(`image${index + 1}`);
-                        }}
-                      />
-                    </div>
-                  </ResizableBox>
-                </Draggable>
-              ))}
+          <div className="grid grid-cols-2 gap-2 h-48">
+    {images.map((src, index) => (
+      <div key={index} className="border border-black w-32 h-32 flex items-center justify-center">
+        <Draggable
+          disabled={activeDraggable !== `image${index + 1}`}
+          defaultPosition={{
+            x: getElementPosition(componentId, `image${index + 1}`).x,
+            y: getElementPosition(componentId, `image${index + 1}`).y,
+          }}
+          onStop={(e, data) => {
+            updateElementPosition(componentId, `image${index + 1}`, {
+              x: data.x,
+              y: data.y,
+              width: getElementPosition(componentId, `image${index + 1}`).width,
+              height: getElementPosition(componentId, `image${index + 1}`).height,
+            });
+          }}
+        >
+          <ResizableBox
+            width={getElementPosition(componentId, `image${index + 1}`).width}
+            height={getElementPosition(componentId, `image${index + 1}`).height}
+            minConstraints={[100, 100]}
+            maxConstraints={[400, 400]}
+            axis="both"
+            resizeHandles={
+              activeDraggable === `image${index + 1}` ? ["se", "sw", "ne", "nw"] : []
+            }
+            onResizeStop={(e, { size }) => {
+              updateElementPosition(componentId, `image${index + 1}`, {
+                x: getElementPosition(componentId, `image${index + 1}`).x,
+                y: getElementPosition(componentId, `image${index + 1}`).y,
+                width: size.width,
+                height: size.height,
+              });
+            }}
+          >
+            <div className="relative w-full h-full">
+              <img
+                src={src}
+                alt={`Image ${index + 1}`}
+                className="w-full h-full object-cover cursor-pointer"
+                onDoubleClick={(e) => handleDoubleClickSmallImage(e, index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDragStart(`image${index + 1}`);
+                }}
+              />
             </div>
-          </div>
+          </ResizableBox>
+        </Draggable>
+      </div>
+    ))}
+  </div>
           {/* Text Content */}
           <div className="flex flex-col justify-center pl-6">
             <Draggable
@@ -766,7 +759,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                 }}
               >
                 <div
-                  className="relative text-center cursor-move"
+                  className="relative text-justify cursor-move"
                   style={{ position: "relative", zIndex: 3 }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -818,7 +811,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                 }}
               >
                 <div
-                  className="relative text-center cursor-move"
+                  className="relative text-justify cursor-move"
                   style={{ position: "relative", zIndex: 3 }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -870,7 +863,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                 }}
               >
                 <div
-                  className="relative text-center cursor-move"
+                  className="relative text-justify cursor-move"
                   style={{ position: "relative", zIndex: 3 }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -922,7 +915,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                 }}
               >
                 <div
-                  className="relative text-center cursor-move"
+                  className="relative text-justify cursor-move"
                   style={{ position: "relative", zIndex: 3 }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -943,7 +936,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
               </ResizableBox>
             </Draggable>
 
-           
+
           </div>
         </div>
 
