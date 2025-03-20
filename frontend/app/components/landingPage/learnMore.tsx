@@ -19,14 +19,14 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
 
       <div id="webcrumbs">
         <div className=" p-8 rounded-lg relative overflow-hidden w-[800px]">
-          <h2 className="text-4xl font-custom font-bold text-center mb-10 relative">
+          <h2 className="text-4xl font-custom font-bold text-center mb-10 relative text-black">
             How our App Works
             <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-1 w-24 bg-[#822538] rounded-full"></span>
           </h2>
 
           <div className="flex flex-col items-center gap-6 max-w-[600px] mx-auto">
             {/* Step 1: Signup Card */}
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
                   1
@@ -81,7 +81,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
             </div>
 
             {/* Step 2: Prompt Card */}
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold  text-[#616852]">
                   2
@@ -131,7 +131,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
             </div>
 
             {/* Step 3: Sketch Card */}
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
                   3
@@ -158,7 +158,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
 
 
                {/* Step 4: Editing Card */}
-               <div className="flex w-full items-center">
+               <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
                   4
@@ -197,7 +197,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
 
 
                {/* Step 5: 3d visualization */}
-               <div className="flex w-full items-center">
+               <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
                   5
@@ -221,7 +221,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
             </div>
 
                {/* Step 6: Portfolio */}
-               <div className="flex w-full items-center">
+               <div className="flex w-full items-center text-black">
               <div className="h-full flex flex-col items-center mr-4">
                 <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center font-bold text-[#616852]">
                   6

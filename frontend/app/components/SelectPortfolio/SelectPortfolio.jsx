@@ -12,12 +12,12 @@ const SelectPortfolio = () => {
 
   const portfolioTemplates = [
     {
-      id: 1,
-      title: "Elegance Unveiled",
-      imageUrl: "/port1.jpg",
-      tags: "Minimalist",
+      id: 2,
+      title: "Apparel Design",
+      imageUrl: "/port2.jpg",
+      tags: "Modern",
     },
-    { id: 2, title: "Apparel Design", imageUrl: "/port2.jpg", tags: "Modern" },
+    { id: 1, title: "Elegance Unveiled", imageUrl: "/port1.jpg", tags: "Minimalist" },
     {
       id: 3,
       title: "A Vision in Fashion",
@@ -106,7 +106,7 @@ const SelectPortfolio = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#616852] to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-[#822538] transition-colors duration-300">
+                    <h3 className="text-black text-xl font-bold mb-2 group-hover:text-[#822538] transition-colors duration-300">
                       {portfolio.title}
                     </h3>
                     <p className="text-[#616852] mb-4">

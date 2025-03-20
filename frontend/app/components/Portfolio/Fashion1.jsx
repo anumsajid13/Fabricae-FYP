@@ -96,9 +96,9 @@ export const FashionPortfolio = forwardRef((props, ref) => {
     updatePageState,
     getElementPosition,
   ]);
-   // Expose the save function to the parent
-   useImperativeHandle(ref, () => ({
-    saveState ,
+  // Expose the save function to the parent
+  useImperativeHandle(ref, () => ({
+    saveState,
   }));
 
   const saveState = async () => {
@@ -448,23 +448,66 @@ export const FashionPortfolio = forwardRef((props, ref) => {
 
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
-
+  
     const selection = window.getSelection();
     const text = selection.toString();
-
+  
     if (text.length > 0) {
       const range = selection.getRangeAt(0);
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
-
+      
+      // Find the container element for this text type
+      const textContainer = e.currentTarget;
+      
+      // Calculate the absolute offsets by traversing the text nodes
+      let absoluteStartOffset = 0;
+      let absoluteEndOffset = 0;
+      let foundStart = false;
+      let foundEnd = false;
+      
+      // Recursive function to traverse text nodes and calculate offsets
+      const traverseNodes = (node, offset = 0) => {
+        if (foundStart && foundEnd) return offset;
+        
+        if (node.nodeType === Node.TEXT_NODE) {
+          const nodeLength = node.textContent.length;
+          
+          // Check if this node contains the start of the selection
+          if (!foundStart && node === range.startContainer) {
+            absoluteStartOffset = offset + range.startOffset;
+            foundStart = true;
+          }
+          
+          // Check if this node contains the end of the selection
+          if (!foundEnd && node === range.endContainer) {
+            absoluteEndOffset = offset + range.endOffset;
+            foundEnd = true;
+          }
+          
+          return offset + nodeLength;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          let currentOffset = offset;
+          for (let i = 0; i < node.childNodes.length; i++) {
+            currentOffset = traverseNodes(node.childNodes[i], currentOffset);
+          }
+          return currentOffset;
+        }
+        
+        return offset;
+      };
+      
+      traverseNodes(textContainer);
+      
+      console.log('Selection offsets:', absoluteStartOffset, absoluteEndOffset);
+      
       const selectedText = {
         text,
         type,
-        startOffset,
-        endOffset,
+        startOffset: absoluteStartOffset,
+        endOffset: absoluteEndOffset,
         componentId, // Include the component ID
       };
-
+  
+      console.log('Selected text is', selectedText);
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
@@ -640,8 +683,6 @@ export const FashionPortfolio = forwardRef((props, ref) => {
         style={{ zIndex: 2 }}
       >
         <div className="relative w-full z-20">
-
-
           <Draggable
             disabled={activeDraggable !== "quote"}
             bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}

@@ -390,7 +390,7 @@ const childRefs = useRef([]);
                       remove
                     </span>
                   </button>
-                  <span className=" px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
+                  <span className=" px-4 py-2 text-black bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
                     {fontSize}px
                   </span>
                   <button
@@ -535,7 +535,7 @@ const childRefs = useRef([]);
                       zoom_out
                     </span>
                   </button>
-                  <span className="px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
+                  <span className=" text-black px-4 py-2 bg-[#e7e4d8] border-t border-b border-[#e7e4d8]">
                     {Math.round(scale * 100)}%
                   </span>
                   <button
