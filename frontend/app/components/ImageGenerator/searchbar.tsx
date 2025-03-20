@@ -58,7 +58,7 @@ import { relative } from "path";
   const queryImageGeneration = async (prompt: string) => {
     const API_URL = "http://localhost:5001/api/huggingface/hf-inference/models/fyp1/pattern_generation";
     const headers = {
-      Authorization: `Bearer ${process.env.HF_TOKEN}`,   
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_TOKEN}`,
       "Content-Type": "application/json",
     };
 
