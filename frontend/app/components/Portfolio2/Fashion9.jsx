@@ -940,8 +940,11 @@ export const ProjectInDepth = forwardRef((props, ref) => {
           </div>
         </div>
 
-        {/* Image Options Modal */}
-        {showImageOptions !== null && (
+    
+      </div>
+
+          {/* Image Options Modal */}
+          {showImageOptions !== null && (
           <ImageOptionsModal
             onClose={handleCloseModal}
             onChooseFromComputer={() =>
@@ -960,7 +963,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
             onSelectImage={handleSelectImageFromGallery}
           />
         )}
-      </div>
+        
     </div>
   );
 });
