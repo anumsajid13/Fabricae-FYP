@@ -62,7 +62,6 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
     updatePageState(pageId, {
       title,
       quote,
-      description,
       year,
       images,
       styledContent,
@@ -105,15 +104,12 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
         username,
         title,
         quote,
-        description,
         year,
         images,
         styledContent,
         elementPositions: {
-          name: getElementPosition(componentId, "name"),
           title: getElementPosition(componentId, "title"),
           quote: getElementPosition(componentId, "quote"),
-          description: getElementPosition(componentId, "description"),
           year: getElementPosition(componentId, "year"),
           image1: getElementPosition(componentId, "image1"),
         },
