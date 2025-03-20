@@ -11,7 +11,7 @@ export const useFashionStore = create((set, get) => ({
   },
 
   // State for portfolio ID
-  portfolioId: 1, // Default portfolio ID
+  portfolioId: 2, // Default portfolio ID
 
   // Function to set portfolio ID
   setPortfolioId: (id) => {
@@ -139,34 +139,124 @@ export const useFashionStore = create((set, get) => ({
     set({ selectedPage: pageId });
   },
 
-   // State to track positions and sizes of elements
-   elementPositions: {
+  // State to track positions and sizes of elements
+  elementPositions: {
     "fashion-portfolio": {
       quote: { x: 130, y: 80, width: 380, height: 100 },
       title: { x: 10, y: 0, width: 800, height: 150 },
       image: { x: 10, y: -3, width: 300, height: 400 },
     },
+    "fashion-layout": {
+      // Default positions and sizes for small images, heading, and description
+      "smallImage-0": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-1": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-2": { x: 0, y: 0, width: 130, height: 130 },
+      "smallImage-3": { x: 0, y: 0, width: 130, height: 130 },
+      heading: { x: 0, y: 0, width: 400, height: 50 },
+      description: { x: -30, y: 0, width: 380, height: 200 },
+    },
+    "fashion-project": {
+      "smallImage-0": { x: 0, y: 0, width: 150, height: 120 },
+      "smallImage-1": { x: 0, y: 0, width: 150, height: 120 },
+      "smallImage-2": { x: 0, y: 0, width: 150, height: 120 },
+      heading: { x: 0, y: 0, width: 420, height: 50 },
+    },
+    "fashion-design": {
+      model1: { x: -30, y: 50, width: 200, height: 400 },
+      model2: { x: 40, y: 50, width: 150, height: 100 },
+      model3: { x: 55, y: 50, width: 150, height: 100 },
+      model4: { x: 40, y: 50, width: 310, height: 200 },
+      model5: { x: 80, y: 50, width: 250, height: 400 },
+    },
+    "fashion-work": {
+      heading: { x: 0, y: 0, width: 400, height: 50 },
+      description: { x: 0, y: 60, width: 400, height: 150 },
+      illustration: { x: 10, y: -100, width: 250, height: 150 },
+    },
+    "fashion-collab": {
+      "smallImage1-0": { x: 130, y: 0, width: 130, height: 200 },
+      "smallImage1-1": { x: -150, y: 0, width: 150, height: 200 },
+      "smallImage1-2": { x: 25, y: 50, width: 100, height: 100 },
+      "smallImage1-3": { x: 130, y: -56, width: 120, height: 50 },
+      heading: { x: 30, y: 0, width: 250, height: 50 },
+      description: { x: 30, y: 0, width: 150, height: 150 },
+    },
+    "apparel-portfolio": {
+      name: { x: 100, y: 70, width: 200, height: 50 },
+      title: { x: 10, y: 60, width: 400, height: 100 },
+      quote: { x: 10, y: 110, width: 300, height: 50 },
+      description: { x: 10, y: 110, width: 400, height: 150 },
+      year: { x: 100, y: -20, width: 150, height: 50 },
+      image1: { x: 0, y: 0, width: 340, height: 140 },
+      image2: { x: 0, y: 0, width: 340, height: 140 },
+      image3: { x: 0, y: 0, width: 340, height: 140 },
+    },
+    "about-me": {
+      name: { x: 0, y: 0, width: 200, height: 50 },
+      description: { x: 0, y: 0, width: 400, height: 100 },
+      year: { x: 0, y: 0, width: 150, height: 50 },
+      title: { x: 0, y: 0, width: 500, height: 100 },
+      label: { x: 0, y: 0, width: 100, height: 100 },
+      modelImage: { x: -20, y: 0, width: 400, height: 350 },
+    },
+    "about-me-2": {
+    heading: { x: 150, y: -20, width: 500, height: 100 },
+    description: { x: 0, y: -20, width: 800, height: 150 },
+    image1: { x: 5, y: 0, width: 200, height: 200 },
+    image2: { x: 5, y: 0, width: 200, height: 200 },
+    image3: { x: 5, y: 0, width: 200, height: 200 },
+    },
+    "my-services": {
+      heading: { x: 0, y: 90, width: 600, height: 100 },
+      label1 : { x: 0, y: 50, width: 200, height: 50 },
+      label2 : { x: 0, y: 50, width: 200, height: 50 },
+      label3 : { x: 0, y: 50, width: 200, height: 50 },
+      label4 : { x: 0, y: 190, width: 200, height: 50 },
+      label5 : { x: 0, y: 190, width: 200, height: 50 },
+      label6 : { x: 0, y: 190, width: 200, height: 50 },
+    },
+    "what-i-do": {
+      heading: { x: 0, y: -50, width: 300, height: 50 },
+      description: { x: 0, y: -20, width: 350, height: 100 },
+      modelImage: { x: 0, y: 0, width: 335, height: 300 },
+    },
+    "research": {
+      heading: { x: 200, y: 0, width: 300, height: 50 },
+      description: { x: 0, y: 0, width: 700, height: 50 },
+      label1: { x: 0, y: 0, width: 700, height: 50 },
+      label2: { x: 0, y: 0, width: 700, height: 50 },
+      image1: { x: 10, y: 0, width: 335, height: 150 },
+      image2: { x: 10, y: 0, width: 335, height: 150 },
+    },
+
   },
 
-   // Function to update the position and size of an element
-   updateElementPosition: (componentId, elementType, position) => {
-     set((state) => ({
-       elementPositions: {
-         ...state.elementPositions,
-         [componentId]: {
-           ...(state.elementPositions[componentId] || {}),
-           [elementType]: position,
-         },
-       },
-     }));
-   },
+  // Function to update the position and size of an element
+  updateElementPosition: (componentId, elementType, position) => {
+    set((state) => ({
+      elementPositions: {
+        ...state.elementPositions,
+        [componentId]: {
+          ...(state.elementPositions[componentId] || {}),
+          [elementType]: position,
+        },
+      },
+    }));
+  },
 
-   // Function to get the position and size of an element
-   getElementPosition: (componentId, elementType) => {
-     return get().elementPositions[componentId]?.[elementType] || { x: 0, y: 0, width: 0, height: 0 };
-   },
+  // Function to get the position and size of an element
+  getElementPosition: (componentId, elementType) => {
+    return (
+      get().elementPositions[componentId]?.[elementType] || {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      }
+    );
+  },
 
-    // Existing state and actions
+  // Existing state and actions
   componentsMap: {
     1: [
       "FashionPortfolio",
@@ -187,7 +277,18 @@ export const useFashionStore = create((set, get) => ({
       "MyWorkArea1",
       "ProjectInDepth",
       "Project1",
+      "ContactMe",
     ],
+    3: [
+      "PortfolioHeader",
+      "ResumePage",
+      "CollectionHeader",
+      "FashionMoodBoard",
+      "ResearchWork",
+      "FashionCollection",
+      "CollectionPage",
+      "ContactMe1",
+    ]
   },
 
   // Function to get components for the current portfolio
@@ -218,5 +319,8 @@ export const useFashionStore = create((set, get) => ({
 
     setSelectedPage(selectedPage + 1);
   },
-
+  savePortfolioState: () => {
+    console.warn("savePortfolioState is not registered yet!");
+  }, // Default no-op function
+  setSavePortfolioState: (fn) => set({ savePortfolioState: fn }),
 }));

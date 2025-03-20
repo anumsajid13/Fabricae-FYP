@@ -1,20 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { useFashionStore } from "./FashionProvider";
 import { ImageOptionsModal } from "./ImageOptionsModal";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import {GalleryModal} from "./GalleryModal"
+import { GalleryModal } from "./GalleryModal";
 
-export const FashionPortfolio = () => {
+export const FashionPortfolio = forwardRef((props, ref) => {
   const [activeDraggable, setActiveDraggable] = useState(null);
-
-  // Track which field is being edited
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
   const modelInputRef = useRef(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
-
+  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
 
   const {
     handleTextSelection,
@@ -30,23 +34,237 @@ export const FashionPortfolio = () => {
   const pageId = `fashion-portfolio-${selectedPage}`;
   const pageState = getPageState(pageId);
 
-  const [showImageOptions, setShowImageOptions] = useState(null); // 'background' or 'model'
-
   // Initialize state from pageState if it exists, otherwise use defaults
   const [quote, setQuote] = useState(
-    pageState.quote ||
+    pageState?.quote ||
       "Fashion is the armor to survive the reality of everyday life"
   );
-  const [title, setTitle] = useState(pageState.title || "Fashion Portfolio");
+  const [title, setTitle] = useState(pageState?.title || "Fashion Portfolio");
   const [backgroundImage, setBackgroundImage] = useState(
     pageState.backgroundImage || "/Picture7.jpg"
   );
   const [modelImage, setModelImage] = useState(
-    pageState.modelImage || "/Picture1.jpg"
+    pageState?.modelImage || "/Picture1.jpg"
   );
-  const [label, setLabel] = useState(pageState.label || "Your Name");
+  const [label, setLabel] = useState(pageState?.label || "Your Name");
+
+  // Initialize styled content from pageState if it exists
+  const [styledContent, setStyledContent] = useState(() => {
+    if (pageState?.styledContent) {
+      return pageState.styledContent;
+    }
+    return {
+      quote: { text: quote, segments: [{ text: quote, styles: {} }] },
+      title: { text: title, segments: [{ text: title, styles: {} }] },
+      label: { text: label, segments: [{ text: label, styles: {} }] },
+    };
+  });
+
+  // Component ID for this component
+  const componentId = "fashion-portfolio";
+
+  // Register this component with context when it mounts
+  useEffect(() => {
+    registerComponent(componentId, {
+      updateStyles: updateStyles,
+    });
+  }, [registerComponent]);
+
+  // Update page state whenever any state changes
+  useEffect(() => {
+    updatePageState(pageId, {
+      backgroundImage,
+      quote,
+      title,
+      modelImage,
+      label,
+      styledContent,
+      elementPositions: {
+        quote: getElementPosition(componentId, "quote"),
+        title: getElementPosition(componentId, "title"),
+        image: getElementPosition(componentId, "image"),
+      },
+    });
+  }, [
+    backgroundImage,
+    quote,
+    title,
+    modelImage,
+    label,
+    styledContent,
+    pageId,
+    updatePageState,
+    getElementPosition,
+  ]);
+   // Expose the save function to the parent
+   useImperativeHandle(ref, () => ({
+    saveState ,
+  }));
+
+  const saveState = async () => {
+    try {
+      console.log("saveState function called");
+
+      const username = localStorage.getItem("userEmail");
+
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 1; // Hardcoded pageId
+
+      const stateToSave = {
+        portfolioId, // Include portfolioId in the request body
+        pageId, // Include pageId in the request body
+        username, // Include username in the request body
+        quote,
+        title,
+        backgroundImage,
+        modelImage,
+        label,
+        styledContent,
+        elementPositions: {
+          quote: getElementPosition(componentId, "quote"),
+          title: getElementPosition(componentId, "title"),
+          image: getElementPosition(componentId, "image"),
+        },
+      };
+
+      console.log("State to save:", stateToSave);
+
+      const response = await fetch("http://localhost:5000/api/save-portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          username: username, // Send username in headers
+        },
+        body: JSON.stringify(stateToSave),
+      });
+
+      //if (!response.ok) throw new Error("Failed to save portfolio");
+      const result = await response.json();
+      console.log("Portfolio saved successfully:", result);
+    } catch (error) {
+      console.error("Error in saveState function:", error);
+    }
+  };
+
+  const loadState = async () => {
+    try {
+      console.log("Attempting to load portfolio state");
+
+      const username = localStorage.getItem("userEmail");
+      if (!username) {
+        console.error("Username not found in local storage");
+        return;
+      }
+
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 1; // Hardcoded pageId
+
+      const response = await fetch(
+        `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
+        {
+          method: "GET",
+          headers: {
+            username: username, // Send username in headers
+          },
+        }
+      );
+
+      console.log("Response status:", response.status);
+      if (!response.ok) throw new Error("Failed to load portfolio");
+
+      const savedStateArray = await response.json();
+      const savedState = savedStateArray[0];
+      console.log("Loaded state from API:", savedState);
+
+      console.log("Quote in savedState:", savedState.quote);
+
+      if (!savedState || typeof savedState !== "object") {
+        console.error("Invalid state loaded:", savedState);
+        return;
+      }
+
+      // Update states with loaded data
+      if (savedState.quote) setQuote(savedState.quote);
+      if (savedState.title) setTitle(savedState.title);
+      if (savedState.backgroundImage)
+        setBackgroundImage(savedState.backgroundImage);
+      if (savedState.modelImage) setModelImage(savedState.modelImage);
+      if (savedState.label) setLabel(savedState.label);
+
+      // Ensure styledContent is properly structured before setting it
+      if (savedState.styledContent) {
+        const loadedStyledContent = {
+          quote: savedState.styledContent.quote || {
+            text: savedState.quote || quote,
+            segments: [{ text: savedState.quote || quote, styles: {} }],
+          },
+          title: savedState.styledContent.title || {
+            text: savedState.title || title,
+            segments: [{ text: savedState.title || title, styles: {} }],
+          },
+          label: savedState.styledContent.label || {
+            text: savedState.label || label,
+            segments: [{ text: savedState.label || label, styles: {} }],
+          },
+        };
+        console.log("Setting styled content to:", loadedStyledContent);
+        setStyledContent(loadedStyledContent);
+      }
+
+      // Update element positions if they exist
+      if (savedState.elementPositions) {
+        if (savedState.elementPositions.quote) {
+          updateElementPosition(
+            componentId,
+            "quote",
+            savedState.elementPositions.quote
+          );
+        }
+        if (savedState.elementPositions.title) {
+          updateElementPosition(
+            componentId,
+            "title",
+            savedState.elementPositions.title
+          );
+        }
+        if (savedState.elementPositions.image) {
+          updateElementPosition(
+            componentId,
+            "image",
+            savedState.elementPositions.image
+          );
+        }
+      }
+
+      console.log("Portfolio loaded successfully");
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+    }
+  };
+
+  // Handle background image upload
+  const handleBackgroundImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBackgroundImage(imageUrl);
+      updatePageState(pageId, { backgroundImage: imageUrl });
+    }
+  };
+
+  // Handle double-click to trigger file input for background
+  const handleDoubleClickBackground = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowImageOptions("background");
+  };
 
   const handleImageClick = (type) => {
+    console.log("Image click type:", type);
     setShowImageOptions(type);
   };
 
@@ -64,51 +282,40 @@ export const FashionPortfolio = () => {
     setShowImageOptions(null); // Close the modal
   };
 
-  const handleImageUpload = (e, setImage) => {
+  const handleImageUpload = (e, type) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl); // Replace the existing image
+      if (type === "background") {
+        setBackgroundImage(imageUrl); // Update background image
+        updatePageState(pageId, { backgroundImage: imageUrl }); // Update global state
+      } else if (type === "model") {
+        setModelImage(imageUrl); // Update model image
+        updatePageState(pageId, { modelImage: imageUrl }); // Update global state
+      }
     }
   };
+
   const handleChooseFromGallery = (type) => {
     setShowGalleryModal(true); // Show the gallery modal
     setShowImageOptions(type);
-    };
+  };
 
   const handleSelectImageFromGallery = (imageUrl) => {
     if (showImageOptions === "background") {
       setBackgroundImage(imageUrl); // Update background image
+      updatePageState(pageId, { backgroundImage: imageUrl });
     } else if (showImageOptions === "model") {
       setModelImage(imageUrl); // Update model image
+      updatePageState(pageId, { modelImage: imageUrl });
     }
     setShowGalleryModal(false); // Close the gallery modal
     setShowImageOptions(null);
   };
 
-  // Initialize styled content from pageState if it exists
-  const [styledContent, setStyledContent] = useState(() => {
-    // Check if we have stored styled content
-    if (pageState.styledContent) {
-      return pageState.styledContent;
-    }
-
-    // Otherwise create default styled content
-    return {
-      quote: {
-        text: quote,
-        segments: [{ text: quote, styles: {} }],
-      },
-      title: {
-        text: title,
-        segments: [{ text: title, styles: {} }],
-      },
-      label: {
-        text: label,
-        segments: [{ text: label, styles: {} }],
-      },
-    };
-  });
+  const handleSave = () => {
+    saveState();
+  };
 
   // Update page state whenever any state changes
   useEffect(() => {
@@ -137,9 +344,6 @@ export const FashionPortfolio = () => {
     getElementPosition,
     ,
   ]);
-
-  // Component ID for this component
-  const componentId = "fashion-portfolio";
 
   const quotePosition = getElementPosition(componentId, "quote");
   const titlePosition = getElementPosition(componentId, "title");
@@ -176,8 +380,6 @@ export const FashionPortfolio = () => {
     updatePageState,
   ]);
 
-
-
   const handleDragStart = (key) => {
     setActiveDraggable(key);
   };
@@ -185,7 +387,50 @@ export const FashionPortfolio = () => {
   const handleTextChange = (e, type) => {
     const newText = e.target.value;
 
-    // Update both the direct state and the styled content
+    setStyledContent((prev) => {
+      const content = prev[type];
+
+      if (!content) return prev;
+
+      const oldSegments = content.segments || [
+        { text: content.text, styles: {} },
+      ];
+      const newSegments = [];
+
+      let remainingText = newText;
+      let index = 0;
+
+      // Preserve styles for as many characters as possible
+      for (let segment of oldSegments) {
+        if (remainingText.length === 0) break;
+
+        const segmentText = segment.text;
+        const lengthToCopy = Math.min(segmentText.length, remainingText.length);
+
+        newSegments.push({
+          text: remainingText.substring(0, lengthToCopy),
+          styles: { ...segment.styles },
+        });
+
+        remainingText = remainingText.substring(lengthToCopy);
+        index += lengthToCopy;
+      }
+
+      // If there's any remaining text, add it as a new unstyled segment
+      if (remainingText.length > 0) {
+        newSegments.push({ text: remainingText, styles: {} });
+      }
+
+      return {
+        ...prev,
+        [type]: {
+          text: newText,
+          segments: newSegments,
+        },
+      };
+    });
+
+    // Update the plain text state as well
     switch (type) {
       case "quote":
         setQuote(newText);
@@ -199,14 +444,6 @@ export const FashionPortfolio = () => {
       default:
         break;
     }
-
-    setStyledContent((prev) => ({
-      ...prev,
-      [type]: {
-        text: newText,
-        segments: [{ text: newText, styles: {} }],
-      },
-    }));
   };
 
   const handleLocalTextSelection = (e, type) => {
@@ -372,30 +609,39 @@ export const FashionPortfolio = () => {
     );
   };
 
+  // Load portfolio state when the component mounts
+  useEffect(() => {
+    loadState();
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   return (
     <div
-      className="relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] portfolio-page"
+      style={{
+        backgroundImage: `url('${backgroundImage}')`,
+      }}
+      className="max-w-[830px] bg-cover bg-center relative w-full h-screen bg-gradient-to-br from-[#fdf3e5] to-[#fad9b7] cursor-pointer portfolio-page"
       onClick={() => setActiveDraggable(null)}
+      onDoubleClick={handleDoubleClickBackground}
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
-        style={{ backgroundImage: `url('${backgroundImage}')`, zIndex: 1 }}
-        onClick={() => handleImageClick("background")}
-      ></div>
-
       <input
         type="file"
         accept="image/*"
         ref={backgroundInputRef}
         className="hidden"
-        onChange={(e) => handleImageUpload(e, setBackgroundImage)}
+        onChange={handleBackgroundImageUpload}
       />
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-80 cursor-pointer"
+        style={{ zIndex: 1 }}
+      ></div>
 
       <div
         className="relative flex flex-col items-center justify-center h-full"
         style={{ zIndex: 2 }}
       >
         <div className="relative w-full z-20">
+
+
           <Draggable
             disabled={activeDraggable !== "quote"}
             bounds={{ left: 0, top: -100, right: 500, bottom: 280 }}
@@ -439,7 +685,12 @@ export const FashionPortfolio = () => {
                 }}
               >
                 <EditableText
-                  content={styledContent.quote}
+                  content={
+                    styledContent?.quote || {
+                      text: quote,
+                      segments: [{ text: quote, styles: {} }],
+                    }
+                  }
                   type="quote"
                   className="text-white italic text-sm md:text-lg lg:text-xl mb-8 cursor-text"
                 />
@@ -489,7 +740,12 @@ export const FashionPortfolio = () => {
                 }}
               >
                 <EditableText
-                  content={styledContent.title}
+                  content={
+                    styledContent?.title || {
+                      text: title,
+                      segments: [{ text: title, styles: {} }],
+                    }
+                  }
                   type="title"
                   className="text-4xl md:text-6xl lg:text-8xl font-serif text-white tracking-wide leading-tight mx-auto cursor-text"
                 />
@@ -546,19 +802,26 @@ export const FashionPortfolio = () => {
                   alt="New Fashion"
                   className="relative object-cover rounded-lg shadow-lg max-h-96 w-auto cursor-pointer"
                   onDoubleClick={(e) => {
-                    //e.stopPropagation();
+                    e.stopPropagation();
                     handleImageClick("model");
                   }}
                 />
+
                 <input
                   type="file"
                   accept="image/*"
                   ref={modelInputRef}
                   className="hidden"
-                  onChange={(e) => handleImageUpload(e, setModelImage)}
+                  onChange={(e) => handleImageUpload(e, "model")} // Pass the type
                 />
+
                 <EditableText
-                  content={styledContent.label}
+                  content={
+                    styledContent?.label || {
+                      text: label,
+                      segments: [{ text: label, styles: {} }],
+                    }
+                  }
                   type="label"
                   className="absolute bottom-4 right-4 bg-white text-[#9a7752] font-bold px-4 py-1 text-xs uppercase tracking-wide rounded cursor-text"
                 />
@@ -566,35 +829,26 @@ export const FashionPortfolio = () => {
             </ResizableBox>
           </Draggable>
         </div>
-
-
       </div>
 
+      {/* Image Options Modal */}
+      {showImageOptions && (
+        <ImageOptionsModal
+          onClose={handleCloseModal}
+          onChooseFromComputer={() =>
+            handleChooseFromComputer(showImageOptions)
+          }
+          onChooseFromGallery={() => handleChooseFromGallery(showImageOptions)}
+        />
+      )}
 
-       {/* Image Options Modal */}
-       {showImageOptions && (
-          <ImageOptionsModal
-            onClose={handleCloseModal}
-            onChooseFromComputer={() =>
-              handleChooseFromComputer(showImageOptions)
-            }
-            onChooseFromGallery={() =>
-              handleChooseFromGallery(showImageOptions)
-            }
-          />
-        )}
-
-
-
-        {/* Gallery Modal */}
-        {showGalleryModal && (
-                <GalleryModal
-                  onClose={() => setShowGalleryModal(false)}
-                  onSelectImage={handleSelectImageFromGallery}
-                />
-              )}
-
-
+      {/* Gallery Modal */}
+      {showGalleryModal && (
+        <GalleryModal
+          onClose={() => setShowGalleryModal(false)}
+          onSelectImage={handleSelectImageFromGallery}
+        />
+      )}
     </div>
   );
-};
+});

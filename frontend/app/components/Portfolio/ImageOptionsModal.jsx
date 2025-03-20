@@ -8,8 +8,9 @@ export const ImageOptionsModal = ({
   return (
     <div
       id="webcrumbs"
-      style={{ zIndex: 1000 }}
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      style={{ zIndex: 1000,  top: "-60px" }}
+      className="fixed h-[610px] inset-0 flex items-center justify-center bg-black bg-opacity-50"
+
     >
       <div className="w-[400px] bg-[#e7e4d8] rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02]">
         <div className="relative p-5 border-b border-[#616852]/20">
