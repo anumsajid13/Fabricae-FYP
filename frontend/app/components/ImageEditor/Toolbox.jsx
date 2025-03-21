@@ -6,9 +6,9 @@ import { SwapColor } from "../../../colorSwapFilter";
 import * as fabric from "fabric";
 import { SketchPicker } from "react-color";
 //import { ChromePicker } from "react-color";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebase"; 
+import { storage } from "../../firebase";
 import { toast } from "react-toastify";
 import ImageGalleryPopup from "./ImageGalleryPopup"
 
@@ -78,20 +78,20 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           return null;
       }
     }
-  
+
     function addFilter(){
 
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
       activeObject.filters = activeObject.filters || [];
-  
+
       // Handle grayscale filter
       if (currentFilter === "grayscale") {
         const filter = getSelectedFilter();
         activeObject.filters=filter ? [filter] : [];
       }
-  
+
       // Handle sepia filter
       if (currentFilter === "sepia") {
         const filter = getSelectedFilter();
@@ -115,12 +115,12 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         const filter = getSelectedFilter();
         activeObject.filters=filter ? [filter] : [];
       }
-  
+
       activeObject.applyFilters();
       canvas.renderAll();
-  
+
     }
-  
+
     if(swapFiltersVisible && sourceColor)
       applySwapFiters();
 
@@ -165,8 +165,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
     link.click();
   };
 
- 
-   
+
+
 
   const clearAll = () => {
     if (window.confirm("Are you sure you want to clear all?")) {
@@ -174,10 +174,10 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
     }
   };
 
- 
 
-  
-  
+
+
+
 
   const toggleFiltersMenu = () => {
     setFiltersMenuVisible(!filtersMenuVisible);
@@ -270,7 +270,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   // const applyCrop = async () => {
   //   console.log("selectedImage", selectedImage);
   //   console.log("cropRect", cropRect);
-  
+
   //   if (selectedImage && cropRect) {
   //     console.log("heyyy11");
   //     const { left, top, width, height } = cropRect.getBoundingRect();
@@ -278,22 +278,22 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   //     const imageTop = selectedImage.top;
   //     const scaleX = selectedImage.scaleX || 1;
   //     const scaleY = selectedImage.scaleY || 1;
-  
+
   //     // Calculate cropping offsets relative to the image
   //     const cropX = (left - imageLeft) / scaleX;
   //     const cropY = (top - imageTop) / scaleY;
   //     const cropWidth = width / scaleX;
   //     const cropHeight = height / scaleY;
-  
+
   //     // Get the original image element
   //     const originalImage = selectedImage._element;
-  
+
   //     // Create a canvas for cropping
   //     const tempCanvas = document.createElement('canvas');
   //     const ctx = tempCanvas.getContext('2d');
   //     tempCanvas.width = cropWidth;
   //     tempCanvas.height = cropHeight;
-  
+
   //     // Draw the cropped part of the image onto the temp canvas
   //     ctx.drawImage(
   //       originalImage,
@@ -306,11 +306,11 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   //       cropWidth,
   //       cropHeight
   //     );
-  
+
   //     // Convert the temp canvas to a data URL
   //     const croppedDataURL = tempCanvas.toDataURL();
   //     console.log("croppedDataURL", croppedDataURL);
-  
+
   //     try {
   //       // Wait for the image to load
   //       const croppedImg = await Image.fromURL(croppedDataURL);
@@ -320,20 +320,20 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
   //         scaleX: selectedImage.scaleX,
   //         scaleY: selectedImage.scaleY,
   //       });
-  
+
   //       // Remove the original image from the canvas
   //       canvas.remove(selectedImage);
-  
+
   //       // Add the cropped image
   //       canvas.add(croppedImg);
   //       canvas.centerObject(croppedImg);
   //       canvas.setActiveObject(croppedImg);
-  
+
   //       // Remove the crop rectangle
   //       canvas.remove(cropRect);
   //       setCropRect(null);
   //       setIsCropping(false);
-  
+
   //       // Update the canvas to reflect the changes
   //       canvas.renderAll();
   //     } catch (error) {
@@ -351,12 +351,12 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
       alert('Please select an image and define a crop area.');
       return;
     }
-  
+
     // Get the dimensions and position of the crop rectangle and the selected image
     const { left, top, width, height } = cropRect.getBoundingRect();
     const imageLeft = selectedImage.left;
     const imageTop = selectedImage.top;
-  
+
     // Calculate the cropping offsets relative to the image
     const cropX = (left - imageLeft) / selectedImage.scaleX;
     const cropY = (top - imageTop) / selectedImage.scaleY;
@@ -365,30 +365,30 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
 
     console.log("cropX:", cropX, "cropY:", cropY, "cropWidth:", cropWidth, "cropHeight:", cropHeight);
 
-  
+
     // Get the original image element
     const originalImage = selectedImage._element;
-  
+
     // Create a temporary canvas for cropping
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
     tempCanvas.width = cropWidth;
     tempCanvas.height = cropHeight;
-  
+
     // Draw the cropped part of the image onto the temp canvas
     ctx.drawImage(
       originalImage,   // Image source
       cropX, cropY, cropWidth, cropHeight,   // Source cropping coordinates
       0, 0, cropWidth, cropHeight   // Destination (drawing) coordinates
     );
-  
+
     // Convert the temp canvas to a data URL
     const croppedDataURL = tempCanvas.toDataURL();
-  
+
     try {
       // Create a new image from the cropped data URL
       const croppedImg = await Image.fromURL(croppedDataURL);
-  
+
       // Set the position and scale of the cropped image
       croppedImg.set({
         left: selectedImage.left,  // Keep the same position as the original
@@ -397,21 +397,21 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         scaleY: selectedImage.scaleY,
       });
 
-      
-  
+
+
       // Remove the original image and the crop rectangle from the canvas
       canvas.remove(selectedImage);
       canvas.remove(cropRect);
-      
+
       // Add the new cropped image to the canvas
       canvas.add(croppedImg);
       canvas.centerObject(croppedImg);  // Center the cropped image
       canvas.setActiveObject(croppedImg); // Set the cropped image as active
-  
+
       // Reset the cropping state
       setIsCropping(false);
       setCropRect(null);
-  
+
       // Re-render the canvas
       canvas.renderAll();
     } catch (error) {
@@ -419,8 +419,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
       alert('An error occurred while cropping the image.');
     }
   };
-  
-  
+
+
 
 
    // Static images for filter previews
@@ -432,35 +432,35 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
     grayscale: "/grayscale.PNG",
   };
 
- 
-  const [isSaving, setIsSaving] = useState(false); 
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false); 
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const handleSaveImage = async () => {
     if (!canvas) {
       console.error("Canvas not initialized.");
       return;
     }
-  
+
     try {
       setIsSaving(true); // ✅ Show loader
-  
+
       // Convert canvas to Base64 image
       const imageSrc = canvas.toDataURL("image/png");
-  
+
       // Generate a unique ID for the image
       const uniqueId = uuidv4();
       const storageRef = ref(storage, `images/generated_image_${uniqueId}`);
-  
+
       // Upload the Base64 image to Firebase Storage
       await uploadString(storageRef, imageSrc, "data_url");
-  
+
       // Get the download URL
       const downloadURL = await getDownloadURL(storageRef);
-  
+
       // Retrieve user email from local storage (for associating with user)
       const userEmail = localStorage.getItem("userEmail");
-  
+
       // Metadata to be stored in MongoDB
       const metadata = {
         title: `Image_${uniqueId}`,
@@ -469,18 +469,18 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         patternType: "edited-pattern",
         prompt: "No prompt provided",
       };
-  
+
       // Send data to MongoDB via API
       const res = await fetch("http://localhost:5000/api/prompt-designs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(metadata),
       });
-  
+
       if (!res.ok) {
         throw new Error("Database save failed with status: " + res.statusText);
       }
-  
+
       toast.success("Image successfully saved to database!");
       openGallery();
     } catch (error) {
@@ -499,30 +499,30 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         applyCrop();  // Trigger crop operation
       }
     };
-  
+
     // Add keydown event listener
     document.addEventListener("keydown", handleKeyDown);
-  
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isCropping, applyCrop]);
-  
+
 
 
 
   return (
-    
-    // bg-[#9e4557] 
-      <div className="ml-9 flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
-        
+
+    // bg-[#9e4557]
+      <div className="ml-0 flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
+
         <label
             className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
-            onClick={openGallery} 
+            onClick={openGallery}
           >
             <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "white" }} />
         </label>
-  
+
         <button
           title="Drawing mode"
           onClick={toggleDrawingMode}
@@ -534,7 +534,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         >
           <FontAwesomeIcon icon={faPencilAlt} size="xl" style={{color: "white"}}/>
         </button>
-  
+
         {/* Filters Icon */}
         <button
           title="Filters"
@@ -544,7 +544,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
            <FontAwesomeIcon icon={faWandMagicSparkles} size="xl" style={{color: "white"}} />
           {/* <img src='/Filter.PNG' className='w-10'></img> */}
         </button>
-  
+
          {/* Filters Sub-Menu */}
          {filtersMenuVisible && (
           <div className="absolute bg-transparent p-4 shadow-md rounded-xl grid grid-cols- gap-4 top-[0rem] left-20 w-auto h-[calc(87vh-4rem)]"
@@ -557,8 +557,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           >
             {Object.entries(filterImages).map(([filterName, imgSrc]) => (
               <div key={filterName} className="flex flex-col items-center">
-                <button 
-                  onClick={() => setCurrentFilter(filterName)} 
+                <button
+                  onClick={() => setCurrentFilter(filterName)}
                   className="w-[80px] h-[80px] bg-gray-200 rounded shadow-md flex justify-center items-center hover:bg-gray-300"
                 >
                   <img src={imgSrc} alt={filterName} className="w-full h-full rounded" />
@@ -569,10 +569,10 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           </div>
         )}
 
-  
 
-      
-  
+
+
+
         {/* Swap Filters Icon */}
         <button
           title="Swap Filters"
@@ -582,9 +582,9 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           {/* <FontAwesomeIcon icon={faExchangeAlt} /> */}
           <img src='/Frame2.png' className='w-8'></img>
         </button>
-  
-      
-  
+
+
+
        {/* Swap Filters Box */}
 {swapFiltersVisible && (
   <div
@@ -597,7 +597,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
     // }}
   >
     <div className="flex flex-col space-y-3">
-      
+
       {/* Source Color Picker */}
       <div className="flex flex-col items-center">
         <span className="text-gray-600 text-xs">Source Color</span>
@@ -625,7 +625,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
           />
         </div>
       </div>
-      
+
     </div>
 
     {/* Hide scrollbar in Chrome, Safari, and Opera using inline CSS */}
@@ -714,7 +714,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
             appearance: none;
             width: 100%;
             height: 8px;
-            background: linear-gradient(to right, gray, #822538); 
+            background: linear-gradient(to right, gray, #822538);
             border-radius: 5px;
             outline: none;
             transition: background 0.15s ease-in-out;
@@ -748,7 +748,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
         >
           <FontAwesomeIcon icon={faTrash} size="xl" style={{color: "white"}} />
         </button>
-        
+
         <button
         title="Save Image to Database"
         onClick={handleSaveImage}
@@ -808,7 +808,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter,openGallery }) => {
 
 
 
-      
+
 
   );
 };
