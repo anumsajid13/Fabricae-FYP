@@ -14,6 +14,7 @@ import { GalleryModal } from "./GalleryModal";
 
 
 export const FashionPortfolio = forwardRef((props, ref) => {
+  localStorage.removeItem("fashion-portfolio-storage")
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const backgroundInputRef = useRef(null);
@@ -294,7 +295,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
   };
 
   const handleChooseFromGallery = (type) => {
-    
+
     setShowGalleryModal(true); // Show the gallery modal
     setShowImageOptions(type);
   };
@@ -446,41 +447,41 @@ export const FashionPortfolio = forwardRef((props, ref) => {
 
   const handleLocalTextSelection = (e, type) => {
     if (editingField) return; // Don't handle selection while editing
-  
+
     const selection = window.getSelection();
     const text = selection.toString();
-  
+
     if (text.length > 0) {
       const range = selection.getRangeAt(0);
-      
+
       // Find the container element for this text type
       const textContainer = e.currentTarget;
-      
+
       // Calculate the absolute offsets by traversing the text nodes
       let absoluteStartOffset = 0;
       let absoluteEndOffset = 0;
       let foundStart = false;
       let foundEnd = false;
-      
+
       // Recursive function to traverse text nodes and calculate offsets
       const traverseNodes = (node, offset = 0) => {
         if (foundStart && foundEnd) return offset;
-        
+
         if (node.nodeType === Node.TEXT_NODE) {
           const nodeLength = node.textContent.length;
-          
+
           // Check if this node contains the start of the selection
           if (!foundStart && node === range.startContainer) {
             absoluteStartOffset = offset + range.startOffset;
             foundStart = true;
           }
-          
+
           // Check if this node contains the end of the selection
           if (!foundEnd && node === range.endContainer) {
             absoluteEndOffset = offset + range.endOffset;
             foundEnd = true;
           }
-          
+
           return offset + nodeLength;
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           let currentOffset = offset;
@@ -489,14 +490,14 @@ export const FashionPortfolio = forwardRef((props, ref) => {
           }
           return currentOffset;
         }
-        
+
         return offset;
       };
-      
+
       traverseNodes(textContainer);
-      
+
       console.log('Selection offsets:', absoluteStartOffset, absoluteEndOffset);
-      
+
       const selectedText = {
         text,
         type,
@@ -504,7 +505,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
         endOffset: absoluteEndOffset,
         componentId, // Include the component ID
       };
-  
+
       console.log('Selected text is', selectedText);
       // Send selection to the global context
       handleTextSelection(selectedText);

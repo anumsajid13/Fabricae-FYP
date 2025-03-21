@@ -13,7 +13,7 @@ import "react-resizable/css/styles.css";
 import { GalleryModal } from "../Portfolio/GalleryModal";
 
 export const ApparelPortfolio = forwardRef((props, ref) => {
-
+  localStorage.removeItem("fashion-portfolio-storage")
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
