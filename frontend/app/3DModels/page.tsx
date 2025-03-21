@@ -11,10 +11,10 @@ import { useThree } from "@react-three/fiber";
 import { FiUploadCloud } from "react-icons/fi";
 import PatternGalleryPopup from "../components/3Dvisualization/PatternGalleryPopup"
 import { FaTrash } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebase"; 
-import { ToastContainer, toast } from "react-toastify";  
+import { storage } from "../firebase";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiLoader } from "react-icons/fi";
 import ThreeDGallery from "../components/3Dvisualization/ThreeDGallery";
@@ -37,7 +37,7 @@ const ModelsPage = () => {
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState<boolean>(false);
-  const [saving, setSaving] = useState(false); 
+  const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [gallery3DOpen, setGallery3DOpen] = useState(false);
 
@@ -87,7 +87,7 @@ const ModelsPage = () => {
   };
 
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSliderValue(Number(event.target.value)); 
+    setSliderValue(Number(event.target.value));
   };
 
   const captureScreenshot = async () => {
@@ -99,7 +99,7 @@ const ModelsPage = () => {
         console.error("Canvas not found");
         return;
       }
-  
+
       // Create a new canvas and get its context
       const newCanvas = document.createElement('canvas');
       const context = newCanvas.getContext('2d');
@@ -107,46 +107,46 @@ const ModelsPage = () => {
         console.error("Could not get 2d context");
         return;
       }
-  
+
       // Set the new canvas dimensions to match the original
       newCanvas.width = canvas.width;
       newCanvas.height = canvas.height;
-  
+
       // Draw the WebGL canvas content onto the new canvas
       // This preserves the WebGL state
       context.drawImage(canvas, 0, 0);
-  
+
       // Convert to base64 image
       const dataUrl = newCanvas.toDataURL('image/png', 1.0);
       setScreenshot(dataUrl);
       setShowPreview(true);
-  
+
     } catch (error) {
       console.error("Error capturing screenshot:", error);
     }finally {
       setIsCapturing(false);
     }
   };
-  
+
   // // Add this function to actually save the screenshot
   // const handleSaveDesign = async () => {
   //   if (!screenshot) return;
-  
+
   //   try {
   //     // Convert base64 to blob
   //     const base64Response = await fetch(screenshot);
   //     const blob = await base64Response.blob();
-  
+
   //     // Create a download link
   //     const link = document.createElement('a');
   //     link.href = URL.createObjectURL(blob);
   //     link.download = `design-${Date.now()}.png`;
-      
+
   //     // Trigger download
   //     document.body.appendChild(link);
   //     link.click();
   //     document.body.removeChild(link);
-  
+
   //     setShowPreview(false);
   //   } catch (error) {
   //     console.error("Error saving screenshot:", error);
@@ -191,7 +191,7 @@ const ModelsPage = () => {
     }
   };
 
-  
+
 
   if (loading) return <p>Loading...</p>;
 
@@ -201,7 +201,7 @@ const ModelsPage = () => {
     <NavBar />
     <div className="flex flex-col md:flex-row h-[90vh] mt-1">
       {/* Left Side: 3D Model Display (70%) */}
-      
+
      <div className="w-full md:w-7/12 p-6 flex items-center justify-center relative">
   <div className="bg-[#434242] rounded-2xl shadow-xl p-4 w-full h-full flex items-center justify-center border-1" ref={canvasRef}>
     {selectedModel && (
@@ -211,7 +211,7 @@ const ModelsPage = () => {
         <Environment preset="sunset" />
         <PerspectiveCamera makeDefault position={[0, 3, 10]} fov={10} />
         <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
-        
+
         {/* Centered Model */}
         <group position={[0, -1, 0]}>
         <ModelComponent key={selectedModel._id} modelUrl={selectedModel.glbUrl} textureUrl={selectedPattern} sliderValue={sliderValue}/>
@@ -219,20 +219,7 @@ const ModelsPage = () => {
       </Canvas>
     )}
 
-    {/* Buttons inside the canvas */}
-        <div className="absolute top-12 right-12 flex gap-2">
-          <img
-            src="/undo.png"
-            alt="Undo"
-            className="w-10 h-10 bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 cursor-pointer"
-          />
-          <img
-            src="/redo.png"
-            alt="Redo"
-            className="w-10 h-10 bg-gradient-to-r from-white to-[#F8F7F2] p-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 cursor-pointer"
-          />
-        </div>
-
+ 
 
         {/* Slider below */}
         <div className="absolute bottom-12 left-12 right-4 w-[89%]">
@@ -246,7 +233,7 @@ const ModelsPage = () => {
       </div>
     </div>
 
-  
+
       {/* Right Side: Mannequin Selection and Patterns (30%) */}
       <div className="w-full md:w-5/12 space-y-6 p-4 bg-[#E7E4D8] overflow-auto">
         {/* Select Mannequin */}
@@ -298,7 +285,7 @@ const ModelsPage = () => {
             </div>
           </div>
         )}
-  
+
         {/* Design Patterns */}
         <div className="bg-gradient-to-br bg-[#434242] rounded-2xl p-4 shadow-md">
         <div className="bg-gradient-to-br from-white to-[#F8F7F2] rounded-2xl p-4 shadow-md flex justify-between items-center">
@@ -306,7 +293,7 @@ const ModelsPage = () => {
             Design Patterns
           </h2>
           <FiUploadCloud
-            size={28} 
+            size={28}
             className="text-black cursor-pointer hover:scale-110 transition-transform hover:text-[#B4707E]" // ✅ Stylish hover effect
             onClick={handleOpenGallery}
           />
@@ -341,7 +328,7 @@ const ModelsPage = () => {
             ))}
           </div>
         </div>
-  
+
         {/* Action Buttons */}
         <div className="flex gap-4">
           <button  onClick={captureScreenshot} disabled={isCapturing} className="flex-1 bg-gradient-to-r from-[#434242] to-[#a8a8a8] text-white py-3 rounded-2xl font-semibold  transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
@@ -349,7 +336,7 @@ const ModelsPage = () => {
             <img className= "w-8 h-8" src= "/save.png"/>
             {isCapturing ? 'Capturing...' : 'Save Design'}
             </span>
-            
+
           </button>
           <button
             onClick={() => setGallery3DOpen(true)}
@@ -360,14 +347,14 @@ const ModelsPage = () => {
             </span>
           </button>
           <button className="flex-1 bg-gradient-to-r from-white to-[#F8F7F2] text-[#434242]  border-[#434242] py-3 rounded-2xl font-semibold hover:bg-[#E7E4D8] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-xl">
-           
+
             <span className="flex items-center justify-center gap-2">
             Next
             <img className= "w-8 h-8" src= "/next.png"/>
-              
+
             </span>
           </button>
-          
+
 
         </div>
       </div>
@@ -376,16 +363,16 @@ const ModelsPage = () => {
     <PatternGalleryPopup
         isOpen={galleryOpen}
         onClose={() => setGalleryOpen(false)}
-        images={patterns} 
+        images={patterns}
     />
     <ThreeDGallery isOpen={gallery3DOpen} onClose={() => setGallery3DOpen(false)} />
 
     <ToastContainer position="top-right" autoClose={3000} />
   </div>
-  
+
 
   );
-  
+
 };
 
 export default ModelsPage;
