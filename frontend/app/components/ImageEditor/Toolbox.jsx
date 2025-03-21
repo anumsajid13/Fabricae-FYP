@@ -17,7 +17,9 @@ import * as fabric from "fabric";
 import { SketchPicker } from "react-color";
 //import { ChromePicker } from "react-color";
 import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase";
 import { storage } from "../../firebase";
 import { toast } from "react-toastify";
 import ImageGalleryPopup from "./ImageGalleryPopup";
@@ -86,7 +88,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
       }
     }
 
-    function addFilter() {
+    function addFilter(){
+
       const activeObject = canvas.getActiveObject();
       if (!activeObject) return;
 
@@ -124,9 +127,11 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
 
       activeObject.applyFilters();
       canvas.renderAll();
+
     }
 
-    if (swapFiltersVisible && sourceColor) applySwapFiters();
+    if(swapFiltersVisible && sourceColor)
+      applySwapFiters();
 
     if (filtersMenuVisible) addFilter();
   }, [sourceColor, destinationColor, currentFilter, canvas]);
@@ -168,11 +173,19 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
     link.click();
   };
 
+
+
+
   const clearAll = () => {
     if (window.confirm("Are you sure you want to clear all?")) {
       canvas.remove(...canvas.getObjects());
     }
   };
+
+
+
+
+
 
   const toggleFiltersMenu = () => {
     setFiltersMenuVisible(!filtersMenuVisible);
@@ -355,16 +368,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
     const cropWidth = width / selectedImage.scaleX;
     const cropHeight = height / selectedImage.scaleY;
 
-    console.log(
-      "cropX:",
-      cropX,
-      "cropY:",
-      cropY,
-      "cropWidth:",
-      cropWidth,
-      "cropHeight:",
-      cropHeight
-    );
+    console.log("cropX:", cropX, "cropY:", cropY, "cropWidth:", cropWidth, "cropHeight:", cropHeight);
+
 
     // Get the original image element
     const originalImage = selectedImage._element;
@@ -403,6 +408,8 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
         scaleY: selectedImage.scaleY,
       });
 
+
+
       // Remove the original image and the crop rectangle from the canvas
       canvas.remove(selectedImage);
       canvas.remove(cropRect);
@@ -424,6 +431,9 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
     }
   };
 
+
+
+
   // Static images for filter previews
   const filterImages = {
     sepia: "/sepia.PNG",
@@ -432,6 +442,7 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
     polaroid: "/polaroid.PNG",
     grayscale: "/grayscale.PNG",
   };
+
 
   const [isSaving, setIsSaving] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -508,127 +519,125 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
     };
   }, [isCropping, applyCrop]);
 
+
+
+
   return (
+
     // bg-[#9e4557]
-    <div className="ml-0 flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
-      <label
-        className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
-        onClick={openGallery}
-      >
-        <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "white" }} />
-      </label>
+      <div className="ml-0 flex flex-col bg-[#434242] items-start space-y-4 p-4 shadow-md rounded-xl fixed top-[7rem] left-2 h-[calc(90vh-4rem)]">
 
-      <button
-        title="Drawing mode"
-        onClick={toggleDrawingMode}
-        className={`flex items-center p-2 ${
-          drawingMode
-            ? "bg-transparent text-white hover:bg-gray-400"
-            : "bg-transparent text-gray-700 hover:bg-gray-400"
-        } rounded`}
-      >
-        <FontAwesomeIcon
-          icon={faPencilAlt}
-          size="xl"
-          style={{ color: "white" }}
-        />
-      </button>
+        <label
+            className="space-x-2 cursor-pointer bg-transparent text-gray-700 hover:bg-gray-400 flex items-center p-1.5 rounded mt-6"
+            onClick={openGallery}
+          >
+            <FontAwesomeIcon icon={faImage} size="xl" style={{ color: "white" }} />
+        </label>
 
-      {/* Filters Icon */}
-      <button
-        title="Filters"
-        onClick={toggleFiltersMenu}
-        className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
-      >
-        <FontAwesomeIcon
-          icon={faWandMagicSparkles}
-          size="xl"
-          style={{ color: "white" }}
-        />
-        {/* <img src='/Filter.PNG' className='w-10'></img> */}
-      </button>
+        <button
+          title="Drawing mode"
+          onClick={toggleDrawingMode}
+          className={`flex items-center p-2 ${
+            drawingMode
+              ? "bg-transparent text-white hover:bg-gray-400"
+              : "bg-transparent text-gray-700 hover:bg-gray-400"
+          } rounded`}
+        >
+          <FontAwesomeIcon icon={faPencilAlt} size="xl" style={{color: "white"}}/>
+        </button>
 
-      {/* Filters Sub-Menu */}
-      {filtersMenuVisible && (
-        <div
-          className="absolute bg-transparent p-4 shadow-md rounded-xl grid grid-cols- gap-4 top-[0rem] left-20 w-auto h-[calc(87vh-4rem)]"
-          style={{
+        {/* Filters Icon */}
+        <button
+          title="Filters"
+          onClick={toggleFiltersMenu}
+          className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
+        >
+           <FontAwesomeIcon icon={faWandMagicSparkles} size="xl" style={{color: "white"}} />
+          {/* <img src='/Filter.PNG' className='w-10'></img> */}
+        </button>
+
+         {/* Filters Sub-Menu */}
+         {filtersMenuVisible && (
+          <div className="absolute bg-transparent p-4 shadow-md rounded-xl grid grid-cols- gap-4 top-[0rem] left-20 w-auto h-[calc(87vh-4rem)]"
+           style={{
             maxHeight: "700px",
             overflowY: "auto", // Enables scrolling
             scrollbarWidth: "none", // Firefox
             msOverflowStyle: "none", // Internet Explorer/Edge
           }}
-        >
-          {Object.entries(filterImages).map(([filterName, imgSrc]) => (
-            <div key={filterName} className="flex flex-col items-center">
-              <button
-                onClick={() => setCurrentFilter(filterName)}
-                className="w-[80px] h-[80px] bg-gray-200 rounded shadow-md flex justify-center items-center hover:bg-gray-300"
-              >
-                <img
-                  src={imgSrc}
-                  alt={filterName}
-                  className="w-full h-full rounded"
-                />
-              </button>
-              <span className="text-black mt-2 text-sm capitalize">
-                {filterName}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Swap Filters Icon */}
-      <button
-        title="Swap Filters"
-        onClick={toggleSwapFiltersBox}
-        className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
-      >
-        {/* <FontAwesomeIcon icon={faExchangeAlt} /> */}
-        <img src="/Frame2.png" className="w-8"></img>
-      </button>
-
-      {/* Swap Filters Box */}
-      {swapFiltersVisible && (
-        <div
-          className="absolute bottom-16 left-[4rem] bg-transparent p-3 space-y-3 w-[200px] "
-          // style={{
-          //   maxHeight: "400px",
-          //   overflowY: "auto",  // Enables scrolling
-          //   scrollbarWidth: "none",  // Firefox
-          //   msOverflowStyle: "none",  // Internet Explorer/Edge
-          // }}
-        >
-          <div className="flex flex-col space-y-3">
-            {/* Source Color Picker */}
-            <div className="flex flex-col items-center">
-              <span className="text-gray-600 text-xs">Source Color</span>
-              <div className="w-full flex justify-center items-center">
-                <SketchPicker
-                  color={sourceColor}
-                  onChangeComplete={(color) => setSourceColor(color.hex)}
-                  className="shadow-md rounded-lg"
-                  width="130px"
-                  presetColors={[]}
-                />
+          >
+            {Object.entries(filterImages).map(([filterName, imgSrc]) => (
+              <div key={filterName} className="flex flex-col items-center">
+                <button
+                  onClick={() => setCurrentFilter(filterName)}
+                  className="w-[80px] h-[80px] bg-gray-200 rounded shadow-md flex justify-center items-center hover:bg-gray-300"
+                >
+                  <img src={imgSrc} alt={filterName} className="w-full h-full rounded" />
+                </button>
+                <span className="text-black mt-2 text-sm capitalize">{filterName}</span>
               </div>
-            </div>
-
-            {/* Destination Color Picker */}
-            <div className="flex flex-col items-center">
-              <span className="text-gray-600 text-xs">Destination Color</span>
-              <div className="w-full flex justify-center items-center">
-                <SketchPicker
-                  color={destinationColor}
-                  onChangeComplete={(color) => setDestinationColor(color.hex)}
-                  className="shadow-md rounded-lg"
-                  width="130px"
-                  presetColors={[]}
-                />
-              </div>
-            </div>
+            ))}
           </div>
+        )}
+
+
+
+
+
+        {/* Swap Filters Icon */}
+        <button
+          title="Swap Filters"
+          onClick={toggleSwapFiltersBox}
+          className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
+        >
+          {/* <FontAwesomeIcon icon={faExchangeAlt} /> */}
+          <img src='/Frame2.png' className='w-8'></img>
+        </button>
+
+
+
+       {/* Swap Filters Box */}
+{swapFiltersVisible && (
+  <div
+    className="absolute bottom-16 left-[4rem] bg-transparent p-3 space-y-3 w-[200px] "
+    // style={{
+    //   maxHeight: "400px",
+    //   overflowY: "auto",  // Enables scrolling
+    //   scrollbarWidth: "none",  // Firefox
+    //   msOverflowStyle: "none",  // Internet Explorer/Edge
+    // }}
+  >
+    <div className="flex flex-col space-y-3">
+
+      {/* Source Color Picker */}
+      <div className="flex flex-col items-center">
+        <span className="text-gray-600 text-xs">Source Color</span>
+        <div className="w-full flex justify-center items-center">
+          <SketchPicker
+            color={sourceColor}
+            onChangeComplete={(color) => setSourceColor(color.hex)}
+            className="shadow-md rounded-lg"
+            width="130px"
+            presetColors={[]}
+          />
+        </div>
+      </div>
+
+      {/* Destination Color Picker */}
+      <div className="flex flex-col items-center">
+        <span className="text-gray-600 text-xs">Destination Color</span>
+        <div className="w-full flex justify-center items-center">
+          <SketchPicker
+            color={destinationColor}
+            onChangeComplete={(color) => setDestinationColor(color.hex)}
+            className="shadow-md rounded-lg"
+            width="130px"
+            presetColors={[]}
+          />
+        </div>
+      </div>
+
+    </div>
 
           {/* Hide scrollbar in Chrome, Safari, and Opera using inline CSS */}
           <style>{`
@@ -704,18 +713,18 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
         />
       </div> */}
 
-      {/* Custom CSS for Slider Styling */}
-      <style jsx>{`
-        .custom-slider {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 100%;
-          height: 8px;
-          background: linear-gradient(to right, gray, #822538);
-          border-radius: 5px;
-          outline: none;
-          transition: background 0.15s ease-in-out;
-        }
+        {/* Custom CSS for Slider Styling */}
+        <style jsx>{`
+          .custom-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, gray, #822538);
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.15s ease-in-out;
+          }
 
         .custom-slider::-webkit-slider-thumb {
           -webkit-appearance: none;
@@ -738,15 +747,15 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
         }
       `}</style>
 
-      <button
-        title="Clear all objects"
-        onClick={clearAll}
-        className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
-      >
-        <FontAwesomeIcon icon={faTrash} size="xl" style={{ color: "white" }} />
-      </button>
+        <button
+          title="Clear all objects"
+          onClick={clearAll}
+          className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
+        >
+          <FontAwesomeIcon icon={faTrash} size="xl" style={{color: "white"}} />
+        </button>
 
-      <button
+        <button
         title="Save Image to Database"
         onClick={handleSaveImage}
         className="flex items-center p-2 bg-transparent text-white rounded hover:bg-gray-400"
@@ -803,7 +812,13 @@ const Toolbox = ({ canvas, currentFilter, setCurrentFilter, openGallery }) => {
       >
         Test Button
       </button> */}
-    </div>
+
+      </div>
+
+
+
+
+
   );
 };
 

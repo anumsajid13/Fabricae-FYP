@@ -55,6 +55,7 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
 
     function handleCanvasClick() {
       setContextMenu({ visible: false, x: 0, y: 0 });
+
     }
 
     document.addEventListener("keydown", handleKeyDown, false);
@@ -85,6 +86,7 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
       }
     };
   }, [canvas, setCurrentFilter, activeObject]);
+
 
   const duplicateImage = async () => {
     if (activeObject && activeObject.type.toLowerCase() === "image") {
