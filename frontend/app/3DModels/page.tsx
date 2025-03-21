@@ -263,7 +263,7 @@ const ModelsPage = () => {
 
         {/* Screenshot Preview Modal */}
         {showPreview && screenshot && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 text-black bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4">
               <h2 className="text-lg font-semibold mb-4">Preview Screenshot</h2>
               <input

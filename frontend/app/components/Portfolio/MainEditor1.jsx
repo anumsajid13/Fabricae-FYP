@@ -453,7 +453,7 @@ export const MainEditor1 = () => {
                     className="w-16 text-center py-2 text-black bg-[#e7e4d8] border-t border-b border-[#e7e4d8] outline-none"
                     aria-label="Font size input"
                   />
-                  <span className="bg-[#e7e4d8] py-2 pr-2">px</span>
+                  <span className="bg-[#e7e4d8] py-2 pr-2 text-black">px</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
