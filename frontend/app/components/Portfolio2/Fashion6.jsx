@@ -26,6 +26,7 @@ export const Research = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `research-${selectedPage}`;
@@ -610,8 +611,16 @@ export const Research = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    loadState();
-  }, []);
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
+
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
 
   return (
     <div

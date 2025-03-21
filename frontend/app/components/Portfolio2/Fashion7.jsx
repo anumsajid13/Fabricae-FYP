@@ -23,6 +23,7 @@ export const Resume = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `resume-${selectedPage}`;
@@ -658,8 +659,16 @@ export const Resume = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    loadState();
-  }, []);
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
+
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
 
   const headingPosition = getElementPosition(componentId, "heading");
   const label1Position = getElementPosition(componentId, "label1");

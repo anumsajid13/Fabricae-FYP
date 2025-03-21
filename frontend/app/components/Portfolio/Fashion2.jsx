@@ -19,6 +19,7 @@ export const FashionLayout  = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `fashion-portfolio-${selectedPage}`;
@@ -549,8 +550,8 @@ export const FashionLayout  = forwardRef((props, ref) => {
         return;
       }
 
-      const portfolioId = "1"; // Hardcoded portfolioId
-      const pageId = "2"; // Hardcoded pageId
+      const portfolioId = 1; // Hardcoded portfolioId
+      const pageId = 2; // Hardcoded pageId
 
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
@@ -620,11 +621,17 @@ export const FashionLayout  = forwardRef((props, ref) => {
     }
   };
 
-  // Load portfolio state when the component mounts
-  useEffect(() => {
-    loadState();
-  }, []); // Empty dependency array ensures this runs only once on mount
+   useEffect(() => {
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
 
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]); 
   return (
     <div
       style={{

@@ -28,6 +28,7 @@ export const AboutMe = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `about-me-${selectedPage}`;
@@ -613,10 +614,17 @@ export const AboutMe = forwardRef((props, ref) => {
     );
   };
 
-  // Load portfolio state when the component mounts
-  useEffect(() => {
-    loadState();
-  }, []); // Empty dependency array ensures this runs only once on mount
+ useEffect(() => {
+     if (loadstate) {
+       const loadPortfolioState = async () => {
+         await loadState(); // Call your existing loadState function
+         setLoadState(false); // Reset loadState to false after loading
+
+       };
+       loadPortfolioState();
+
+     }
+   }, [loadState, setLoadState]);
 
   const namePosition = getElementPosition(componentId, "name");
   const descriptionPosition = getElementPosition(componentId, "description");

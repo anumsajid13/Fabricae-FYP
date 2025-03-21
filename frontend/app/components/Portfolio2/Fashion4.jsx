@@ -26,6 +26,7 @@ export const MyServices = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `my-services-${selectedPage}`;
@@ -936,9 +937,16 @@ export const MyServices = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    loadState();
-  }, []);
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
 
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
   const services = [
     {
       id: "label1",

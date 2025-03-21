@@ -17,6 +17,7 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `fashion-portfolio-${selectedPage}`;
@@ -84,16 +85,16 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
   const saveState = async () => {
     try {
       const username = localStorage.getItem("userEmail");
-  
+
       if (!username) {
         console.error("Username not found in local storage");
         return;
       }
 
-      
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 4; // Hardcoded pageId
-  
+
       const stateToSave = {
         username,
         portfolioId,
@@ -113,7 +114,7 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
           model5: getElementPosition(componentId, "model5"),
         },
       };
-  
+
       const response = await fetch("http://localhost:5000/api/save-portfolio", {
         method: "POST",
         headers: {
@@ -122,7 +123,7 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
         },
         body: JSON.stringify(stateToSave),
       });
-  
+
       if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
@@ -138,10 +139,10 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
         console.error("Username not found in local storage");
         return;
       }
-  
+
       const portfolioId = 1; // Hardcoded portfolioId
       const pageId = 4; // Hardcoded pageId
-  
+
       const response = await fetch(
         `http://localhost:5000/api/load-portfolio?username=${username}&portfolioId=${portfolioId}&pageId=${pageId}`,
         {
@@ -151,17 +152,17 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
           },
         }
       );
-  
+
       if (!response.ok) throw new Error("Failed to load portfolio");
-  
+
       const savedStateArray = await response.json();
       const savedState = savedStateArray[0];
-  
+
       if (!savedState || typeof savedState !== "object") {
         console.error("Invalid state loaded:", savedState);
         return;
       }
-  
+
       // Update the component's state with the loaded data
       if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
       if (savedState.modelImage1) setModelImage1(savedState.modelImage1);
@@ -170,24 +171,31 @@ export const FabricMaterialSelection =  forwardRef((props, ref) => {
       if (savedState.modelImage4) setModelImage4(savedState.modelImage4);
       if (savedState.modelImage5) setModelImage5(savedState.modelImage5);
       if (savedState.bgColor) setBgColor(savedState.bgColor);
-  
+
       // Update element positions if they exist
       if (savedState.elementPositions) {
         Object.keys(savedState.elementPositions).forEach((key) => {
           updateElementPosition(componentId, key, savedState.elementPositions[key]);
         });
       }
-  
+
       console.log("Portfolio loaded successfully");
     } catch (error) {
       console.error("Error loading portfolio:", error);
     }
   };
 
-  // Load state when the component mounts
-    useEffect(() => {
-      loadState();
-    }, []);
+   useEffect(() => {
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
+
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);

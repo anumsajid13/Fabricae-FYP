@@ -17,6 +17,7 @@ export const PortfolioSection =  forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `fashion-portfolio-${selectedPage}`;
@@ -214,11 +215,17 @@ export const PortfolioSection =  forwardRef((props, ref) => {
   };
 
 
-    // Load state when the component mounts
-    useEffect(() => {
-      loadState();
-    }, []);
+  useEffect(() => {
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
 
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
 
   const handleDragStart = (key) => {
     setActiveDraggable(key);

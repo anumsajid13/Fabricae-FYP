@@ -26,6 +26,7 @@ export const WhatIDo = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `what-i-do-${selectedPage}`;
@@ -531,9 +532,16 @@ export const WhatIDo = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    loadState();
-  }, []);
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
 
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
   return (
     <div
       className="flex justify-center items-center min-h-screen bg-[#efe8e4] p-4"

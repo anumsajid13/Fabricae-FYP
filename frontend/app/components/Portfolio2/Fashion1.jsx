@@ -13,7 +13,7 @@ import "react-resizable/css/styles.css";
 import { GalleryModal } from "../Portfolio/GalleryModal";
 
 export const ApparelPortfolio = forwardRef((props, ref) => {
-  localStorage.removeItem("fashion-portfolio-storage");
+
   const [activeDraggable, setActiveDraggable] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
@@ -27,6 +27,7 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
+    loadstate, setLoadState
   } = useFashionStore();
 
   const pageId = `apparel-portfolio-${selectedPage}`;
@@ -642,9 +643,16 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    loadState();
-  }, []);
+      if (loadstate) {
+        const loadPortfolioState = async () => {
+          await loadState(); // Call your existing loadState function
+          setLoadState(false); // Reset loadState to false after loading
 
+        };
+        loadPortfolioState();
+
+      }
+    }, [loadState, setLoadState]);
   return (
     <div
       className="max-w-[942px] min-h-[780px] flex justify-center items-center  bg-[#efe8e4] p-6 w-full"
