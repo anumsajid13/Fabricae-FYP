@@ -3,7 +3,11 @@ import * as fabric from "fabric";
 import { Image } from "fabric";
 
 const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
-  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
   const [activeObject, setActiveObject] = useState(null);
 
   // Define the desired canvas size
@@ -12,12 +16,12 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
 
   useEffect(() => {
     if (!canvas) return;
-  
+
     // Resize the Fabric.js canvas to match the desired dimensions
     canvas.setWidth(CANVAS_WIDTH);
     canvas.setHeight(CANVAS_HEIGHT);
     canvas.renderAll(); // Update the rendering
-  
+
     function handleKeyDown(e) {
       if (e.key === "Delete") {
         for (const obj of canvas.getActiveObjects()) {
@@ -26,18 +30,18 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
         }
       }
     }
-  
+
     function handleSelection(e) {
       const obj = e.selected?.length === 1 ? e.selected[0] : null;
       const filter = obj?.filters?.at(0);
       setCurrentFilter(filter ? filter.type.toLowerCase() : null);
       setActiveObject(obj);
     }
-  
+
     function handleRightClick(e) {
       e.preventDefault();
       const pointer = canvas.getPointer(e);
-  
+
       if (activeObject && activeObject.type === "image") {
         setContextMenu({
           visible: true,
@@ -48,12 +52,11 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
         setContextMenu({ visible: false, x: 0, y: 0 });
       }
     }
-  
+
     function handleCanvasClick() {
       setContextMenu({ visible: false, x: 0, y: 0 });
-      
     }
-  
+
     document.addEventListener("keydown", handleKeyDown, false);
     canvas.on({
       "selection:created": handleSelection,
@@ -61,12 +64,12 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
       "selection:cleared": handleSelection,
       "mouse:down": handleCanvasClick,
     });
-  
+
     //  Ensure `canvas.wrapperEl` exists before adding event listener
     if (canvas.wrapperEl) {
       canvas.wrapperEl.addEventListener("contextmenu", handleRightClick);
     }
-  
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown, false);
       canvas.off({
@@ -75,14 +78,13 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
         "selection:cleared": handleSelection,
         "mouse:down": handleCanvasClick,
       });
-  
+
       // ✅ Ensure `canvas.wrapperEl` exists before removing event listener
       if (canvas.wrapperEl) {
         canvas.wrapperEl.removeEventListener("contextmenu", handleRightClick);
       }
     };
   }, [canvas, setCurrentFilter, activeObject]);
-  
 
   const duplicateImage = async () => {
     if (activeObject && activeObject.type.toLowerCase() === "image") {
@@ -106,13 +108,15 @@ const EditorCanvas = forwardRef(({ canvas, setCurrentFilter }, ref) => {
     }
 
     setContextMenu({ visible: false, x: 0, y: 0 });
-};
-
+  };
 
   return (
-    <div className="left-[15%] mt-[4rem] relative ">
+    <div className="left-[18%] mt-[4rem] relative ">
       {/* Canvas Wrapper with Fixed Size */}
-      <div className="border border-gray-300 shadow-md" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+      <div
+        className="border border-gray-300 shadow-md"
+        style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
+      >
         <canvas ref={ref}></canvas>
       </div>
 

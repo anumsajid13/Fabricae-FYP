@@ -28,7 +28,9 @@ const ImageBox = ({ canvas, currentFilter, setCurrentFilter }) => {
         return;
       }
       try {
-        const response = await fetch(`http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`);
+        const response = await fetch(
+          `http://localhost:5000/api/prompt-designs/retrieve-by-username/${username}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch patterns");
         }
@@ -43,7 +45,7 @@ const ImageBox = ({ canvas, currentFilter, setCurrentFilter }) => {
   }, []);
 
   return (
-    <div className="mr-9 flex flex-col items-start space-y-4 p-4 bg-[#434242] shadow-md rounded-xl fixed top-[7rem] right-2 h-[calc(89vh-4rem)] overflow-y-scroll scrollbar-hide w-84">
+    <div className="mr-0 flex flex-col items-start space-y-4 p-4 bg-[#434242] shadow-md rounded-xl fixed top-[7rem] right-2 h-[calc(89vh-4rem)] overflow-y-scroll scrollbar-hide w-84">
       {/* 🔹 YOUR DESIGNS Header */}
       <h2 className="font-custom text-white text-lg font-bold uppercase tracking-wider border-b border-transparent pb-0 w-full text-center">
         YOUR DESIGNS

@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; // Import persist middleware
+
 
 export const useFashionStore = create(
-  persist(
+ 
     (set, get) => ({
       // State for selected text information
       selection: {
@@ -371,9 +371,5 @@ export const useFashionStore = create(
       loadstate: false,
       setLoadState: (state) => set({ loadstate: state }),
     }),
-    {
-      name: "fashion-portfolio-storage", // Name for the storage
-      getStorage: () => localStorage, // Use localStorage (you could also use sessionStorage)
-    }
+   
   )
-);
