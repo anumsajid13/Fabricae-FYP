@@ -11,6 +11,7 @@ import {  useSearchParams } from "next/navigation";
 import ResetReqModal from '../resetPasswordComp/ResetPassReq'
 import { toast } from "react-toastify";
 import { FiLoader } from "react-icons/fi";
+import Link from "next/link";
 
 import {
   IconBrandGithub,
@@ -30,6 +31,8 @@ export function LoginFormDemo() {
   const reset = searchParams.get("reset") == "true";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReqModel, setIsReqModel] = useState(false)
+
+  
 
   // Open modal if URL has token and reset=true
   useEffect(() => {
@@ -253,7 +256,10 @@ export function LoginFormDemo() {
       <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-start justify-center bg-[#E7E4D8]">
         <h2 className="font-bold text-3xl text-black font-custom">Welcome to Fabricae</h2>
         <p className="text-sm max-w-sm mt-2 text-black">
-          Create an Account if you want to Login!
+          <Link href="/SignUp" className="underline text-black hover:text-red-900">
+            Create an Account
+          </Link>
+          &nbsp;if you want to Login!
         </p>
 
         <form className="my-8 w-full" onSubmit={handleSubmit}>

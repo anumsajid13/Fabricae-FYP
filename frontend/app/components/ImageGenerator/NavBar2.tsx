@@ -60,9 +60,12 @@ export default function Navbar() {
             <Link href="/Profile">
               <Image src="/profile-user.png" alt="Profile" width={40} height={35} className="cursor-pointer" />
             </Link>
+
+            <Link href="/Chat">
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="35" viewBox="0 0 24 24"><path fill="#822538" fill-rule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22m-4-8.75a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5zm-.75-2.75A.75.75 0 0 1 8 9.75h8a.75.75 0 0 1 0 1.5H8a.75.75 0 0 1-.75-.75" clip-rule="evenodd"/></svg>            </Link>
             <button onClick={toggleSidebar} className="focus:outline-none">
-              <img className="h-[30px] transition-transform hover:scale-110" src="/icons8-hamburger-menu.svg" />
-            </button>
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="35" viewBox="0 0 24 24"><path fill="none" stroke="#822538" stroke-linecap="round" stroke-width="1.9" d="M20 7H4m16 5H4m16 5H4"/></svg>     </button>
+          
           </div>
         </div>
 

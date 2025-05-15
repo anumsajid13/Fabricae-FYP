@@ -248,7 +248,7 @@ const LearnMoreSection: React.FC<LearnMoreProps> = ({ id }) => {
 
           </div>
 
-          <Link href="/ImageGenerator">
+          <Link href="/SignUp">
             <div>
               <button className="mt-10 bg-[#b4707e] hover:bg-[#822538] text-black font-custom font-normal py-3 px-8 rounded-full shadow-lg mx-auto transition-all hover:transform hover:scale-105 hover:shadow-xl flex items-center justify-center space-x-2">
                 <span>Start your design journey</span>
