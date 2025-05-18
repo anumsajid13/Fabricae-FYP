@@ -93,8 +93,13 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/explore" className={`text-lg ${pathname === "/explore" ? "text-gray-300" : "hover:text-gray-400"} transition-all`}>
+              <Link href="/Explore" className={`text-lg ${pathname === "/explore" ? "text-gray-300" : "hover:text-gray-400"} transition-all`}>
                 Explore
+              </Link>
+            </li>
+             <li>
+              <Link href="/Feedback" className={`text-lg ${pathname === "/explore" ? "text-gray-300" : "hover:text-gray-400"} transition-all`}>
+                Feedback
               </Link>
             </li>
             <li>

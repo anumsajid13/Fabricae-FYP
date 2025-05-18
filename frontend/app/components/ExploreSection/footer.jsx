@@ -73,8 +73,8 @@ export default function Footer  () {
                             <p className="text-xs text-gray-500 mt-1">Luxury Brand Co. • 2 hours ago</p>
                         </div>
 
-                        <div className="bg-red-200 rounded-lg p-3 mb-4 ml-auto max-w-[80%]">
-                            <p className="text-sm text-red-900">
+                        <div className="bg-[#b4707e]  rounded-2xl p-3 mb-4 ml-auto max-w-[80%]">
+                            <p className="text-sm text-black ">
                                 Thank you for reaching out! I'd be delighted to discuss a collaboration. My schedule is
                                 open next week for a detailed conversation.
                             </p>
