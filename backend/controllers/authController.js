@@ -51,6 +51,7 @@ exports.registerUser = async (req, res) => {
         firstname: newUser.firstname,
         lastname: newUser.lastname,
         email: newUser.email,
+        role: newUser.role, 
       },
       token,
     });
