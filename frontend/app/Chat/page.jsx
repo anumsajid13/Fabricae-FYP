@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
+import Navbar from "../components/ImageGenerator/NavBar2";
 
 // WebSocket server URL
 const SOCKET_URL = "ws://localhost:5000"; //  WebSocket server URL
@@ -323,12 +324,14 @@ const handleFileChange = async (event) => {
   
 
   return (
+    <>
+    {/* <Navbar/> */}
     <div className="h-screen bg-gray-50 flex flex-col">
       <div className="flex flex-1 bg-white shadow-md">
         {/* Left Sidebar */}
         <div className="w-full sm:w-1/4 bg-[#E7E4D8] text-[#822538] pl-0 pr-0 pt-4 pb-4 h-full overflow-y-auto">
           <div className="pt-0 pl-5 pr-5 pb-2">
-            <Link href="/" passHref>
+            <Link href="/" >
               <div className="text-xl font-semibold mb-6 cursor-pointer">Fabricae</div>
             </Link>
           </div>
@@ -499,7 +502,7 @@ const handleFileChange = async (event) => {
           <div className="text-xl font-semibold mb-4">{selectedContact?.name}</div>
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-gray-300">
-            <img className="w-9 h-9 rounded-full bg-gray-300 mr-2"  src={profile?.profilePicture}  />
+            <img className="w-10 h-10 rounded-full bg-gray-300 mr-2"  src={profile?.profilePicture}  />
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-800">{selectedContact?.name}</div>
@@ -515,14 +518,15 @@ const handleFileChange = async (event) => {
           <div className="mt-6">
             <div className="text-xs font-semibold text-gray-600">Contact Information</div>
             <div className="text-sm text-gray-500 mt-2">
-              <p><i className="fas fa-envelope text-gray-600"></i> Email: <a href={`mailto:${selectedContact?.email}`} className="text-blue-600 hover:underline">{selectedContact?.contact}</a></p>
+              <p><i className="fas fa-envelope text-gray-600"></i> Email: <a href={`mailto:${selectedContact?.email}`} className="text-blue-600 hover:underline">{selectedContact?.email}</a></p>
               {/* <p><i className="fas fa-phone text-gray-600"></i> Phone: <a href={`tel:${selectedContact?.phone}`} className="text-blue-600 hover:underline">{selectedContact?.phone}</a></p> */}
-              <p><i className="fas fa-map-marker-alt text-gray-600"></i> Location: {profile?.country}</p>
+              <p><i className="fas fa-map-marker-alt text-gray-600"></i> Location: {profile?.country || 'Pakistan'}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 };
 
