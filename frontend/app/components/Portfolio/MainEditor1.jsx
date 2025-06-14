@@ -56,9 +56,126 @@ export const MainEditor1 = () => {
       .map((_, i) => childRefs.current[i] || React.createRef());
   }, [currentPortfolioComponents.length]);
 
-  // Update the handleSave function to save all components
-  const handleSave = () => {
+  // Updated downloadPDF function that can both download and return blob
+  const downloadPDF = async (shouldDownload = true) => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      console.error('downloadPDF can only be called on the client side');
+      return null;
+    }
+
+    const toastMessage = shouldDownload ? "Generating PDF... Please wait." : "Generating and uploading PDF... Please wait.";
+
+    toast.info(toastMessage, {
+      autoClose: false,
+      closeButton: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      theme: "colored",
+      style: {
+        backgroundColor: "#616852",
+        color: "#ffffff",
+      },
+    });
+
+    try {
+      // Save the current page so we can return to it later
+      const originalSelectedPage = selectedPage;
+
+      // Create a new PDF document
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "pt",
+        format: [960, 540], // Match the exact dimensions of your portfolio viewer
+      });
+
+      // Get a reference to the portfolio content container
+      const portfolioContainer = document.querySelector(
+        ".bg-white.mt-11.shadow-lg.rounded-sm"
+      );
+
+      if (!portfolioContainer) {
+        throw new Error("Could not find portfolio container element");
+      }
+
+      // Generate screenshots of each page
+      for (
+        let i = 0;
+        i < Math.min(totalSlides, currentPortfolioComponents.length);
+        i++
+      ) {
+        console.log(
+          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
+        );
+
+        // Change to the current page
+        setSelectedPage(i + 1);
+
+        // Wait for the component to render
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Take a screenshot of the current page
+        const canvas = await html2canvas(portfolioContainer, {
+          scale: 2, // Higher scale for better quality
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+        });
+
+        // Add a new page to the PDF (except for the first page)
+        if (i > 0) {
+          pdf.addPage([960, 540], "landscape");
+        }
+
+        // Add the screenshot to the PDF
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+        pdf.addImage(imgData, "JPEG", 0, 0, 960, 540);
+
+        console.log(`Added page ${i + 1} to PDF`);
+      }
+
+      // Return to the original page
+      setSelectedPage(originalSelectedPage);
+
+      if (shouldDownload) {
+        // Save the PDF
+        pdf.save("portfolio.pdf");
+        console.log("PDF saved successfully");
+
+        // Dismiss the loading toast
+        toast.dismiss();
+        toast.success("PDF generated successfully!", {
+          autoClose: 3000,
+        });
+
+        return null; // No blob needed for download
+      } else {
+        // Return PDF as blob for upload
+        console.log("PDF blob generated successfully");
+        return pdf.output('blob');
+      }
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.dismiss();
+      toast.error("Error generating PDF. Please try again.", {
+        autoClose: 3000,
+      });
+      throw error;
+    }
+  };
+
+  // Updated handleSave function to save all components and upload PDF
+  const handleSave = async () => {
     console.log("Save button clicked");
+
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      console.error('handleSave can only be called on the client side');
+      return;
+    }
 
     // Call the save function of each child component
     childRefs.current.forEach((ref, index) => {
@@ -72,7 +189,54 @@ export const MainEditor1 = () => {
 
     // Save the portfolio state
     //savePortfolioState();
+
+    // Generate and upload PDF
+    try {
+      const email = localStorage.getItem('userEmail');
+      if (!email) {
+        toast.error("Email not found. Please log in again.");
+        return;
+      }
+
+      // Generate PDF blob (without downloading)
+      const pdfBlob = await downloadPDF(false);
+
+      if (!pdfBlob) {
+        throw new Error("Failed to generate PDF blob");
+      }
+
+      // Create FormData for upload
+      const formData = new FormData();
+      formData.append('pdf', pdfBlob, 'portfolio.pdf');
+
+      // Upload to backend
+      const response = await fetch(`http://localhost:5000/api/users/profile/${email}/portfolio`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('PDF uploaded successfully:', result);
+
+      // Dismiss loading toast and show success
+      toast.dismiss();
+      toast.success("Portfolio saved and PDF uploaded successfully!", {
+        autoClose: 3000,
+      });
+
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      toast.dismiss();
+      toast.error("Error uploading PDF. Please try again.", {
+        autoClose: 3000,
+      });
+    }
   };
+
   // Get total slides for the current portfolio
   const totalSlides = currentPortfolioComponents.length;
 
@@ -240,101 +404,15 @@ export const MainEditor1 = () => {
     };
   }, []);
 
-  const downloadPDF = async () => {
-    toast.info("Generating PDF... Please wait.", {
-      autoClose: false,
-      closeButton: false,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      theme: "colored",
-      style: {
-        backgroundColor: "#616852",
-        color: "#ffffff",
-      },
-    });
-
-    try {
-      // Save the current page so we can return to it later
-      const originalSelectedPage = selectedPage;
-
-      // Create a new PDF document
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "pt",
-        format: [960, 540], // Match the exact dimensions of your portfolio viewer
-      });
-
-      // Get a reference to the portfolio content container
-      const portfolioContainer = document.querySelector(
-        ".bg-white.mt-11.shadow-lg.rounded-sm"
-      );
-
-      if (!portfolioContainer) {
-        throw new Error("Could not find portfolio container element");
-      }
-
-      // Generate screenshots of each page
-      for (
-        let i = 0;
-        i < Math.min(totalSlides, currentPortfolioComponents.length);
-        i++
-      ) {
-        console.log(
-          `Processing page ${i + 1} of ${currentPortfolioComponents.length}`
-        );
-
-        // Change to the current page
-        setSelectedPage(i + 1);
-
-        // Wait for the component to render
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // Take a screenshot of the current page
-        const canvas = await html2canvas(portfolioContainer, {
-          scale: 2, // Higher scale for better quality
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: "#ffffff",
-          logging: false,
-        });
-
-        // Add a new page to the PDF (except for the first page)
-        if (i > 0) {
-          pdf.addPage([960, 540], "landscape");
-        }
-
-        // Add the screenshot to the PDF
-        const imgData = canvas.toDataURL("image/jpeg", 1.0);
-        pdf.addImage(imgData, "JPEG", 0, 0, 960, 540);
-
-        console.log(`Added page ${i + 1} to PDF`);
-      }
-
-      // Save the PDF
-      pdf.save("portfolio.pdf");
-      console.log("PDF saved successfully");
-
-      // Return to the original page
-      setSelectedPage(originalSelectedPage);
-
-      // Dismiss the loading toast
-      toast.dismiss();
-      toast.success("PDF generated successfully!", {
-        autoClose: 3000,
-      });
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.dismiss();
-      toast.error("Error generating PDF. Please try again.", {
-        autoClose: 3000,
-      });
-    }
-  };
   const handleDuplicatePage = () => {
     duplicatePage(); // Call the Zustand action
     setAnimatePage(true); // Trigger animation
     setTimeout(() => setAnimatePage(false), 1000); // Reset after 1 second
+  };
+
+  // For the download button, call it like this:
+  const handleDownloadClick = () => {
+    downloadPDF(true); // This will download the PDF
   };
 
   return (
@@ -622,7 +700,7 @@ export const MainEditor1 = () => {
             </h1>
             <div className="flex items-center gap-2">
               <button
-                onClick={downloadPDF}
+                onClick={handleDownloadClick}
                 className="p-2 bg-[#434242] rounded-md hover:bg-[#616852] transition-colors duration-300"
               >
                 <span className="material-symbols-outlined text-white">
