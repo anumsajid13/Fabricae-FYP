@@ -39,7 +39,7 @@
     "app/components/landingPage/NavBar.tsx",
     "app/components/3Dvisualization/kameezTrouser.jsx",
     "app/ImageEditor/page.jsx"
-  ],
+, "app/Chat/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { getUserProfile ,updateUserProfile, uploadPdfToPortfolio} = require('../controllers/userController');
+const { getUserProfile ,updateUserProfile, getContacts, uploadPdfToPortfolio} = require('../controllers/userController');
 const router = express.Router();
 
 // Setup multer for handling PDF upload
@@ -13,5 +13,7 @@ router.get('/profile/:email', getUserProfile);
 router.put('/profile/:email', updateUserProfile);
 
 router.post('/profile/:email/portfolio', upload.single('pdf'), uploadPdfToPortfolio);
+
+router.get('/:userEmail/contacts', getContacts);
 
 module.exports = router;
