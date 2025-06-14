@@ -5,6 +5,7 @@ import "./globals.css";
 import 'tailwindcss/tailwind.css';
 import * as React from "react";
 import { NextUIProvider } from "@nextui-org/react";
+//import 'stream-chat-react/dist/css/index.css';
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
