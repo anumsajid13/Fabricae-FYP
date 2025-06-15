@@ -189,10 +189,76 @@ export default function ExploreSection() {
   };
 
   const handleUploadSuccess = (newPortfolio) => {
-    setPortfolios((prevPortfolios) => [newPortfolio, ...prevPortfolios]);
-    setRefreshKey((prev) => prev + 1);
-  };
+    // Add the new portfolio with a pending thumbnail status
+    const portfolioWithPendingThumbnail = {
+      ...newPortfolio,
+      thumbnailStatus: "pending",
+    };
 
+    setPortfolios((prevPortfolios) => [
+      portfolioWithPendingThumbnail,
+      ...prevPortfolios,
+    ]);
+
+    // Start polling for thumbnail generation
+    const pollForThumbnail = async (portfolioId) => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/thumbnails/${portfolioId}/thumbnail-status`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.thumbnailStatus === "generated") {
+            // Update the portfolio with the generated thumbnail
+            setPortfolios((prevPortfolios) =>
+              prevPortfolios.map((portfolio) =>
+                portfolio._id === portfolioId
+                  ? {
+                      ...portfolio,
+                      thumbnailUrl: data.thumbnailUrl,
+                      thumbnailStatus: "generated",
+                    }
+                  : portfolio
+              )
+            );
+            return true;
+          }
+        }
+        return false;
+      } catch (error) {
+        console.error("Error checking thumbnail status:", error);
+        return false;
+      }
+    };
+
+    // Poll every 2 seconds for up to 30 seconds
+    const maxAttempts = 15;
+    let attempts = 0;
+
+    const intervalId = setInterval(async () => {
+      attempts++;
+      const success = await pollForThumbnail(newPortfolio._id);
+
+      if (success || attempts >= maxAttempts) {
+        clearInterval(intervalId);
+        // If still not generated after max attempts, mark as failed
+        if (!success) {
+          setPortfolios((prevPortfolios) =>
+            prevPortfolios.map((portfolio) =>
+              portfolio._id === newPortfolio._id
+                ? {
+                    ...portfolio,
+                    thumbnailStatus: "failed",
+                  }
+                : portfolio
+            )
+          );
+        }
+      }
+    }, 2000);
+  };
   // Function to get thumbnail URL with fallbacks
   const getThumbnailUrl = (portfolio) => {
     // If thumbnail is available and generated, use it
@@ -200,7 +266,7 @@ export default function ExploreSection() {
       return portfolio.thumbnailUrl;
     }
 
-    // If thumbnail is pending or failed, show a placeholder
+    // If thumbnail is pending, show a loading placeholder
     if (portfolio.thumbnailStatus === "pending") {
       return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjEwMCIgcj0iMjAiIGZpbGw9IiM5Q0E0QUYiLz4KPGFuZXh0IHg9IjE1MCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjM3Mzg1IiBmb250LXNpemU9IjEyIj5HZW5lcmF0aW5nLi4uPC90ZXh0Pgo8L3N2Zz4K";
     }
@@ -219,22 +285,24 @@ export default function ExploreSection() {
     const fetchTopStories = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/success-stories/top');
-        
+        const response = await fetch(
+          "http://localhost:5000/api/success-stories/top"
+        );
+
         if (!response.ok) {
-          throw new Error('Failed to fetch success stories');
+          throw new Error("Failed to fetch success stories");
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
           setStories(data.data);
         } else {
-          throw new Error(data.message || 'Failed to load stories');
+          throw new Error(data.message || "Failed to load stories");
         }
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching success stories:', err);
+        console.error("Error fetching success stories:", err);
       } finally {
         setLoading(false);
       }
@@ -247,22 +315,22 @@ export default function ExploreSection() {
   const fetchAllStories = async () => {
     try {
       setLoadingAll(true);
-      const response = await fetch('http://localhost:5000/api/success-stories');
-      
+      const response = await fetch("http://localhost:5000/api/success-stories");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch all success stories');
+        throw new Error("Failed to fetch all success stories");
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setAllStories(data.data);
       } else {
-        throw new Error(data.message || 'Failed to load all stories');
+        throw new Error(data.message || "Failed to load all stories");
       }
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching all success stories:', err);
+      console.error("Error fetching all success stories:", err);
     } finally {
       setLoadingAll(false);
     }
@@ -285,7 +353,10 @@ export default function ExploreSection() {
     // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <span key={i} className="material-symbols-outlined text-[#822538] text-sm">
+        <span
+          key={i}
+          className="material-symbols-outlined text-[#822538] text-sm"
+        >
           star
         </span>
       );
@@ -294,7 +365,10 @@ export default function ExploreSection() {
     // Half star (if needed)
     if (hasHalfStar) {
       stars.push(
-        <span key="half" className="material-symbols-outlined text-[#822538] text-sm">
+        <span
+          key="half"
+          className="material-symbols-outlined text-[#822538] text-sm"
+        >
           star_half
         </span>
       );
@@ -304,7 +378,10 @@ export default function ExploreSection() {
     const remainingStars = 5 - Math.ceil(rating);
     for (let i = 0; i < remainingStars; i++) {
       stars.push(
-        <span key={`empty-${i}`} className="material-symbols-outlined text-neutral-300 text-sm">
+        <span
+          key={`empty-${i}`}
+          className="material-symbols-outlined text-neutral-300 text-sm"
+        >
           star
         </span>
       );
@@ -319,7 +396,9 @@ export default function ExploreSection() {
       return story.profileImage;
     }
     // Generate a placeholder based on name
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(story.name)}&background=822538&color=ffffff&size=128`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      story.name
+    )}&background=822538&color=ffffff&size=128`;
   };
 
   // Get stories to display
@@ -420,17 +499,42 @@ export default function ExploreSection() {
                   className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col min-h-[400px]" // Added flex-col and min-h
                 >
                   <div className="h-48 overflow-hidden relative group">
-                    {/* PDF Thumbnail with fallbacks */}
-                    <img
-                      src={getThumbnailUrl(portfolio)}
-                      alt={portfolio.name}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src =
-                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjEyNSIgeT0iNzUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzlDQTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjEzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYzNzM4NSIgZm9udC1zaX6PSIxMiI+UERGIFBvcnRmb2xpbzwvdGV4dD4KPC9zdmc+";
-                      }}
-                    />
+                    {/* PDF Thumbnail with fallback + spinner if no thumbnail */}
+                    {portfolio.thumbnailUrl ? (
+                      <img
+                        src={getThumbnailUrl(portfolio)}
+                        alt={portfolio.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.src =
+                            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjEyNSIgeT0iNzUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzlDQTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjEzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYzNzM4NSIgZm9udC1zaX6PSIxMiI+UERGIFBvcnRmb2xpbzwvdGV4dD4KPC9zdmc+";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <svg
+                          className="animate-spin h-8 w-8 text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          ></path>
+                        </svg>
+                      </div>
+                    )}
 
                     {/* Overlay button to view PDF */}
                     <button
@@ -600,18 +704,25 @@ export default function ExploreSection() {
               </div>
             ) : (
               <>
-                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-500 ${
-                  showAllStories ? 'max-h-none' : 'max-h-96 overflow-hidden'
-                }`}>
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-500 ${
+                    showAllStories ? "max-h-none" : "max-h-96 overflow-hidden"
+                  }`}
+                >
                   {displayedStories.map((story) => (
-                    <div key={story._id} className="flex flex-col items-center text-center">
+                    <div
+                      key={story._id}
+                      className="flex flex-col items-center text-center"
+                    >
                       <img
                         src={getProfileImage(story)}
                         alt={story.name}
                         className="w-16 h-16 rounded-full mb-3 object-cover"
                         onError={(e) => {
                           // Fallback to generated avatar if image fails to load
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(story.name)}&background=822538&color=ffffff&size=128`;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            story.name
+                          )}&background=822538&color=ffffff&size=128`;
                         }}
                       />
                       <h3 className="font-medium">{story.name}</h3>
@@ -619,10 +730,10 @@ export default function ExploreSection() {
                         {story.profession}
                       </p>
                       <div className="flex items-center gap-2 mb-4">
-                        <div className="flex">
-                          {renderStars(story.rating)}
-                        </div>
-                        <span className="text-sm font-medium">{story.rating}</span>
+                        <div className="flex">{renderStars(story.rating)}</div>
+                        <span className="text-sm font-medium">
+                          {story.rating}
+                        </span>
                       </div>
                       <p className="text-xs text-neutral-600">
                         "{story.testimonial}"
@@ -634,7 +745,9 @@ export default function ExploreSection() {
                 {loadingAll && (
                   <div className="flex justify-center items-center py-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#822538]"></div>
-                    <span className="ml-2 text-sm text-neutral-600">Loading more stories...</span>
+                    <span className="ml-2 text-sm text-neutral-600">
+                      Loading more stories...
+                    </span>
                   </div>
                 )}
 
@@ -644,11 +757,13 @@ export default function ExploreSection() {
                     disabled={loadingAll}
                     className="text-xs text-[#822538] transition-colors inline-flex items-center hover:underline disabled:opacity-50"
                   >
-                    {showAllStories ? 'Show Less' : 'View all Success Stories'}
-                    <span className={`material-symbols-outlined text-sm ml-1 transition-transform ${
-                      showAllStories ? 'rotate-180' : ''
-                    }`}>
-                      {showAllStories ? 'expand_less' : 'arrow_forward'}
+                    {showAllStories ? "Show Less" : "View all Success Stories"}
+                    <span
+                      className={`material-symbols-outlined text-sm ml-1 transition-transform ${
+                        showAllStories ? "rotate-180" : ""
+                      }`}
+                    >
+                      {showAllStories ? "expand_less" : "arrow_forward"}
                     </span>
                   </button>
                 </div>

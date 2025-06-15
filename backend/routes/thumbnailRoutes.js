@@ -18,7 +18,6 @@ router.post('/generate-thumbnail/:id', thumbnailController.generateThumbnailOnUp
 // Batch generate missing thumbnails
 router.post('/generate-missing-thumbnails', thumbnailController.generateMissingThumbnails);
 
-// Clean up old thumbnails
-router.delete('/cleanup-thumbnails', thumbnailController.cleanupOldThumbnails);
+router.get('/:portfolioId/thumbnail-status', thumbnailController.getThumbnailStatus);
 
 module.exports = router;

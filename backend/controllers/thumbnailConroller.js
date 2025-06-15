@@ -412,49 +412,45 @@ exports.getThumbnailUrl = async (req, res) => {
   }
 };
 
-// Clean up old thumbnails (utility function)
-exports.cleanupOldThumbnails = async (req, res) => {
+
+ // Add this to your user-portfolio controller
+exports.getThumbnailStatus = async (req, res) => {
   try {
-    const portfolios = await UserPortfolio.find({}, '_id thumbnailUrl');
-    const existingIds = new Set(portfolios.map(p => p._id.toString()));
+    const { portfolioId } = req.params;
 
-    // Ensure thumbnails directory exists
-    ensureDirectoryExists(thumbnailsDir);
-
-    // Read thumbnail directory
-    const files = fs.readdirSync(thumbnailsDir);
-    let deletedCount = 0;
-
-    console.log(`🧹 Cleaning up thumbnails directory...`);
-
-    for (const file of files) {
-      if (file.endsWith('.jpg') || file.endsWith('.jpeg')) {
-        const portfolioId = file.replace(/\.(jpg|jpeg)$/, '');
-        if (!existingIds.has(portfolioId)) {
-          const filePath = path.join(thumbnailsDir, file);
-          try {
-            fs.unlinkSync(filePath);
-            deletedCount++;
-            console.log(`🗑️  Deleted orphaned thumbnail: ${file}`);
-          } catch (deleteError) {
-            console.warn(`⚠️  Failed to delete ${file}:`, deleteError.message);
-          }
-        }
-      }
+    if (!portfolioId) {
+      return res.status(400).json({
+        success: false,
+        message: "Portfolio ID is required"
+      });
     }
 
-    console.log(`✅ Cleanup completed: ${deletedCount} files deleted`);
+    const portfolio = await UserPortfolio.findById(portfolioId,
+      'thumbnailUrl thumbnailStatus thumbnailGeneratedAt thumbnailError'
+    );
 
-    res.status(200).json({
-      message: "Cleanup completed",
-      deletedFiles: deletedCount,
-      totalFiles: files.length
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: "Portfolio not found"
+      });
+    }
+
+    // Return the current thumbnail status
+    return res.status(200).json({
+      success: true,
+      portfolioId: portfolio._id,
+      thumbnailStatus: portfolio.thumbnailStatus || 'pending',
+      thumbnailUrl: portfolio.thumbnailUrl,
+      thumbnailGeneratedAt: portfolio.thumbnailGeneratedAt,
+      thumbnailError: portfolio.thumbnailError
     });
 
   } catch (error) {
-    console.error("❌ Error in cleanup:", error);
-    res.status(500).json({
-      message: "Error during cleanup",
+    console.error('Error checking thumbnail status:', error);
+    return res.status(500).json({
+      success: false,
+      message: "Error checking thumbnail status",
       error: error.message
     });
   }
@@ -466,5 +462,5 @@ module.exports = {
   generateThumbnailOnUpload: exports.generateThumbnailOnUpload,
   generateMissingThumbnails: exports.generateMissingThumbnails,
   getThumbnailUrl: exports.getThumbnailUrl,
-  cleanupOldThumbnails: exports.cleanupOldThumbnails
+  getThumbnailStatus: exports.getThumbnailStatus
 };
