@@ -110,6 +110,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
 
       const username = localStorage.getItem("userEmail");
 
+      console.log("DDDDNJ",username)
       if (!username) {
         console.error("Username not found in local storage");
         return;
@@ -145,7 +146,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
         },
         body: JSON.stringify(stateToSave),
       });
-
+      
       //if (!response.ok) throw new Error("Failed to save portfolio");
       const result = await response.json();
       console.log("Portfolio saved successfully:", result);
