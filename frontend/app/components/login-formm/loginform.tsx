@@ -203,7 +203,7 @@ export function LoginFormDemo() {
         return; // Stop execution if login fails
       }
 
-      const { token, user } = data;
+      const { token, user  } = data;
       console.log("Token is:", token);
 
       // Set token in Zustand store

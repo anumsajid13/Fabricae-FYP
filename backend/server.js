@@ -6,9 +6,10 @@ const promptDesignRoutes = require("./routes/promptDesign");
 const authRoutes = require("./routes/authRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const path = require("path");
-const Portfolio = require("./data/models/Portfolio.js"); // Import the Portfolio model
+const Portfolio = require("./data/models/Portfolio.js");
 
-const portfolioRoutes = require("./routes/portRoutes"); // ✅ Import portfolio routes
+const portfolioRoutes = require("./routes/portRoutes"); 
+const successStoriesRoutes = require('./routes/successStories');
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ app.use("/api/model-routes", modelRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api", portfolioRoutes); 
+
+app.use('/api/success-stories', successStoriesRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

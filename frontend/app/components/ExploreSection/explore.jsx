@@ -1,10 +1,127 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Post } from "./post"; // 🟢 Import correctly using named import
 import "./style.css";
 
 export default function ExploreSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [stories, setStories] = useState([]);
+  const [allStories, setAllStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingAll, setLoadingAll] = useState(false);
+  const [error, setError] = useState(null);
+  const [showAllStories, setShowAllStories] = useState(false);
+
+  // Fetch top 3 success stories from backend
+  useEffect(() => {
+    const fetchTopStories = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5000/api/success-stories/top');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch success stories');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setStories(data.data);
+        } else {
+          throw new Error(data.message || 'Failed to load stories');
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching success stories:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopStories();
+  }, []);
+
+  // Fetch all success stories
+  const fetchAllStories = async () => {
+    try {
+      setLoadingAll(true);
+      const response = await fetch('http://localhost:5000/api/success-stories');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch all success stories');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setAllStories(data.data);
+      } else {
+        throw new Error(data.message || 'Failed to load all stories');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching all success stories:', err);
+    } finally {
+      setLoadingAll(false);
+    }
+  };
+
+  // Handle view all stories click
+  const handleViewAllStories = async () => {
+    if (!showAllStories && allStories.length === 0) {
+      await fetchAllStories();
+    }
+    setShowAllStories(!showAllStories);
+  };
+
+  // Render star rating
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const stars = [];
+
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <span key={i} className="material-symbols-outlined text-[#822538] text-sm">
+          star
+        </span>
+      );
+    }
+
+    // Half star (if needed)
+    if (hasHalfStar) {
+      stars.push(
+        <span key="half" className="material-symbols-outlined text-[#822538] text-sm">
+          star_half
+        </span>
+      );
+    }
+
+    // Empty stars to complete 5
+    const remainingStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < remainingStars; i++) {
+      stars.push(
+        <span key={`empty-${i}`} className="material-symbols-outlined text-neutral-300 text-sm">
+          star
+        </span>
+      );
+    }
+
+    return stars;
+  };
+
+  // Default placeholder image
+  const getProfileImage = (story) => {
+    if (story.profileImage) {
+      return story.profileImage;
+    }
+    // Generate a placeholder based on name
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(story.name)}&background=822538&color=ffffff&size=128`;
+  };
+
+  // Get stories to display
+  const displayedStories = showAllStories ? allStories : stories;
 
   return (
     <div id="webcrumbs">
@@ -39,8 +156,10 @@ export default function ExploreSection() {
             </h2>
 
             <div className="flex items-center gap-2">
-              <button             onClick={() => setIsModalOpen(true)}
- className="rounded-full bg-primary-50 p-2 hover:bg-primary-100 transition-colors">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="rounded-full bg-primary-50 p-2 hover:bg-primary-100 transition-colors"
+              >
                 <span className="material-symbols-outlined text-[#822538]">
                   add_circle
                 </span>
@@ -56,49 +175,50 @@ export default function ExploreSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Portfolio Card 1 */}
-           <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-  <div className="h-48 overflow-hidden">
-    <img
-      src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3"
-      alt="Fashion collection"
-      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-      keywords="fashion, rack, clothes, collection"
-    />
-  </div>
-  <div className="p-4">
-    <div className="flex justify-between items-center mb-3">
-      <div className="flex items-center gap-2">
-        <img
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHwyfHxwcm9maWxlfGVufDB8fHx8MTc0NjE1OTI5OHww&ixlib=rb-4.0.3&q=80&w=1080"
-          alt="Tyler Chen"
-          className="w-8 h-8 rounded-full"
-          keywords="profile, designer, avatar"
-        />
-        <div>
-          <p className="font-medium text-sm">Tyler Chen</p>
-          <p className="text-xs text-neutral-500">Fashion Designer</p>
-        </div>
-      </div>
-      <button className="p-1 hover:bg-neutral-100 rounded-full transition-colors">
-        <span className="material-symbols-outlined text-[#822538] ">
-          favorite_border
-        </span>
-      </button>
-    </div>
+            <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3"
+                  alt="Fashion collection"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  keywords="fashion, rack, clothes, collection"
+                />
+              </div>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHwyfHxwcm9maWxlfGVufDB8fHx8MTc0NjE1OTI5OHww&ixlib=rb-4.0.3&q=80&w=1080"
+                      alt="Tyler Chen"
+                      className="w-8 h-8 rounded-full"
+                      keywords="profile, designer, avatar"
+                    />
+                    <div>
+                      <p className="font-medium text-sm">Tyler Chen</p>
+                      <p className="text-xs text-neutral-500">
+                        Fashion Designer
+                      </p>
+                    </div>
+                  </div>
+                  <button className="p-1 hover:bg-neutral-100 rounded-full transition-colors">
+                    <span className="material-symbols-outlined text-[#822538] ">
+                      favorite_border
+                    </span>
+                  </button>
+                </div>
 
-    {/* Portfolio Title and Description */}
-    <h3 className="text-md font-semibold mb-1">Design Portfolio</h3>
-    <p className="text-sm text-neutral-600 mb-4">
-      A curated collection showcasing original fashion sketches, garment
-      construction, and conceptual design work.
-    </p>
+                {/* Portfolio Title and Description */}
+                <h3 className="text-md font-semibold mb-1">Design Portfolio</h3>
+                <p className="text-sm text-neutral-600 mb-4">
+                  A curated collection showcasing original fashion sketches,
+                  garment construction, and conceptual design work.
+                </p>
 
-    <button className="w-full bg-[#822538] text-white py-2 rounded-md hover:bg-[#b4707e] transition-colors text-sm font-medium">
-      Chat Now
-    </button>
-  </div>
-</div>
-
+                <button className="w-full bg-[#822538] text-white py-2 rounded-md hover:bg-[#b4707e] transition-colors text-sm font-medium">
+                  Chat Now
+                </button>
+              </div>
+            </div>
 
             {/* Portfolio Card 2 */}
             <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -302,102 +422,75 @@ export default function ExploreSection() {
               Success Stories
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Success Story 1 */}
-              <div className="flex flex-col items-center text-center">
-                <img
-                  src="https://images.unsplash.com/photo-1558655146-d09347e92766?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHwxfHxkZXNpZ25lcnxlbnwwfHx8fDE3NDYxNjY5NDl8MA&ixlib=rb-4.0.3&q=80&w=1080"
-                  alt="Alexander Kim"
-                  className="w-16 h-16 rounded-full mb-3"
-                  keywords="designer, success story, avatar"
-                />
-                <h3 className="font-medium">Alexander Kim</h3>
-                <p className="text-xs text-neutral-500 mb-3">
-                  Fashion Designer
-                </p>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    <span className="material-symbols-outlined text-[#822538] text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-[#822538] text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-[#822538] text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-[#822538] text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-[#822538] text-sm">
-                      star
-                    </span>
-                  </div>
-                  <span className="text-sm font-medium">4.9</span>
-                </div>
-                <p className="text-xs text-neutral-600">
-                  "Fashion connects us with my customers and has increased my
-                  business by 300% in just two months."
-                </p>
+            {loading ? (
+              <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#822538]"></div>
               </div>
-
-              {/* Success Story 2 */}
-              <div className="flex flex-col items-center text-center">
-                <img
-                  src="https://images.unsplash.com/photo-1506097425191-7ad538b29cef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHw4fHxkZXNpZ25lcnxlbnwwfHx8fDE3NDYxNjY5NDl8MA&ixlib=rb-4.0.3&q=80&w=1080"
-                  alt="Mei Rodriguez"
-                  className="w-16 h-16 rounded-full mb-3"
-                  keywords="designer, success story, avatar"
-                />
-                <h3 className="font-medium">Mei Rodriguez</h3>
-                <p className="text-xs text-neutral-500 mb-3">
-                  Accessory Designer
-                </p>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    <span className="material-symbols-outlined text-primary-600 text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-primary-600 text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-primary-600 text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-primary-600 text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined text-neutral-300 text-sm">
-                      star
-                    </span>
-                  </div>
-                  <span className="text-sm font-medium">4.3</span>
-                </div>
-                <p className="text-xs text-neutral-600">
-                  "Found amazing designers I couldn't have reached otherwise and
-                  now we collaborate twice monthly."
-                </p>
+            ) : error ? (
+              <div className="text-center py-8 text-red-500">
+                <p>Error loading success stories: {error}</p>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-500 ${
+                  showAllStories ? 'max-h-none' : 'max-h-96 overflow-hidden'
+                }`}>
+                  {displayedStories.map((story) => (
+                    <div key={story._id} className="flex flex-col items-center text-center">
+                      <img
+                        src={getProfileImage(story)}
+                        alt={story.name}
+                        className="w-16 h-16 rounded-full mb-3 object-cover"
+                        onError={(e) => {
+                          // Fallback to generated avatar if image fails to load
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(story.name)}&background=822538&color=ffffff&size=128`;
+                        }}
+                      />
+                      <h3 className="font-medium">{story.name}</h3>
+                      <p className="text-xs text-neutral-500 mb-3">
+                        {story.profession}
+                      </p>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex">
+                          {renderStars(story.rating)}
+                        </div>
+                        <span className="text-sm font-medium">{story.rating}</span>
+                      </div>
+                      <p className="text-xs text-neutral-600">
+                        "{story.testimonial}"
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-            <div className="text-center mt-8">
-              <a
-                href="#"
-                className="text-xs text-[#822538] transition-colors inline-flex items-center"
-              >
-                View all Success Stories
-                <span className="material-symbols-outlined text-sm ml-1">
-                  arrow_forward
-                </span>
-              </a>
-            </div>
+                {loadingAll && (
+                  <div className="flex justify-center items-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#822538]"></div>
+                    <span className="ml-2 text-sm text-neutral-600">Loading more stories...</span>
+                  </div>
+                )}
+
+                <div className="text-center mt-8">
+                  <button
+                    onClick={handleViewAllStories}
+                    disabled={loadingAll}
+                    className="text-xs text-[#822538] transition-colors inline-flex items-center hover:underline disabled:opacity-50"
+                  >
+                    {showAllStories ? 'Show Less' : 'View all Success Stories'}
+                    <span className={`material-symbols-outlined text-sm ml-1 transition-transform ${
+                      showAllStories ? 'rotate-180' : ''
+                    }`}>
+                      {showAllStories ? 'expand_less' : 'arrow_forward'}
+                    </span>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </section>
         {/* 📦 Render Post Modal */}
-      {isModalOpen && <Post onClose={() => setIsModalOpen(false)} />}
+        {isModalOpen && <Post onClose={() => setIsModalOpen(false)} />}
       </div>
-      
-      
     </div>
   );
 }
