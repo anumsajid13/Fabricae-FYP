@@ -475,10 +475,10 @@ export default function ExploreSection() {
                           }}
                         />
                         <div>
-                          <p className="font-medium text-sm">
+                          <p className="font-medium text-sm text-gray-900">
                             {portfolio.email.split("@")[0]}
                           </p>
-                          <p className="text-xs text-neutral-500">
+                          <p className="text-xs text-neutral-500  text-black">
                             {portfolio.category}
                           </p>
                         </div>
@@ -507,7 +507,7 @@ export default function ExploreSection() {
                         )}
                       </button>
                     </div>
-                    <h3 className="text-md font-semibold mb-1 line-clamp-1">
+                    <h3 className="text-md font-semibold mb-1 line-clamp-1 text-gray-900">
                       {portfolio.name}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4 line-clamp-2">
