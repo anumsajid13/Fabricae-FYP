@@ -109,6 +109,7 @@ export const FashionPortfolio = forwardRef((props, ref) => {
       console.log("saveState function called");
 
       const username = localStorage.getItem("userEmail");
+      console.log (' bitchh',username)
 
       if (!username) {
         console.error("Username not found in local storage");
