@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { FileUpload } from "../ui/file-upload";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
-import { storage } from "../../firebase"; 
+import { storage } from "../../firebase";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { useCardsStore } from '../../store/useCardsStore';
 import {PromptDesign} from '../../store/useCardsStore'
@@ -35,9 +35,9 @@ const FileUploadDemo: React.FC = () => {
   const [selectedTheme, setSelectedTheme] = useState<string>("Vibrant");
   const [generatedImages, setGeneratedImages] = useState<(string | null)[]>([null, null, null]);
   const [modalMessage, setModalMessage] = useState<string | null>(null); // Modal state
-  const { cards, setCards, updateCards } = useCardsStore(); 
+  const { cards, setCards, updateCards } = useCardsStore();
 
-  const themes = ["Black & White", "Vibrant", "Pastel Colored", "Plain background"];
+  const themes = ["Black & White", "Vibrant", "Pastel Colored"];
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedTheme(event.target.value);
@@ -68,15 +68,15 @@ const FileUploadDemo: React.FC = () => {
       const imagetitle = extractMiddleFiveWords(prompt);
       const uniqueId = uuidv4();
       const storageRef = ref(storage, `images/generated_image_${uniqueId}`);
-  
+
       // Upload the full Base64 string in 'data_url' format
       await uploadString(storageRef, imageSrc, "data_url");
-  
+
       // Get the download URL for the stored image
       const downloadURL = await getDownloadURL(storageRef);
 
       const userEmail = localStorage.getItem("userEmail");
-  
+
       // Metadata for MongoDB
       const metadata = {
         title: imagetitle,
@@ -85,7 +85,7 @@ const FileUploadDemo: React.FC = () => {
         patternType: "prompt",
         prompt: prompt,
       };
-  
+
       // Save metadata in MongoDB
       const res = await fetch("http://localhost:5000/api/prompt-designs", {
         method: "POST",
@@ -94,23 +94,23 @@ const FileUploadDemo: React.FC = () => {
         },
         body: JSON.stringify(metadata),
       });
-  
+
       if (!res.ok) {
         throw new Error("Database save failed with status: " + res.statusText);
       }
-  
+
       toast.success("Image successfully saved!");
       const savedImage: PromptDesign = await res.json();
       updateCards((prevCards) => {
         // Ensure prevCards is an array before spreading it
         if (!Array.isArray(prevCards)) return prevCards;
-        
+
         // Ensure savedImage is valid (you can add more checks based on your requirements)
         if (!savedImage || !savedImage.title) {
           console.error("Invalid card:", savedImage);
           return prevCards;
         }
-    
+
         // Append the new card
         return [...prevCards, savedImage];
       });
@@ -120,7 +120,7 @@ const FileUploadDemo: React.FC = () => {
       toast.error("Error saving the image.");
     }
   };
-  
+
 
   // Convert file to Base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -134,7 +134,7 @@ const FileUploadDemo: React.FC = () => {
 
   // Handle file upload
   const handleFileUpload = async (files: File[]) => {
-   
+
     const uniqueId = uuidv4();
     if (files.length > 0) {
       const file = files[0];
@@ -172,7 +172,7 @@ const FileUploadDemo: React.FC = () => {
            },
            body: JSON.stringify(requestBody),
          });
-         
+
          if (response.ok) {
            const data = await response.json();
            const generatedImageBase64 = `data:image/png;base64,${data.image}`;
@@ -203,7 +203,7 @@ const FileUploadDemo: React.FC = () => {
 
   return (
     <div>
-        
+
 
       {/* Theme Selection */}
       <div className="mb-6 max-w-md mx-auto z-20">
