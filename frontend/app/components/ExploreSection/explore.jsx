@@ -38,7 +38,6 @@ export default function ExploreSection() {
         setError(null);
 
         await fetchUserProfiles(data.portfolios);
-        console.log(data);
       } catch (err) {
         setError(err.message);
         console.error("Error fetching portfolios:", err);
@@ -112,6 +111,54 @@ export default function ExploreSection() {
     }
   };
 
+  // Handle Chat Now functionality
+  const handleChatNow = async (receiverEmail) => {
+    if (!userEmail) {
+      alert("Please log in to start a chat");
+      return;
+    }
+
+    if (userEmail === receiverEmail) {
+      alert("You cannot chat with yourself");
+      return;
+    }
+
+    try {
+      // Get sender's name from user profiles or email
+      const senderName = getUserDisplayName(userEmail);
+      const receiverName = getUserDisplayName(receiverEmail);
+
+      // Create automated message
+      const messageText = `Hello ${receiverName}! This is ${senderName}. I came across your portfolio and I'm really impressed with your work. I'd love to connect and discuss potential collaboration opportunities. Looking forward to hearing from you!`;
+
+      const response = await fetch("http://localhost:5000/api/chat/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          senderEmail: userEmail,
+          receiverEmail: receiverEmail,
+          messageText: messageText,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create chat");
+      }
+
+      const data = await response.json();
+      console.log("Chat created successfully:", data);
+
+      // Redirect to chat page
+      window.location.href = `/Chat`;
+    } catch (error) {
+      console.error("Error creating chat:", error);
+      alert("Error starting chat: " + error.message);
+    }
+  };
+
   // Pagination handlers
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -141,11 +188,8 @@ export default function ExploreSection() {
     return email.split("@")[0];
   };
 
-  const handleUploadSuccess = () => {
-    // Either reset to page 1 where new portfolio will appear
-    setCurrentPage(1);
-
-    // Or force a complete refresh by incrementing the refreshKey
+  const handleUploadSuccess = (newPortfolio) => {
+    setPortfolios((prevPortfolios) => [newPortfolio, ...prevPortfolios]);
     setRefreshKey((prev) => prev + 1);
   };
 
@@ -257,7 +301,7 @@ export default function ExploreSection() {
               {portfolios.map((portfolio) => (
                 <div
                   key={portfolio._id}
-                  className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                  className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col min-h-[400px]" // Added flex-col and min-h
                 >
                   <div className="h-48 overflow-hidden relative group">
                     {/* PDF Thumbnail with fallbacks */}
@@ -266,6 +310,10 @@ export default function ExploreSection() {
                       alt={portfolio.name}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       loading="lazy"
+                      onError={(e) => {
+                        e.target.src =
+                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjEyNSIgeT0iNzUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzlDQTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjEzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYzNzM4NSIgZm9udC1zaX6PSIxMiI+UERGIFBvcnRmb2xpbzwvdGV4dD4KPC9zdmc+";
+                      }}
                     />
 
                     {/* Overlay button to view PDF */}
@@ -295,7 +343,10 @@ export default function ExploreSection() {
                     )}
                   </div>
 
-                  <div className="p-4">
+                  {/* Content area that will grow to push button down */}
+                  <div className="p-4 flex flex-col flex-grow">
+                    {" "}
+                    {/* Added flex-grow here */}
                     <div className="flex justify-between items-center mb-3">
                       <div className="flex items-center gap-2">
                         {/* User avatar */}
@@ -340,24 +391,36 @@ export default function ExploreSection() {
                         )}
                       </button>
                     </div>
-
                     <h3 className="text-md font-semibold mb-1 line-clamp-1">
                       {portfolio.name}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4 line-clamp-2">
                       {portfolio.description || "No description provided"}
                     </p>
-
                     {/* Upload date */}
                     <p className="text-xs text-neutral-400 mb-3">
                       Uploaded{" "}
                       {new Date(portfolio.uploadDate).toLocaleDateString()}
                     </p>
-
-                    <div className="flex gap-2">
-                      <button className="flex-1 bg-[#822538] text-white py-2 rounded-md hover:bg-[#b4707e] transition-colors text-sm font-medium">
-                        Chat Now
-                      </button>
+                    {/* This div will be pushed to the bottom */}
+                    <div className="mt-auto">
+                      {" "}
+                      {/* Added mt-auto to push to bottom */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleChatNow(portfolio.email)}
+                          disabled={userEmail === portfolio.email}
+                          className={`flex-1 py-2 rounded-md text-sm font-medium ${
+                            userEmail === portfolio.email
+                              ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                              : "bg-[#822538] text-white hover:bg-[#b4707e] transition-colors"
+                          }`}
+                        >
+                          {userEmail === portfolio.email
+                            ? "Your Portfolio"
+                            : "Chat Now"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

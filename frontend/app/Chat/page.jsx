@@ -96,7 +96,7 @@ const Home = () => {
           return [...newMessages];
         });
       }
-     
+
     };
 
     // Cleanup WebSocket connection when component unmounts
@@ -123,7 +123,7 @@ const Home = () => {
       }
 
       const email = selectedContact?.email;
-      
+
         try {
           const response = await fetch(`http://localhost:5000/api/users/profile/${email}`);
           if (!response.ok) throw new Error("Failed to fetch profile data");
@@ -147,9 +147,9 @@ const Home = () => {
   }, [selectedContact]);
 
 
-   
+
    useEffect(() => {
-     
+
       // const email = selectedContact?.email;
       // const fetchProfile = async () => {
       //   try {
@@ -172,10 +172,10 @@ const Home = () => {
       //     setLoading(false);
       //   }
       // };
-  
+
      // fetchProfile();
     }, []);
-  
+
 
   const handleContactClick = (contact) => {
     setSelectedContact(contact);
@@ -192,14 +192,14 @@ const Home = () => {
           console.log('Updated messages immediately: ', newMessages);  // Log to check if the state is updated instantly
           return [...newMessages];
         });
-      
+
       const newMessage = { sender: userEmail, text: message, contactEmail: selectedContact.email };
 
      // console.log("newMessage in socket: ", newMessage)
       // Send message through WebSocket to the server
       socket.send(JSON.stringify(newMessage));
 
-      
+
       //  save message to database here as well
      // console.log("send-message api: ", message)
       fetch('http://localhost:5000/api/chat/send-message', {
@@ -217,7 +217,7 @@ const Home = () => {
     const userEmail = localStorage.getItem('userEmail');
     const senderEmail = selectedContact.email;
     const receiverEmail = userEmail;
-  
+
     try {
       if (messageId) {
         // Call the delete message API if messageId is provided
@@ -230,10 +230,10 @@ const Home = () => {
             messageId,
           }),
         });
-  
+
         const data = await response.json();
         console.log('Message deleted:', data);
-  
+
         if (response.ok) {
           // Update the messages array to immediately reflect the deletion in the frontend
           setMessages((prevMessages) => prevMessages.filter((msg) => msg._id !== messageId));
@@ -258,7 +258,7 @@ const Home = () => {
   const sendAttachmentToBackend = async (url, filename) => {
     const userEmail = localStorage.getItem('userEmail');
     const receiverEmail = selectedContact.email;
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/chat/send-attachment', {
         method: 'POST',
@@ -270,7 +270,7 @@ const Home = () => {
           filename: filename,  // The filename of the uploaded file
         }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         console.log('Attachment uploaded and saved to backend:', data);
@@ -281,7 +281,7 @@ const Home = () => {
       console.error('Error sending attachment to backend:', error);
     }
   };
-  
+
 
   // Function to handle file input change (when user selects a file)
 const handleFileChange = async (event) => {
@@ -294,7 +294,7 @@ const handleFileChange = async (event) => {
   try {
     // Upload the file to Firebase Storage
     await uploadBytes(storageRef, file);
-    
+
     // Get the download URL for the uploaded file
     const downloadURL = await getDownloadURL(storageRef);
 
@@ -307,12 +307,12 @@ const handleFileChange = async (event) => {
     // Optionally update the UI with the uploaded file
     setMessages((prevMessages) => [
       ...prevMessages,
-      { 
-        sender: 'You', 
+      {
+        sender: 'You',
         text: 'attachment',
         fileUrl: downloadURL,
         fileName: filename,
-      
+
         timestamp: new Date().toLocaleTimeString()
       }
     ]);
@@ -321,11 +321,11 @@ const handleFileChange = async (event) => {
     alert("Failed to upload the file. Please try again.");
   }
 };
-  
+
 
   return (
     <>
-    {/* <Navbar/> */}
+    <Navbar/>
     <div className="h-screen bg-gray-50 flex flex-col">
       <div className="flex flex-1 bg-white shadow-md">
         {/* Left Sidebar */}
@@ -414,7 +414,7 @@ const handleFileChange = async (event) => {
                   {/* Message bubble */}
                   <div className={`p-3 rounded-xl max-w-lg ${msg.senderId === selectedContact?.id || msg.sender === selectedContact?.email ? 'bg-gray-100 text-gray-600' : 'bg-[#c97787] text-white'}`}>
                     <p>{msg.text || msg.messageText}</p>
-                    
+
                     <div className="mt-2">
                       {/* Display based on the file type */}
                       {msg.fileUrl && (
@@ -452,7 +452,7 @@ const handleFileChange = async (event) => {
                             // For other file types (like Word, Excel), show a download link
                             <div>
                               <a
-                              
+
                                 href={msg.fileUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -467,7 +467,7 @@ const handleFileChange = async (event) => {
                       )}
                     </div>
 
-                   
+
                     <TimestampComponent timestamp={msg.timestamp} />
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 const Chat = require('../Data/Models/Chat');
 
-const User = require("../data/models/User.js");
+const User = require("../Data/Models/User.js");
 
 // Create a new chat
 exports.createChat = async (req, res) => {
@@ -15,6 +15,18 @@ exports.createChat = async (req, res) => {
       return res.status(404).json({ message: 'User(s) not found' });
     }
 
+    // Check if a chat already exists between these users (regardless of sender/receiver order)
+    const existingChat = await Chat.findOne({
+      'participants.userId': { $all: [sender._id, receiver._id] }
+    });
+
+    if (existingChat) {
+      return res.status(200).json({
+        message: 'A chat already exists between these users. Please open the existing chat.',
+        chat: existingChat
+      });
+    }
+    
     // Create a unique chatId (you can customize the method of generating chatId)
     const chatId = `chat-${sender._id}-${receiver._id}`;
 
@@ -52,27 +64,27 @@ exports.getChatHistory = async (req, res) => {
       const contact = await User.findOne({ email: contactEmail });
 
      // console.log("user: ",user, "contact",contact)
-  
+
       if (!user || !contact) {
         return res.status(404).json({ message: 'User(s) not found' });
       }
-  
+
       // Find the chat between the users
       const chat = await Chat.findOne({
         'participants.userId': { $all: [user._id, contact._id] },
       }).populate('participants.userId', 'firstname lastname email'); // Populate participant info
-  
+
       if (!chat) {
         return res.status(404).json({ message: 'Chat not found' });
       }
-  
+
       res.status(200).json({ chat });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error fetching chat history' });
     }
   };
-  
+
 
 // Send a message in an existing chat
 exports.sendMessage = async (req, res) => {

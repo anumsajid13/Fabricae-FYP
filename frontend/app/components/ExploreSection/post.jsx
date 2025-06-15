@@ -229,6 +229,44 @@ export const Post = ({ onClose, onUploadSuccess }) => {
       : cleanName;
   };
 
+  // Chat functionality
+  const handleChatNow = async (receiverEmail) => {
+    if (!userEmail || userEmail === receiverEmail) {
+      return; // Prevent chatting with self
+    }
+
+    try {
+      // Get sender name from email (extract name before @)
+      const senderName = userEmail.split('@')[0];
+
+      // Create automated message
+      const automatedMessage = `Hello! This is ${senderName}. I came across your portfolio and I'm really impressed with your work. I'd love to connect and discuss potential collaboration opportunities. Looking forward to hearing from you!`;
+
+      const response = await fetch("http://localhost:5000/api/chat/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          senderEmail: userEmail,
+          receiverEmail: receiverEmail,
+          message: automatedMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      // Show success message or redirect to chat
+      alert("Message sent successfully!");
+
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
+    }
+  };
+
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
@@ -262,9 +300,21 @@ export const Post = ({ onClose, onUploadSuccess }) => {
       const data = await response.json();
       console.log("Portfolio uploaded:", data);
 
+      // Create the new portfolio object with all necessary fields for immediate display
+      const newPortfolio = {
+        ...data.portfolio,
+        userEmail: userEmail,
+        pdfUrl: file.url,
+        name: portfolioName,
+        category: selectedCategory,
+        description: description,
+        fileName: file.name,
+        createdAt: new Date().toISOString(),
+      };
+
       // Call success callback with the new portfolio
       if (onUploadSuccess) {
-        onUploadSuccess(data.portfolio);
+        onUploadSuccess(newPortfolio);
       }
 
       // Close modal and reset form
