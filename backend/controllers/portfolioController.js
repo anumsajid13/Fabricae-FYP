@@ -4,6 +4,7 @@ const Portfolio = require("../data/models/Portfolio");
 exports.savePortfolio = async (req, res) => {
   try {
     const username = req.headers.username; // Get username from request headers
+    console.log("SAVE MEE", username)
     const {
       portfolioId,
       pageId,
@@ -58,13 +59,14 @@ exports.savePortfolio = async (req, res) => {
 
     console.log(portfolioId,pageId)
 
-    // Check if a portfolio with the same portfolioId AND pageId exists
-    let existingPortfolio = await Portfolio.findOne({ portfolioId, pageId });
+    // OMGGGGG KILKL MEE
+    let existingPortfolio = await Portfolio.findOne({ username, portfolioId, pageId });
 
     console.log(existingPortfolio)
 
     if (existingPortfolio) {
       // Update the existing portfolio
+
       existingPortfolio.title = title || existingPortfolio.title;
       existingPortfolio.quote = quote || existingPortfolio.quote;
       existingPortfolio.backgroundImage = backgroundImage || existingPortfolio.backgroundImage;

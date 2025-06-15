@@ -171,11 +171,11 @@ export const MainEditor1 = () => {
   const handleSave = async () => {
     console.log("Save button clicked");
 
-    // Check if we're on the client side
-    if (typeof window === 'undefined') {
-      console.error('handleSave can only be called on the client side');
-      return;
-    }
+    // // Check if we're on the client side
+    // if (typeof window === 'undefined') {
+    //   console.error('handleSave can only be called on the client side');
+    //   return;
+    // }
 
     // Call the save function of each child component
     childRefs.current.forEach((ref, index) => {
