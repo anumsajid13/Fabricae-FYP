@@ -30,17 +30,16 @@ export const AboutMe2 = forwardRef((props, ref) => {
     selectedPage,
     getElementPosition,
     updateElementPosition,
-    loadstate, setLoadState
+    loadstate,
+    setLoadState,
   } = useFashionStore();
 
   const pageId = `about-me-2-${selectedPage}`;
   const pageState = getPageState(pageId);
-  console.log(pageId)
+  console.log(pageId);
 
   // Initialize state from pageState if it exists, otherwise use defaults
-  const [heading, setHeading] = useState(
-    pageState?.heading || "ABOUT ME"
-  );
+  const [heading, setHeading] = useState(pageState?.heading || "ABOUT ME");
   const [description, setDescription] = useState(
     pageState?.description ||
       "You can give a brief description of the topic you want to talk about here. For example, if you want to talk about minimalist design, you can say that it's one of the most impactful approaches of design."
@@ -211,7 +210,9 @@ export const AboutMe2 = forwardRef((props, ref) => {
           },
           description: {
             text: savedState.description || description,
-            segments: [{ text: savedState.description || description, styles: {} }],
+            segments: [
+              { text: savedState.description || description, styles: {} },
+            ],
           },
         });
       }
@@ -455,7 +456,7 @@ export const AboutMe2 = forwardRef((props, ref) => {
 
       traverseNodes(textContainer);
 
-      console.log('Selection offsets:', absoluteStartOffset, absoluteEndOffset);
+      console.log("Selection offsets:", absoluteStartOffset, absoluteEndOffset);
 
       const selectedText = {
         text,
@@ -465,7 +466,7 @@ export const AboutMe2 = forwardRef((props, ref) => {
         componentId, // Include the component ID
       };
 
-      console.log('Selected text is', selectedText);
+      console.log("Selected text is", selectedText);
       // Send selection to the global context
       handleTextSelection(selectedText);
     }
@@ -609,16 +610,14 @@ export const AboutMe2 = forwardRef((props, ref) => {
     );
   };
   useEffect(() => {
-      if (loadstate) {
-        const loadPortfolioState = async () => {
-          await loadState(); // Call your existing loadState function
-          setLoadState(false); // Reset loadState to false after loading
-
-        };
-        loadPortfolioState();
-
-      }
-    }, [loadState, setLoadState]);
+    if (loadstate) {
+      const loadPortfolioState = async () => {
+        await loadState(); // Call your existing loadState function
+        setLoadState(false); // Reset loadState to false after loading
+      };
+      loadPortfolioState();
+    }
+  }, [loadState, setLoadState]);
   const headingPosition = getElementPosition(componentId, "heading");
   const descriptionPosition = getElementPosition(componentId, "description");
   const image1Position = getElementPosition(componentId, "image1");
@@ -626,7 +625,10 @@ export const AboutMe2 = forwardRef((props, ref) => {
   const image3Position = getElementPosition(componentId, "image3");
 
   return (
-    <div className="w-[830px] flex flex-col items-center justify-center min-h-screen bg-[#efe8e4] p-6"  onClick={() => setActiveDraggable(null)}>
+    <div
+      className="w-[830px] flex flex-col items-center justify-center min-h-screen bg-[#efe8e4] p-6"
+      onClick={() => setActiveDraggable(null)}
+    >
       <div className="max-w-4xl w-full text-center">
         {/* Heading */}
         <Draggable
@@ -676,7 +678,7 @@ export const AboutMe2 = forwardRef((props, ref) => {
                   }
                 }
                 type="heading"
-                className="text-6xl font-serif font-bold"
+                className="text-6xl font-serif font-bold text-black"
               />
             </div>
           </ResizableBox>
@@ -685,9 +687,15 @@ export const AboutMe2 = forwardRef((props, ref) => {
         {/* Description */}
         <Draggable
           disabled={activeDraggable !== "description"}
-          defaultPosition={{ x: descriptionPosition.x, y: descriptionPosition.y }}
+          defaultPosition={{
+            x: descriptionPosition.x,
+            y: descriptionPosition.y,
+          }}
           onStop={(e, data) => {
-            console.log("Updating description position:", { x: data.x, y: data.y });
+            console.log("Updating description position:", {
+              x: data.x,
+              y: data.y,
+            });
             updateElementPosition(componentId, "description", {
               x: data.x,
               y: data.y,
@@ -730,7 +738,7 @@ export const AboutMe2 = forwardRef((props, ref) => {
                   }
                 }
                 type="description"
-                className="text-xl max-w-3xl mx-auto"
+                className="text-xl max-w-3xl mx-auto  text-black"
               />
             </div>
           </ResizableBox>
@@ -741,10 +749,12 @@ export const AboutMe2 = forwardRef((props, ref) => {
           {/* Image 1 */}
           <Draggable
             disabled={activeDraggable !== "image1"}
-
             defaultPosition={{ x: image1Position.x, y: image1Position.y }}
             onStop={(e, data) => {
-              console.log("Updating image1 position:", { x: data.x, y: data.y });
+              console.log("Updating image1 position:", {
+                x: data.x,
+                y: data.y,
+              });
               updateElementPosition(componentId, "image1", {
                 x: data.x,
                 y: data.y,
@@ -802,10 +812,12 @@ export const AboutMe2 = forwardRef((props, ref) => {
           {/* Image 2 */}
           <Draggable
             disabled={activeDraggable !== "image2"}
-
             defaultPosition={{ x: image2Position.x, y: image2Position.y }}
             onStop={(e, data) => {
-              console.log("Updating image2 position:", { x: data.x, y: data.y });
+              console.log("Updating image2 position:", {
+                x: data.x,
+                y: data.y,
+              });
               updateElementPosition(componentId, "image2", {
                 x: data.x,
                 y: data.y,
@@ -863,10 +875,12 @@ export const AboutMe2 = forwardRef((props, ref) => {
           {/* Image 3 */}
           <Draggable
             disabled={activeDraggable !== "image3"}
-
             defaultPosition={{ x: image3Position.x, y: image3Position.y }}
             onStop={(e, data) => {
-              console.log("Updating image3 position:", { x: data.x, y: data.y });
+              console.log("Updating image3 position:", {
+                x: data.x,
+                y: data.y,
+              });
               updateElementPosition(componentId, "image3", {
                 x: data.x,
                 y: data.y,

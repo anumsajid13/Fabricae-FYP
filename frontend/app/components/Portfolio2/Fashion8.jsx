@@ -730,7 +730,7 @@ export const MyWorkArea1 = forwardRef((props, ref) => {
                     }
                   }
                   type="quote"
-                  className="text-4xl font-serif font-bold italic"
+                  className="text-4xl font-serif font-bold italic  text-black"
                 />
               </div>
             </ResizableBox>

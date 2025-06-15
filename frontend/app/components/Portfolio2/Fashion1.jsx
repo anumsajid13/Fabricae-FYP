@@ -661,7 +661,7 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
     }, [loadState, setLoadState]);
   return (
     <div
-      className="max-w-[942px] min-h-[780px] flex justify-center items-center  bg-[#efe8e4] p-6 w-full"
+      className="text-black max-w-[942px] min-h-[780px] flex justify-center items-center  bg-[#efe8e4] p-6 w-full"
       onClick={() => setActiveDraggable(null)}
     >
       <div className="max-w-4xl grid grid-cols-2 gap-8 items-center">
@@ -752,7 +752,7 @@ export const ApparelPortfolio = forwardRef((props, ref) => {
               }}
             >
               <div
-                className="relative text-justify cursor-move"
+                className="relative text-justify cursor-move text-black"
                 style={{ position: "relative", zIndex: 3 }}
                 onClick={(e) => {
                   e.stopPropagation();

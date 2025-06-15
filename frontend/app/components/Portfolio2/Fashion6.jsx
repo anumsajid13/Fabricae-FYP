@@ -674,7 +674,7 @@ export const Research = forwardRef((props, ref) => {
                   }
                 }
                 type="heading"
-                className="text-3xl font-serif font-bold cursor-text"
+                className="text-3xl font-serif font-bold cursor-text  text-black"
               />
             </div>
           </ResizableBox>
@@ -821,7 +821,7 @@ export const Research = forwardRef((props, ref) => {
                   }
                 }
                 type="description"
-                className="text-sm mt-3 cursor-text"
+                className="text-sm mt-3 cursor-text  text-black"
               />
             </div>
           </ResizableBox>
@@ -875,7 +875,7 @@ export const Research = forwardRef((props, ref) => {
                     }
                   }
                   type="label1"
-                  className="cursor-text"
+                  className="cursor-text  text-black"
                 />
               </div>
             </ResizableBox>
@@ -927,7 +927,7 @@ export const Research = forwardRef((props, ref) => {
                     }
                   }
                   type="label2"
-                  className="cursor-text"
+                  className="cursor-text  text-black"
                 />
               </div>
             </ResizableBox>

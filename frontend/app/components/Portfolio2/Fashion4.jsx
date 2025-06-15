@@ -1050,7 +1050,7 @@ export const MyServices = forwardRef((props, ref) => {
                 }
               }
               type="heading"
-              className="text-6xl font-serif font-bold cursor-text"
+              className="text-6xl font-serif font-bold cursor-text  text-black"
             />
           </div>
         </ResizableBox>
@@ -1112,7 +1112,7 @@ export const MyServices = forwardRef((props, ref) => {
                 }
               }
               type={service.id}
-              className="text-2xl font-serif italic mt-2 cursor-text"
+              className="text-2xl font-serif italic mt-2 cursor-text  text-black"
             />
             <EditableText
               content={

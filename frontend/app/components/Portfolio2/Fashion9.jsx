@@ -717,7 +717,8 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                   }
                 }
                 type="title"
-                className="text-4xl font-serif font-bold text-center"
+                className="text-4xl font-serif font-bold text-center  text-black
+              "
               />
             </div>
           </ResizableBox>
@@ -826,7 +827,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                       }
                     }
                     type="quote"
-                    className="text-2xl italic font-serif cursor-text"
+                    className="text-2xl italic font-serif cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -878,7 +879,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                       }
                     }
                     type="description"
-                    className="text-lg cursor-text "
+                    className="text-lg cursor-text  text-black "
                   />
                 </div>
               </ResizableBox>
@@ -930,7 +931,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                       }
                     }
                     type="year"
-                    className="text-2xl italic font-serif mt-4 cursor-text"
+                    className="text-2xl italic font-serif mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -982,7 +983,7 @@ export const ProjectInDepth = forwardRef((props, ref) => {
                       }
                     }
                     type="name"
-                    className="text-lg cursor-text"
+                    className="text-lg cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>

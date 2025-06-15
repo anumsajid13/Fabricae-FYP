@@ -185,7 +185,7 @@ const SelectPortfolio = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-[#616852] to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
                     </div>
                     <div className="p-4">
-                      <h3 className="text-lg font-bold mb-1 group-hover:text-[#822538] transition-colors duration-300">
+                      <h3 className="text-black text-lg font-bold mb-1 group-hover:text-[#822538] transition-colors duration-300">
                         {template?.title || `Portfolio ${id}`}
                       </h3>
                       <p className="text-[#616852] text-sm mb-3">

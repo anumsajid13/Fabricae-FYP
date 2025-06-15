@@ -734,7 +734,7 @@ export const Resume = forwardRef((props, ref) => {
                   }
                 }
                 type="heading"
-                className="text-6xl font-serif font-bold cursor-text"
+                className="text-6xl font-serif font-bold cursor-text  text-black"
               />
             </div>
           </ResizableBox>
@@ -789,7 +789,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label1"
-                    className="text-3xl italic font-serif cursor-text"
+                    className="text-3xl italic font-serif cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -841,7 +841,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label4"
-                    className="text-xl font-bold mt-4 cursor-text"
+                    className="text-xl font-bold mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -898,7 +898,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="description1"
-                    className="text-xl mt-4 cursor-text"
+                    className="text-xl mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -955,7 +955,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="description2"
-                    className="text-xl mt-4 cursor-text"
+                    className="text-xl mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1010,7 +1010,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label2"
-                    className="text-3xl italic font-serif cursor-text"
+                    className="text-3xl italic font-serif cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1062,7 +1062,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label5"
-                    className="text-xl font-bold mt-4 cursor-text"
+                    className="text-xl font-bold mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1119,7 +1119,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="description3"
-                    className="text-xl mt-4 cursor-text"
+                    className="text-xl mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1176,7 +1176,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="description4"
-                    className="text-xl mt-4 cursor-text"
+                    className="text-xl mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1231,7 +1231,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label3"
-                    className="text-3xl italic font-serif cursor-text"
+                    className="text-3xl italic font-serif cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -1283,7 +1283,7 @@ export const Resume = forwardRef((props, ref) => {
                       }
                     }
                     type="label6"
-                    className="text-xl font-bold mt-4 cursor-text"
+                    className="text-xl font-bold mt-4 cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>

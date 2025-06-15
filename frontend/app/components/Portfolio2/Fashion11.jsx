@@ -666,7 +666,7 @@ export const ContactMe = forwardRef((props, ref) => {
                   }
                 }
                 type="heading"
-                className="text-3xl font-serif font-bold text-center cursor-text"
+                className="text-3xl font-serif font-bold text-center cursor-text  text-black"
               />
             </div>
           </ResizableBox>
@@ -721,7 +721,7 @@ export const ContactMe = forwardRef((props, ref) => {
                   }
                 }
                 type="description1"
-                className="text-center text-base mt-3 cursor-text"
+                className="text-center text-base mt-3 cursor-text  text-black"
               />
             </div>
           </ResizableBox>
@@ -776,7 +776,7 @@ export const ContactMe = forwardRef((props, ref) => {
                       }
                     }
                     type="label4"
-                    className="text-xl font-serif font-bold cursor-text"
+                    className="text-xl font-serif font-bold cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -882,7 +882,7 @@ export const ContactMe = forwardRef((props, ref) => {
                       }
                     }
                     type="label5"
-                    className="text-xl font-serif font-bold cursor-text"
+                    className="text-xl font-serif font-bold cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -934,7 +934,7 @@ export const ContactMe = forwardRef((props, ref) => {
                       }
                     }
                     type="label2"
-                    className="text-base text-blue-600 hover:underline cursor-text"
+                    className="text-base text-blue-600 hover:underline cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>
@@ -988,7 +988,7 @@ export const ContactMe = forwardRef((props, ref) => {
                       }
                     }
                     type="label3"
-                    className="text-base cursor-text"
+                    className="text-base cursor-text  text-black"
                   />
                 </div>
               </ResizableBox>

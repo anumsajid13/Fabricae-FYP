@@ -596,7 +596,7 @@ export const WhatIDo = forwardRef((props, ref) => {
                     }
                   }
                   type="heading"
-                  className="text-4xl font-serif font-bold cursor-text"
+                  className="text-4xl font-serif font-bold cursor-text  text-black"
                 />
               </div>
             </ResizableBox>
@@ -648,7 +648,7 @@ export const WhatIDo = forwardRef((props, ref) => {
                     }
                   }
                   type="description"
-                  className="text-base mt-3 cursor-text"
+                  className="text-base mt-3 cursor-text  text-black"
                 />
               </div>
             </ResizableBox>

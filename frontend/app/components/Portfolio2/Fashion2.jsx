@@ -765,7 +765,7 @@ export const AboutMe = forwardRef((props, ref) => {
                   }
                 }
                 type="label"
-                className="text-5xl font-bold"
+                className="text-5xl font-bold text-black"
               />
             </div>
           </Draggable>
@@ -799,7 +799,7 @@ export const AboutMe = forwardRef((props, ref) => {
                   }
                 }
                 type="title"
-                className="text-6xl font-serif font-bold mt-4"
+                className="text-6xl font-serif font-bold mt-4 text-black"
               />
             </div>
           </Draggable>
@@ -833,7 +833,7 @@ export const AboutMe = forwardRef((props, ref) => {
                   }
                 }
                 type="description"
-                className="text-xl mt-4"
+                className="text-xl mt-4 text-black"
               />
             </div>
           </Draggable>
