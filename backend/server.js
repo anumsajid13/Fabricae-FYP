@@ -15,6 +15,8 @@ const modelRoutes =require("./routes/modelRoutes.js")
 const userPortfolioRoutes = require('./routes/userPortRoutes.js');
 const thumbnailRoutes = require('./routes/thumbnailRoutes');
 const uploadRoute = require('./routes/uploadRoute');
+const successStoriesRoutes = require('./routes/successStories');
+
 dotenv.config();
 
 const app = express();
