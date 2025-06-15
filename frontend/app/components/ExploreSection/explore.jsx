@@ -12,11 +12,15 @@ export default function ExploreSection() {
   const [userProfiles, setUserProfiles] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState(null);
+
 
   // Get user email from localStorage
   useEffect(() => {
     const emailFromStorage = localStorage.getItem("userEmail");
     setUserEmail(emailFromStorage || "");
+     const role = localStorage.getItem('userRole');
+  setUserRole(role);
   }, []);
 
   // Fetch portfolios from backend
@@ -626,21 +630,19 @@ export default function ExploreSection() {
                     <div className="mt-auto">
                       {" "}
                       {/* Added mt-auto to push to bottom */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleChatNow(portfolio.email)}
-                          disabled={userEmail === portfolio.email}
-                          className={`flex-1 py-2 rounded-md text-sm font-medium ${
-                            userEmail === portfolio.email
-                              ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                              : "bg-[#822538] text-white hover:bg-[#b4707e] transition-colors"
-                          }`}
-                        >
-                          {userEmail === portfolio.email
-                            ? "Your Portfolio"
-                            : "Chat Now"}
-                        </button>
-                      </div>
+                     {userRole !== 'Designer' && (
+  <div className="flex gap-2">
+    <button
+      onClick={() => handleChatNow(portfolio.email)}
+      disabled={userEmail === portfolio.email}
+      className={`flex-1 py-2 rounded-md text-sm font-medium bg-[#822538] text-white hover:bg-[#b4707e] transition-colors`}
+      
+    >
+      Chat Now
+    </button>
+  </div>
+)}
+
                     </div>
                   </div>
                 </div>
