@@ -32,22 +32,23 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, unique: true },
     password: { type: String},
-    role: { 
-        type: String, 
+    role: {
+        type: String,
         enum: ["IndustryProfessional", "Designer"],
-        default: "viewer" 
+        default: "viewer"
     },
-    profilePictureUrl: { type: String }, 
+    profilePictureUrl: { type: String },
+    portfolioPdfUrls: [{ type: String }],
     country: { type: String },
-    createdAt: { type: Date, default: Date.now }, 
-    updatedAt: { type: Date, default: Date.now }, 
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
 });
 
 // Add email domain check before saving the user
 UserSchema.pre('save', async function (next) {
     // Extract domain from email
     const emailDomain = this.email.split('@')[1];
-    
+
     // Log the extracted email domain
     console.log('Extracted Email Domain:', emailDomain);
     console.log('Registered Fashion Brand Domains:', fashionBrandDomains);
@@ -61,19 +62,19 @@ UserSchema.pre('save', async function (next) {
         this.role = "Designer"; // Set role to Designer if domain matches
         console.log('Role set to: Designer');
     }
-  
+
     this.updatedAt = Date.now();
-  
+
     // Hash password if it has been modified
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 10);
     next();
 });
-  
+
 // Compare password method (for login)
 UserSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
-  
+
 // Export the User model using CommonJS
 module.exports = mongoose.models.User || mongoose.model('User', UserSchema);

@@ -1,5 +1,5 @@
 
-const User = require("../data/models/User.js");
+const User = require("../Data/Models/User.js");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -51,7 +51,7 @@ exports.registerUser = async (req, res) => {
         firstname: newUser.firstname,
         lastname: newUser.lastname,
         email: newUser.email,
-        role: newUser.role, 
+        role: newUser.role,
       },
       token,
     });
@@ -107,11 +107,11 @@ exports.requestPasswordReset = async (req, res) => {
       return res.status(404).json({ message: "User with this email does not exist." });
     }
 
-    
+
     const token = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-   
+
     resetTokens[hashedToken] = { userId: user._id, expires: Date.now() + 3600 * 1000 }; // 1 hour
 
     console.log("Reset in req", resetTokens)
@@ -133,7 +133,7 @@ exports.requestPasswordReset = async (req, res) => {
 
           If you have any questions or need assistance, feel free to reach out to us.
 
-          Best wishes,  
+          Best wishes,
           The Fabricae Team`
 
     });
@@ -164,10 +164,10 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-   
+
     user.password = newPassword;
 
-  
+
     await user.save();
 
 
@@ -190,7 +190,7 @@ exports.getOrCreateUser = async (req, res) => {
     console.log("user",user)
     if (!user) {
       // If user doesn't exist, create a new user with the provided email
-      const username = email; 
+      const username = email;
       const role = "Designer";
 
       user = new User({
@@ -201,7 +201,7 @@ exports.getOrCreateUser = async (req, res) => {
       console.log("user",user)
       await user.save();
     }
-    
+
     const token = generateToken(user._id);
 
     res.status(200).json({
