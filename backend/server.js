@@ -14,6 +14,7 @@ const chatRoutes = require("./routes/chatRoutes.js");
 const modelRoutes =require("./routes/modelRoutes.js")
 const userPortfolioRoutes = require('./routes/userPortRoutes.js');
 const thumbnailRoutes = require('./routes/thumbnailRoutes');
+const uploadRoute = require('./routes/uploadRoute');
 dotenv.config();
 
 const app = express();
@@ -55,6 +56,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", portfolioRoutes);
 app.use('/api/user-portfolios', userPortfolioRoutes);
 app.use('/api/thumbnails', thumbnailRoutes);
+app.use('/api', uploadRoute);
 
 // Start the server on port 5000 (can be the same port as WebSocket)
 const PORT = process.env.PORT || 5000;

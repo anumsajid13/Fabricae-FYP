@@ -1,41 +1,42 @@
 import React, { useState, useRef, useEffect } from "react";
 
-export const Post = ({ onClose, onUploadSuccess  }) => {
-  const [selectedTab, setSelectedTab] = useState('upload');
-  const [selectedCategory, setSelectedCategory] = useState('');
+export const Post = ({ onClose, onUploadSuccess }) => {
+  const [selectedTab, setSelectedTab] = useState("upload");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState([]);
   const [completedFiles, setCompletedFiles] = useState([]);
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [loadingGallery, setLoadingGallery] = useState(false);
   const [galleryError, setGalleryError] = useState(null);
-  const [portfolioName, setPortfolioName] = useState('');
-  const [description, setDescription] = useState('');
+  const [portfolioName, setPortfolioName] = useState("");
+  const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const fileInputRef = useRef(null);
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
 
   const categories = [
-    'Design Portfolio',
-    'Styling Portfolio',
-    'Textile Design Portfolio',
-    'Communication Portfolio',
-    'Merchandising Portfolio',
-    'Illustration Portfolio',
-    'Digital Portfolio'
+    "Design Portfolio",
+    "Styling Portfolio",
+    "Textile Design Portfolio",
+    "Communication Portfolio",
+    "Merchandising Portfolio",
+    "Illustration Portfolio",
+    "Digital Portfolio",
   ];
 
   // Check if form is ready to submit
-  const isFormValid = portfolioName && selectedCategory && completedFiles.length > 0;
+  const isFormValid =
+    portfolioName && selectedCategory && completedFiles.length > 0;
 
   // Disable upload options when a file is selected
   const isUploadDisabled = completedFiles.length > 0;
 
   useEffect(() => {
-    const emailFromStorage = localStorage.getItem('userEmail');
+    const emailFromStorage = localStorage.getItem("userEmail");
     setUserEmail(emailFromStorage);
-    if (selectedTab === 'gallery' && emailFromStorage) {
+    if (selectedTab === "gallery" && emailFromStorage) {
       fetchUserPortfolios();
     }
   }, [selectedTab]);
@@ -44,38 +45,65 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
     setLoadingGallery(true);
     setGalleryError(null);
     try {
-      const response = await fetch(`http://localhost:5000/api/users/profile/${encodeURIComponent(userEmail)}/getPort`);
+      const response = await fetch(
+        `http://localhost:5000/api/users/profile/${encodeURIComponent(
+          userEmail
+        )}/getPort`
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch portfolios');
+        throw new Error("Failed to fetch portfolios");
       }
       const data = await response.json();
-      setGalleryFiles(data.portfolioPdfUrls.map((url, index) => {
-        const encodedPath = url.split('/o/')[1].split('?')[0];
-        const decodedPath = decodeURIComponent(encodedPath);
-        const fileName = decodedPath.split('/').pop();
+      setGalleryFiles(
+        data.portfolioPdfUrls.map((url, index) => {
+          const encodedPath = url.split("/o/")[1].split("?")[0];
+          const decodedPath = decodeURIComponent(encodedPath);
+          const fileName = decodedPath.split("/").pop();
 
-        return {
-          id: index,
-          name: fileName || `portfolio-${index}.pdf`,
-          url: url,
-          size: 'N/A',
-          type: 'pdf'
-        };
-      }));
+          return {
+            id: index,
+            name: fileName || `portfolio-${index}.pdf`,
+            url: url,
+            size: "N/A",
+            type: "pdf",
+          };
+        })
+      );
     } catch (error) {
-      console.error('Error fetching portfolios:', error);
+      console.error("Error fetching portfolios:", error);
       setGalleryError(error.message);
     } finally {
       setLoadingGallery(false);
     }
   };
 
-  const simulateUpload = (file) => {
+  // Fixed file upload to Firebase function
+  const uploadFileToFirebase = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("email", userEmail);
+
+    const response = await fetch("http://localhost:5000/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload file to Firebase");
+    }
+
+    const data = await response.json();
+    return data.downloadUrl;
+  };
+
+  const simulateUpload = async (file, isFromGallery = false) => {
     // Clear any existing files first
     setUploadingFiles([]);
     setCompletedFiles([]);
 
     const fileId = Date.now() + Math.random();
+    let fileUrl = file.url; // For gallery files
+
     const newFile = {
       id: fileId,
       name: file.name,
@@ -83,36 +111,73 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
       progress: 0,
       totalSize: file.size,
       type: file.type,
-      url: file.url
+      url: fileUrl,
     };
 
     setUploadingFiles([newFile]);
-    setSelectedTab('upload');
+    setSelectedTab("upload");
 
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 15 + 5;
+    try {
+      // If it's a new file from PC, upload it to Firebase
+      if (!isFromGallery && file instanceof File) {
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 15 + 5;
+          if (progress >= 90) {
+            clearInterval(progressInterval);
+          }
+          setUploadingFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId ? { ...f, progress: Math.min(progress, 90) } : f
+            )
+          );
+        }, 200);
 
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
+        // Upload to Firebase
+        fileUrl = await uploadFileToFirebase(file);
+        clearInterval(progressInterval);
 
-        setTimeout(() => {
-          setUploadingFiles([]);
-          setCompletedFiles([{
+        // Complete progress
+        setUploadingFiles((prev) =>
+          prev.map((f) => (f.id === fileId ? { ...f, progress: 100 } : f))
+        );
+      } else {
+        // For gallery files, just simulate quick progress
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 20 + 10;
+
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+          }
+
+          setUploadingFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId ? { ...f, progress: Math.min(progress, 100) } : f
+            )
+          );
+        }, 100);
+      }
+
+      // Move to completed files after a short delay
+      setTimeout(() => {
+        setUploadingFiles([]);
+        setCompletedFiles([
+          {
             id: fileId,
             name: file.name,
             size: file.size,
             type: file.type,
-            url: file.url
-          }]);
-        }, 500);
-      }
-
-      setUploadingFiles(prev =>
-        prev.map(f => f.id === fileId ? { ...f, progress: Math.min(progress, 100) } : f)
-      );
-    }, 200);
+            url: fileUrl,
+          },
+        ]);
+      }, 500);
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadingFiles([]);
+      setSubmitError("Failed to upload file: " + error.message);
+    }
   };
 
   const handlePCUpload = () => {
@@ -124,9 +189,9 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);
     if (files.length > 0) {
-      simulateUpload(files[0]); // Only take the first file
+      simulateUpload(files[0], false); // false = not from gallery
     }
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const handleGallerySelect = (galleryFile) => {
@@ -134,10 +199,10 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
       const mockFile = {
         name: galleryFile.name,
         size: 0,
-        type: 'application/pdf',
-        url: galleryFile.url
+        type: "application/pdf",
+        url: galleryFile.url,
       };
-      simulateUpload(mockFile);
+      simulateUpload(mockFile, true); // true = from gallery
     }
   };
 
@@ -146,21 +211,21 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const formatFileName = (name) => {
     const cleanName = name
-      .replace(/\.[^/.]+$/, '')
-      .replace(/[_-]/g, ' ')
-      .replace(/\s+/g, ' ')
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[_-]/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
     return cleanName.length > 20
-      ? cleanName.substring(0, 20) + '...'
+      ? cleanName.substring(0, 20) + "..."
       : cleanName;
   };
 
@@ -172,40 +237,45 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
 
     try {
       const file = completedFiles[0];
-      const response = await fetch('http://localhost:5000/api/user-portfolios/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          name: portfolioName,
-          category: selectedCategory,
-          description: description,
-          pdfUrl: file.url,
-          fileName: file.name
-        })
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/user-portfolios/upload",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            name: portfolioName,
+            category: selectedCategory,
+            description: description,
+            pdfUrl: file.url,
+            fileName: file.name,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to upload portfolio');
+        throw new Error("Failed to upload portfolio");
       }
 
       const data = await response.json();
-      console.log('Portfolio uploaded:', data);
+      console.log("Portfolio uploaded:", data);
 
+      // Call success callback with the new portfolio
       if (onUploadSuccess) {
         onUploadSuccess(data.portfolio);
       }
 
+      // Close modal and reset form
       onClose();
-      setPortfolioName('');
-      setDescription('');
-      setSelectedCategory('');
+      setPortfolioName("");
+      setDescription("");
+      setSelectedCategory("");
       setCompletedFiles([]);
     } catch (error) {
-      console.error('Error uploading portfolio:', error);
-      setSubmitError(error.message || 'Failed to upload portfolio');
+      console.error("Error uploading portfolio:", error);
+      setSubmitError(error.message || "Failed to upload portfolio");
     } finally {
       setIsSubmitting(false);
     }
@@ -252,23 +322,29 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => {
-                setSelectedTab('upload');
+                setSelectedTab("upload");
                 handlePCUpload();
               }}
               disabled={isUploadDisabled}
               className={`group relative overflow-hidden border-2 border-dashed rounded-lg p-4 transition-all duration-300 hover:scale-105 ${
-                selectedTab === 'upload'
-                  ? 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-400'
-                  : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 hover:border-blue-400'
-              } ${isUploadDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                selectedTab === "upload"
+                  ? "bg-gradient-to-br from-blue-100 to-blue-200 border-blue-400"
+                  : "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 hover:border-blue-400"
+              } ${isUploadDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex flex-col items-center space-y-2">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                  isUploadDisabled ? 'bg-gray-400' : 'bg-blue-500 group-hover:bg-blue-600'
-                }`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                    isUploadDisabled
+                      ? "bg-gray-400"
+                      : "bg-blue-500 group-hover:bg-blue-600"
+                  }`}
+                >
                   <span className="text-white text-sm">💻</span>
                 </div>
-                <span className="font-semibold text-blue-700 text-sm">From PC</span>
+                <span className="font-semibold text-blue-700 text-sm">
+                  From PC
+                </span>
                 <span className="text-xs text-blue-600 text-center">
                   Upload files from computer
                 </span>
@@ -276,18 +352,22 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
             </button>
 
             <button
-              onClick={() => setSelectedTab('gallery')}
+              onClick={() => setSelectedTab("gallery")}
               disabled={isUploadDisabled}
               className={`group relative overflow-hidden border-2 border-dashed rounded-lg p-4 transition-all duration-300 hover:scale-105 ${
-                selectedTab === 'gallery'
-                  ? 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-400'
-                  : 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300 hover:border-purple-400'
-              } ${isUploadDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                selectedTab === "gallery"
+                  ? "bg-gradient-to-br from-purple-100 to-purple-200 border-purple-400"
+                  : "bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300 hover:border-purple-400"
+              } ${isUploadDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex flex-col items-center space-y-2">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                  isUploadDisabled ? 'bg-gray-400' : 'bg-purple-500 group-hover:bg-purple-600'
-                }`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                    isUploadDisabled
+                      ? "bg-gray-400"
+                      : "bg-purple-500 group-hover:bg-purple-600"
+                  }`}
+                >
                   <span className="text-white text-sm">🖼️</span>
                 </div>
                 <span className="font-semibold text-purple-700 text-sm">
@@ -311,7 +391,11 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
                       {formatFileName(completedFiles[0].name)}
                     </p>
                     <p className="text-xs text-green-600">
-                      {completedFiles[0].size ? `Upload complete • ${formatFileSize(completedFiles[0].size)}` : 'File selected'}
+                      {completedFiles[0].size
+                        ? `Upload complete • ${formatFileSize(
+                            completedFiles[0].size
+                          )}`
+                        : "File selected"}
                     </p>
                   </div>
                 </div>
@@ -333,7 +417,13 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
                       {formatFileName(uploadingFiles[0].name)}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {formatFileSize(uploadingFiles[0].totalSize * uploadingFiles[0].progress / 100)} / {formatFileSize(uploadingFiles[0].totalSize)} ({Math.round(uploadingFiles[0].progress)}%)
+                      {formatFileSize(
+                        (uploadingFiles[0].totalSize *
+                          uploadingFiles[0].progress) /
+                          100
+                      )}{" "}
+                      / {formatFileSize(uploadingFiles[0].totalSize)} (
+                      {Math.round(uploadingFiles[0].progress)}%)
                     </p>
                   </div>
                 </div>
@@ -351,11 +441,17 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
                 ></div>
               </div>
             </div>
-          ) : selectedTab === 'gallery' ? (
+          ) : selectedTab === "gallery" ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium text-gray-800">Select from Gallery</h3>
-                {!loadingGallery && <span className="text-xs text-gray-500">{galleryFiles.length} files</span>}
+                <h3 className="font-medium text-gray-800">
+                  Select from Gallery
+                </h3>
+                {!loadingGallery && (
+                  <span className="text-xs text-gray-500">
+                    {galleryFiles.length} files
+                  </span>
+                )}
               </div>
 
               {loadingGallery ? (
@@ -379,7 +475,10 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
               ) : (
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {galleryFiles.map((file) => (
-                    <div key={file.id} className="bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                    <div
+                      key={file.id}
+                      className="bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <span className="text-red-500">📄</span>
@@ -387,7 +486,11 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
                             <p className="font-medium text-gray-800 text-sm truncate max-w-[180px]">
                               {formatFileName(file.name)}
                             </p>
-                            <p className="text-xs text-gray-500">{file.size === 'N/A' ? 'Size not available' : file.size}</p>
+                            <p className="text-xs text-gray-500">
+                              {file.size === "N/A"
+                                ? "Size not available"
+                                : file.size}
+                            </p>
                           </div>
                         </div>
                         <button
@@ -415,9 +518,13 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 flex items-center justify-between text-left"
               >
                 <span className="text-gray-700">
-                  {selectedCategory || 'Select Portfolio Type'}
+                  {selectedCategory || "Select Portfolio Type"}
                 </span>
-                <span className={`text-gray-500 transform transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                <span
+                  className={`text-gray-500 transform transition-transform duration-200 ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`}
+                >
                   ▼
                 </span>
               </button>
@@ -476,19 +583,37 @@ export const Post = ({ onClose, onUploadSuccess  }) => {
               onClick={handleSubmit}
               disabled={isSubmitting || !isFormValid}
               className={`flex-1 px-6 py-3 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center ${
-                isFormValid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-400 cursor-not-allowed'
+                isFormValid
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-blue-400 cursor-not-allowed"
               }`}
             >
               {isSubmitting ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Uploading...
                 </>
               ) : (
-                'Post Portfolio'
+                "Post Portfolio"
               )}
             </button>
           </div>

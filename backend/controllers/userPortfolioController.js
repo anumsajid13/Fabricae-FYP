@@ -6,19 +6,25 @@ exports.uploadPortfolio = async (req, res) => {
   try {
     const { email, name, category, description, pdfUrl, fileName } = req.body;
 
-    console.log("ndnddn",pdfUrl)
+    console.log("ndnddn", req.body);
 
     // Validate required fields
     if (!email || !name || !category || !pdfUrl || !fileName) {
       return res.status(400).json({
-        message: "Email, name, category, pdfUrl, and fileName are required"
+        message: "Email, name, category, pdfUrl, and fileName are required",
       });
     }
 
     // Validate PDF URL format (Firebase Storage URL)
-    if (!pdfUrl.includes('firebasestorage.googleapis.com') || !pdfUrl.includes('.pdf')) {
+    const isValidPdfUrl =
+      (pdfUrl.includes("firebasestorage.googleapis.com") ||
+        pdfUrl.includes("storage.googleapis.com")) &&
+      pdfUrl.includes(".pdf");
+
+    if (!isValidPdfUrl) {
       return res.status(400).json({
-        message: "Invalid PDF URL. Must be a Firebase Storage PDF link"
+        message:
+          "Invalid PDF URL. Must be a Firebase Storage PDF link ending with .pdf",
       });
     }
 
@@ -36,32 +42,37 @@ exports.uploadPortfolio = async (req, res) => {
       likes: 0,
       // Initialize thumbnail fields
       thumbnailUrl: null,
-      thumbnailStatus: 'pending',
-      thumbnailGeneratedAt: null
+      thumbnailStatus: "pending",
+      thumbnailGeneratedAt: null,
     });
 
     await newPortfolio.save();
 
     // Generate thumbnail asynchronously (don't wait for it)
-    thumbnailController.generateAndStorePdfThumbnail(newPortfolio._id)
+    thumbnailController
+      .generateAndStorePdfThumbnail(newPortfolio._id)
       .then(() => {
-        console.log(`✅ Thumbnail generated for portfolio: ${newPortfolio.name} (${newPortfolio._id})`);
+        console.log(
+          `✅ Thumbnail generated for portfolio: ${newPortfolio.name} (${newPortfolio._id})`
+        );
       })
       .catch((error) => {
-        console.error(`❌ Failed to generate thumbnail for portfolio ${newPortfolio._id}:`, error.message);
+        console.error(
+          `❌ Failed to generate thumbnail for portfolio ${newPortfolio._id}:`,
+          error.message
+        );
       });
 
     res.status(201).json({
       message: "Portfolio uploaded successfully",
       portfolio: newPortfolio,
-      thumbnailStatus: "generating"
+      thumbnailStatus: "generating",
     });
-
   } catch (error) {
     console.error("Error uploading portfolio:", error);
     res.status(500).json({
       message: "Error uploading portfolio",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -82,12 +93,11 @@ exports.getPortfolioById = async (req, res) => {
     await portfolio.save();
 
     res.status(200).json(portfolio);
-
   } catch (error) {
     console.error("Error fetching portfolio:", error);
     res.status(500).json({
       message: "Error fetching portfolio",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -103,18 +113,19 @@ exports.getPortfoliosByEmail = async (req, res) => {
 
     const portfolios = await UserPortfolio.find({ email })
       .sort({ uploadDate: -1 }) // Most recent first
-      .select('_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus thumbnailGeneratedAt isPublic');
+      .select(
+        "_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus thumbnailGeneratedAt isPublic"
+      );
 
     res.status(200).json({
       portfolios,
-      count: portfolios.length
+      count: portfolios.length,
     });
-
   } catch (error) {
     console.error("Error fetching user portfolios:", error);
     res.status(500).json({
       message: "Error fetching user portfolios",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -122,7 +133,7 @@ exports.getPortfoliosByEmail = async (req, res) => {
 // Get all public portfolios for explore page
 exports.getAllPublicPortfolios = async (req, res) => {
   try {
-    const { page = 1, limit = 12, category, sortBy = 'uploadDate' } = req.query;
+    const { page = 1, limit = 12, category, sortBy = "uploadDate" } = req.query;
 
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
@@ -130,20 +141,20 @@ exports.getAllPublicPortfolios = async (req, res) => {
 
     // Build query
     const query = { isPublic: true };
-    if (category && category !== 'all') {
+    if (category && category !== "all") {
       query.category = category;
     }
 
     // Build sort options
     let sortOptions = {};
     switch (sortBy) {
-      case 'views':
+      case "views":
         sortOptions = { views: -1, uploadDate: -1 };
         break;
-      case 'likes':
+      case "likes":
         sortOptions = { likes: -1, uploadDate: -1 };
         break;
-      case 'uploadDate':
+      case "uploadDate":
       default:
         sortOptions = { uploadDate: -1 };
         break;
@@ -154,7 +165,9 @@ exports.getAllPublicPortfolios = async (req, res) => {
       .sort(sortOptions)
       .skip(skip)
       .limit(limitNum)
-      .select('_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus');
+      .select(
+        "_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus"
+      );
 
     // Get total count for pagination
     const totalCount = await UserPortfolio.countDocuments(query);
@@ -167,15 +180,14 @@ exports.getAllPublicPortfolios = async (req, res) => {
         totalPages,
         totalCount,
         hasNextPage: pageNum < totalPages,
-        hasPrevPage: pageNum > 1
-      }
+        hasPrevPage: pageNum > 1,
+      },
     });
-
   } catch (error) {
     console.error("Error fetching public portfolios:", error);
     res.status(500).json({
       message: "Error fetching public portfolios",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -195,14 +207,16 @@ exports.updatePortfolio = async (req, res) => {
 
     // Check if user owns this portfolio
     if (portfolio.email !== email) {
-      return res.status(403).json({ message: "Unauthorized to update this portfolio" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this portfolio" });
     }
 
     // Update only allowed fields
-    const allowedUpdates = ['name', 'category', 'description', 'isPublic'];
+    const allowedUpdates = ["name", "category", "description", "isPublic"];
     const updates = {};
 
-    allowedUpdates.forEach(field => {
+    allowedUpdates.forEach((field) => {
       if (updateData[field] !== undefined) {
         updates[field] = updateData[field];
       }
@@ -216,14 +230,13 @@ exports.updatePortfolio = async (req, res) => {
 
     res.status(200).json({
       message: "Portfolio updated successfully",
-      portfolio: updatedPortfolio
+      portfolio: updatedPortfolio,
     });
-
   } catch (error) {
     console.error("Error updating portfolio:", error);
     res.status(500).json({
       message: "Error updating portfolio",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -242,7 +255,9 @@ exports.deletePortfolio = async (req, res) => {
 
     // Check if user owns this portfolio
     if (portfolio.email !== email) {
-      return res.status(403).json({ message: "Unauthorized to delete this portfolio" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to delete this portfolio" });
     }
 
     // Delete the portfolio
@@ -252,11 +267,15 @@ exports.deletePortfolio = async (req, res) => {
     try {
       if (portfolio.thumbnailUrl) {
         // If storing locally
-        const fs = require('fs');
-        const path = require('path');
+        const fs = require("fs");
+        const path = require("path");
 
-        if (portfolio.thumbnailUrl.startsWith('/thumbnails/')) {
-          const thumbnailPath = path.join(__dirname, '../public', portfolio.thumbnailUrl);
+        if (portfolio.thumbnailUrl.startsWith("/thumbnails/")) {
+          const thumbnailPath = path.join(
+            __dirname,
+            "../public",
+            portfolio.thumbnailUrl
+          );
           if (fs.existsSync(thumbnailPath)) {
             fs.unlinkSync(thumbnailPath);
             console.log(`🗑️ Deleted thumbnail file for portfolio ${id}`);
@@ -270,17 +289,16 @@ exports.deletePortfolio = async (req, res) => {
         // await bucket.file(`thumbnails/${id}.jpg`).delete();
       }
     } catch (cleanupError) {
-      console.error('Error cleaning up thumbnail:', cleanupError.message);
+      console.error("Error cleaning up thumbnail:", cleanupError.message);
       // Don't fail the deletion if thumbnail cleanup fails
     }
 
     res.status(200).json({ message: "Portfolio deleted successfully" });
-
   } catch (error) {
     console.error("Error deleting portfolio:", error);
     res.status(500).json({
       message: "Error deleting portfolio",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -297,9 +315,9 @@ exports.toggleLike = async (req, res) => {
       return res.status(404).json({ message: "Portfolio not found" });
     }
 
-    if (action === 'like') {
+    if (action === "like") {
       portfolio.likes += 1;
-    } else if (action === 'unlike' && portfolio.likes > 0) {
+    } else if (action === "unlike" && portfolio.likes > 0) {
       portfolio.likes -= 1;
     }
 
@@ -307,14 +325,13 @@ exports.toggleLike = async (req, res) => {
 
     res.status(200).json({
       message: `Portfolio ${action}d successfully`,
-      likes: portfolio.likes
+      likes: portfolio.likes,
     });
-
   } catch (error) {
     console.error("Error toggling like:", error);
     res.status(500).json({
       message: "Error toggling like",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -324,7 +341,10 @@ exports.getThumbnailStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const portfolio = await UserPortfolio.findById(id, 'thumbnailUrl thumbnailStatus thumbnailGeneratedAt');
+    const portfolio = await UserPortfolio.findById(
+      id,
+      "thumbnailUrl thumbnailStatus thumbnailGeneratedAt"
+    );
 
     if (!portfolio) {
       return res.status(404).json({ message: "Portfolio not found" });
@@ -334,14 +354,13 @@ exports.getThumbnailStatus = async (req, res) => {
       portfolioId: id,
       thumbnailUrl: portfolio.thumbnailUrl,
       thumbnailStatus: portfolio.thumbnailStatus,
-      thumbnailGeneratedAt: portfolio.thumbnailGeneratedAt
+      thumbnailGeneratedAt: portfolio.thumbnailGeneratedAt,
     });
-
   } catch (error) {
     console.error("Error getting thumbnail status:", error);
     res.status(500).json({
       message: "Error getting thumbnail status",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -360,29 +379,31 @@ exports.regenerateThumbnail = async (req, res) => {
 
     // Check if user owns this portfolio
     if (portfolio.email !== email) {
-      return res.status(403).json({ message: "Unauthorized to regenerate thumbnail" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to regenerate thumbnail" });
     }
 
     // Generate thumbnail
     try {
-      const thumbnailUrl = await thumbnailController.generateAndStorePdfThumbnail(id);
+      const thumbnailUrl =
+        await thumbnailController.generateAndStorePdfThumbnail(id);
 
       res.status(200).json({
         message: "Thumbnail regenerated successfully",
-        thumbnailUrl: thumbnailUrl
+        thumbnailUrl: thumbnailUrl,
       });
     } catch (thumbnailError) {
       res.status(500).json({
         message: "Failed to regenerate thumbnail",
-        error: thumbnailError.message
+        error: thumbnailError.message,
       });
     }
-
   } catch (error) {
     console.error("Error regenerating thumbnail:", error);
     res.status(500).json({
       message: "Error regenerating thumbnail",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -395,8 +416,8 @@ exports.searchPortfolios = async (req, res) => {
       limit = 12,
       category,
       search,
-      sortBy = 'uploadDate',
-      email // Optional: filter by specific user
+      sortBy = "uploadDate",
+      email, // Optional: filter by specific user
     } = req.query;
 
     const pageNum = parseInt(page);
@@ -406,7 +427,7 @@ exports.searchPortfolios = async (req, res) => {
     // Build query
     const query = { isPublic: true };
 
-    if (category && category !== 'all') {
+    if (category && category !== "all") {
       query.category = category;
     }
 
@@ -416,25 +437,25 @@ exports.searchPortfolios = async (req, res) => {
 
     if (search) {
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { category: { $regex: search, $options: 'i' } }
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
       ];
     }
 
     // Build sort options
     let sortOptions = {};
     switch (sortBy) {
-      case 'views':
+      case "views":
         sortOptions = { views: -1, uploadDate: -1 };
         break;
-      case 'likes':
+      case "likes":
         sortOptions = { likes: -1, uploadDate: -1 };
         break;
-      case 'name':
+      case "name":
         sortOptions = { name: 1 };
         break;
-      case 'uploadDate':
+      case "uploadDate":
       default:
         sortOptions = { uploadDate: -1 };
         break;
@@ -445,7 +466,9 @@ exports.searchPortfolios = async (req, res) => {
       .sort(sortOptions)
       .skip(skip)
       .limit(limitNum)
-      .select('_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus');
+      .select(
+        "_id email name category description fileName pdfUrl uploadDate views likes thumbnailUrl thumbnailStatus"
+      );
 
     // Get total count for pagination
     const totalCount = await UserPortfolio.countDocuments(query);
@@ -458,21 +481,20 @@ exports.searchPortfolios = async (req, res) => {
         totalPages,
         totalCount,
         hasNextPage: pageNum < totalPages,
-        hasPrevPage: pageNum > 1
+        hasPrevPage: pageNum > 1,
       },
       searchCriteria: {
         category,
         search,
         sortBy,
-        email
-      }
+        email,
+      },
     });
-
   } catch (error) {
     console.error("Error searching portfolios:", error);
     res.status(500).json({
       message: "Error searching portfolios",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -488,7 +510,7 @@ exports.getPortfolioAnalytics = async (req, res) => {
 
     // Get user's portfolios with analytics
     const portfolios = await UserPortfolio.find({ email })
-      .select('_id name category uploadDate views likes thumbnailStatus')
+      .select("_id name category uploadDate views likes thumbnailStatus")
       .sort({ uploadDate: -1 });
 
     // Calculate analytics
@@ -497,27 +519,28 @@ exports.getPortfolioAnalytics = async (req, res) => {
       totalViews: portfolios.reduce((sum, p) => sum + p.views, 0),
       totalLikes: portfolios.reduce((sum, p) => sum + p.likes, 0),
       thumbnailStats: {
-        generated: portfolios.filter(p => p.thumbnailStatus === 'generated').length,
-        pending: portfolios.filter(p => p.thumbnailStatus === 'pending').length,
-        failed: portfolios.filter(p => p.thumbnailStatus === 'failed').length
+        generated: portfolios.filter((p) => p.thumbnailStatus === "generated")
+          .length,
+        pending: portfolios.filter((p) => p.thumbnailStatus === "pending")
+          .length,
+        failed: portfolios.filter((p) => p.thumbnailStatus === "failed").length,
       },
       categoryBreakdown: portfolios.reduce((acc, p) => {
         acc[p.category] = (acc[p.category] || 0) + 1;
         return acc;
       }, {}),
-      recentPortfolios: portfolios.slice(0, 5) // Last 5 portfolios
+      recentPortfolios: portfolios.slice(0, 5), // Last 5 portfolios
     };
 
     res.status(200).json({
       analytics,
-      portfolios
+      portfolios,
     });
-
   } catch (error) {
     console.error("Error getting portfolio analytics:", error);
     res.status(500).json({
       message: "Error getting portfolio analytics",
-      error: error.message
+      error: error.message,
     });
   }
 };

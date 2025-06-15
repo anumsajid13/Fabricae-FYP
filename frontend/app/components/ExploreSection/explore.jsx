@@ -11,6 +11,13 @@ export default function ExploreSection() {
   const [totalPages, setTotalPages] = useState(1);
   const [userProfiles, setUserProfiles] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
+  const [userEmail, setUserEmail] = useState("");
+
+  // Get user email from localStorage
+  useEffect(() => {
+    const emailFromStorage = localStorage.getItem("userEmail");
+    setUserEmail(emailFromStorage || "");
+  }, []);
 
   // Fetch portfolios from backend
   useEffect(() => {
@@ -22,7 +29,7 @@ export default function ExploreSection() {
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch portfolios');
+          throw new Error("Failed to fetch portfolios");
         }
 
         const data = await response.json();
@@ -41,17 +48,19 @@ export default function ExploreSection() {
     };
 
     fetchPortfolios();
-  }, [currentPage,refreshKey]);
+  }, [currentPage, refreshKey]);
 
   const fetchUserProfiles = async (portfolios) => {
-    const uniqueEmails = [...new Set(portfolios.map(p => p.email))];
+    const uniqueEmails = [...new Set(portfolios.map((p) => p.email))];
     const profiles = {};
 
     await Promise.all(
       uniqueEmails.map(async (email) => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/users/profile/${encodeURIComponent(email)}`
+            `http://localhost:5000/api/users/profile/${encodeURIComponent(
+              email
+            )}`
           );
 
           if (response.ok) {
@@ -67,11 +76,39 @@ export default function ExploreSection() {
     setUserProfiles(profiles);
   };
 
-
   // Handle PDF viewing - Open in new tab
   const handleViewPdf = (pdfUrl) => {
     if (pdfUrl) {
-      window.open(pdfUrl, '_blank');
+      window.open(pdfUrl, "_blank");
+    }
+  };
+
+  // Handle portfolio deletion
+  const handleDeletePortfolio = async (portfolioId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/user-portfolios/${portfolioId}`,
+        {
+          method: "DELETE",
+          headers: {
+            email: userEmail, // Send email in headers for authorization
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete portfolio");
+      }
+
+      // Remove the portfolio from local state
+      setPortfolios((prevPortfolios) =>
+        prevPortfolios.filter((portfolio) => portfolio._id !== portfolioId)
+      );
+    } catch (error) {
+      console.error("Error deleting portfolio:", error);
+      alert("Error deleting portfolio: " + error.message);
     }
   };
 
@@ -88,7 +125,7 @@ export default function ExploreSection() {
     }
   };
 
- const getUserProfilePicture = (email) => {
+  const getUserProfilePicture = (email) => {
     if (userProfiles[email]?.profilePictureUrl) {
       return userProfiles[email].profilePictureUrl;
     }
@@ -101,18 +138,32 @@ export default function ExploreSection() {
       if (firstname && lastname) return `${firstname} ${lastname}`;
       if (firstname) return firstname;
     }
-    return email.split('@')[0];
+    return email.split("@")[0];
   };
 
-   const handleUploadSuccess = () => {
+  const handleUploadSuccess = () => {
     // Either reset to page 1 where new portfolio will appear
     setCurrentPage(1);
 
     // Or force a complete refresh by incrementing the refreshKey
-    setRefreshKey(prev => prev + 1);
-
+    setRefreshKey((prev) => prev + 1);
   };
 
+  // Function to get thumbnail URL with fallbacks
+  const getThumbnailUrl = (portfolio) => {
+    // If thumbnail is available and generated, use it
+    if (portfolio.thumbnailUrl && portfolio.thumbnailStatus === "generated") {
+      return portfolio.thumbnailUrl;
+    }
+
+    // If thumbnail is pending or failed, show a placeholder
+    if (portfolio.thumbnailStatus === "pending") {
+      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjEwMCIgcj0iMjAiIGZpbGw9IiM5Q0E0QUYiLz4KPGFuZXh0IHg9IjE1MCIgeT0iMTMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjM3Mzg1IiBmb250LXNpemU9IjEyIj5HZW5lcmF0aW5nLi4uPC90ZXh0Pgo8L3N2Zz4K";
+    }
+
+    // Default fallback for failed or missing thumbnails
+    return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjEyNSIgeT0iNzUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzlDQTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjEzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYzNzM4NSIgZm9udC1zaXplPSIxMiI+UERGIFBvcnRmb2xpbzwvdGV4dD4KPC9zdmc+";
+  };
 
   return (
     <div id="webcrumbs">
@@ -188,9 +239,12 @@ export default function ExploreSection() {
             </div>
           ) : portfolios.length === 0 ? (
             <div className="text-center py-20">
-              <div className="text-6xl mb-4">📁</div>
-              <h3 className="text-xl font-semibold text-[#822538] mb-2">No Portfolios Yet</h3>
-              <p className="text-neutral-600 mb-4">Be the first to share your amazing work!</p>
+              <h3 className="text-xl font-semibold text-[#822538] mb-2">
+                No Portfolios Yet
+              </h3>
+              <p className="text-neutral-600 mb-4">
+                Be the first to share your amazing work!
+              </p>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-6 py-3 bg-[#822538] text-white rounded-md hover:bg-[#b4707e] transition-colors"
@@ -206,9 +260,9 @@ export default function ExploreSection() {
                   className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   <div className="h-48 overflow-hidden relative group">
-                    {/* PDF Thumbnail */}
+                    {/* PDF Thumbnail with fallbacks */}
                     <img
-                      src={portfolio.thumbnailUrl}
+                      src={getThumbnailUrl(portfolio)}
                       alt={portfolio.name}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       loading="lazy"
@@ -227,6 +281,18 @@ export default function ExploreSection() {
                       </span>
                     </button>
 
+                    {/* Delete button - only show for portfolio owner */}
+                    {userEmail && portfolio.email === userEmail && (
+                      <button
+                        onClick={() => handleDeletePortfolio(portfolio._id)}
+                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        title="Delete Portfolio"
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          delete
+                        </span>
+                      </button>
+                    )}
                   </div>
 
                   <div className="p-4">
@@ -243,7 +309,7 @@ export default function ExploreSection() {
                         />
                         <div>
                           <p className="font-medium text-sm">
-                            {portfolio.email.split('@')[0]}
+                            {portfolio.email.split("@")[0]}
                           </p>
                           <p className="text-xs text-neutral-500">
                             {portfolio.category}
@@ -253,13 +319,19 @@ export default function ExploreSection() {
 
                       {/* Like button */}
                       <button
-                        onClick={() => handleLike(portfolio._id, portfolio.isLiked)}
+                        onClick={() =>
+                          handleLike(portfolio._id, portfolio.isLiked)
+                        }
                         className="p-1 hover:bg-neutral-100 rounded-full transition-colors group"
                       >
-                        <span className={`material-symbols-outlined text-lg ${
-                          portfolio.isLiked ? 'text-red-500' : 'text-[#822538]'
-                        } group-hover:scale-110 transition-transform`}>
-                          {portfolio.isLiked ? 'favorite' : 'favorite_border'}
+                        <span
+                          className={`material-symbols-outlined text-lg ${
+                            portfolio.isLiked
+                              ? "text-red-500"
+                              : "text-[#822538]"
+                          } group-hover:scale-110 transition-transform`}
+                        >
+                          {portfolio.isLiked ? "favorite" : "favorite_border"}
                         </span>
                         {portfolio.likes > 0 && (
                           <span className="text-xs text-neutral-500 ml-1">
@@ -273,16 +345,16 @@ export default function ExploreSection() {
                       {portfolio.name}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4 line-clamp-2">
-                      {portfolio.description || 'No description provided'}
+                      {portfolio.description || "No description provided"}
                     </p>
 
                     {/* Upload date */}
                     <p className="text-xs text-neutral-400 mb-3">
-                      Uploaded {new Date(portfolio.uploadDate).toLocaleDateString()}
+                      Uploaded{" "}
+                      {new Date(portfolio.uploadDate).toLocaleDateString()}
                     </p>
 
                     <div className="flex gap-2">
-
                       <button className="flex-1 bg-[#822538] text-white py-2 rounded-md hover:bg-[#b4707e] transition-colors text-sm font-medium">
                         Chat Now
                       </button>
@@ -301,13 +373,11 @@ export default function ExploreSection() {
                 disabled={currentPage === 1}
                 className={`p-2 rounded-full transition-colors ${
                   currentPage === 1
-                    ? 'bg-gray-200 cursor-not-allowed text-gray-400'
-                    : 'bg-[#822538] hover:bg-[#b4707e] text-white'
+                    ? "bg-gray-200 cursor-not-allowed text-gray-400"
+                    : "bg-[#822538] hover:bg-[#b4707e] text-white"
                 }`}
               >
-                <span className="material-symbols-outlined">
-                  arrow_back
-                </span>
+                <span className="material-symbols-outlined">arrow_back</span>
               </button>
 
               <div className="flex items-center gap-2">
@@ -324,13 +394,11 @@ export default function ExploreSection() {
                 disabled={currentPage === totalPages}
                 className={`p-2 rounded-full transition-colors ${
                   currentPage === totalPages
-                    ? 'bg-gray-200 cursor-not-allowed text-gray-400'
-                    : 'bg-[#822538] hover:bg-[#b4707e] text-white'
+                    ? "bg-gray-200 cursor-not-allowed text-gray-400"
+                    : "bg-[#822538] hover:bg-[#b4707e] text-white"
                 }`}
               >
-                <span className="material-symbols-outlined">
-                  arrow_forward
-                </span>
+                <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
           )}
@@ -435,7 +503,12 @@ export default function ExploreSection() {
           </div>
         </section>
         {/* Portfolio Upload Modal */}
-        {isModalOpen && <Post onClose={() => setIsModalOpen(false)} onUploadSuccess={handleUploadSuccess} />}
+        {isModalOpen && (
+          <Post
+            onClose={() => setIsModalOpen(false)}
+            onUploadSuccess={handleUploadSuccess}
+          />
+        )}
       </div>
     </div>
   );

@@ -56,7 +56,7 @@ import { relative } from "path";
 
   // Function to call the Hugging Face API and get a single image
   const queryImageGeneration = async (prompt: string) => {
-    const API_URL = "http://localhost:5001/api/huggingface/hf-inference/models/fyp1/pattern_generation";
+    const API_URL = "http://localhost:5001/api/huggingface/hf-inference/models/black-forest-labs/FLUX.1-dev";
     const headers = {
       Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_TOKEN}`,
       "Content-Type": "application/json",
