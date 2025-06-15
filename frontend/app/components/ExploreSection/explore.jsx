@@ -211,9 +211,7 @@ export default function ExploreSection() {
 
   const [stories, setStories] = useState([]);
   const [allStories, setAllStories] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [loadingAll, setLoadingAll] = useState(false);
-  const [error, setError] = useState(null);
   const [showAllStories, setShowAllStories] = useState(false);
 
   // Fetch top 3 success stories from backend
