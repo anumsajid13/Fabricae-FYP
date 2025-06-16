@@ -362,7 +362,7 @@ export const Post = ({ onClose, onUploadSuccess }) => {
               type="text"
               value={portfolioName}
               onChange={(e) => setPortfolioName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="text-black w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
               placeholder="My Awesome Portfolio"
               required
             />
@@ -607,7 +607,7 @@ export const Post = ({ onClose, onUploadSuccess }) => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+              className="text-black w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
               rows="3"
               placeholder="Add a description for your portfolio..."
             ></textarea>
